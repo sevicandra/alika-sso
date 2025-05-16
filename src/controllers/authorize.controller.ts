@@ -11,7 +11,7 @@ import {
 import { AxiosError } from "axios";
 export const authorizationCode = async(req: Request, res: Response) => {
   try {
-    const session = req.session as any;
+    const session = req.session as any;    
     const code = await AuthorizationCode.create({
       client_id: req.query.client_id as string,
       user_id: session.passport.user as string,
@@ -21,7 +21,7 @@ export const authorizationCode = async(req: Request, res: Response) => {
       code: UUID.v4(),
     });
     return res.redirect(
-      `${req.query.redirect_uri}?code=${code}&state=${req.query.state}&scope=${req.query.scope}`
+      `${req.query.redirect_uri}?code=${code.code}&state=${req.query.state}&scope=${req.query.scope}`
     );
   } catch (error: unknown) {
     if (

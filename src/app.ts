@@ -18,7 +18,7 @@ const publicPath = path.join(__dirname, "../public");
 const app = express();
 
 app.use(express.json());
-app.use(logger("dev"));
+// app.use(logger("dev"));
 app.set("trust proxy", 1);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

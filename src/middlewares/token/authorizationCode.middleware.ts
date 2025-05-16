@@ -1,10 +1,5 @@
 import { NextFunction, Response } from "express";
-import {
-  Client,
-  AuthorizationCode,
-  User,
-  RefreshToken,
-} from "@/models";
+import { Client, AuthorizationCode, User, RefreshToken } from "@/models";
 import { errorResponse } from "@/helpers/respose.helper";
 import {
   ValidationError,
@@ -23,7 +18,12 @@ export const authorizationCodeGrant = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.body.grant_type || !req.body.code || !req.body.redirect_uri || !req.client) {
+    if (
+      !req.body.grant_type ||
+      !req.body.code ||
+      !req.body.redirect_uri ||
+      !req.client
+    ) {
       return errorResponse(res, "Missing required parameters", null, 400);
     }
 
@@ -53,7 +53,10 @@ export const authorizationCodeGrant = async (
       return errorResponse(res, "Invalid client id", null, 401);
     }
 
-    const user = await User.findByPk(authorizationCode.user_id, {
+    const user = await User.findOne({
+      where: {
+        sub: authorizationCode.user_id,
+      },
       include: [
         {
           association: "Users",

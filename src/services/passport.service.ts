@@ -51,6 +51,8 @@ passport.use(
             nik: userInfo.data.g2c_Nik,
             npwp: userInfo.data.g2c_Npwp,
           });
+          console.log(user);
+          
           cb(null, user);
         } else {
           const res = await User.create({
@@ -80,9 +82,11 @@ passport.use(
 );
 
 passport.serializeUser((user: any, done) => {
+  console.log(user);
+  
   done(null, user.sub);
 });
-passport.deserializeUser(async (sub: string, done) => {
+passport.deserializeUser(async (sub: string, done) => {  
   User.findOne({ where: { sub: sub } }).then(async (user) => {
     if (user) {
       done(null, user);
