@@ -1,0 +1,70 @@
+import { Request, Response } from "express";
+import { AuthorizationCode } from "@/models";
+import { UUID } from "@/utils/uuid.util";
+import { errorResponse } from "@/helpers/respose.helper";
+import {
+  ValidationError,
+  UniqueConstraintError,
+  DatabaseError,
+  ConnectionError,
+} from "sequelize";
+import { AxiosError } from "axios";
+export const authorizationCode = (req: Request, res: Response) => {
+  try {
+    const session = req.session as any;
+    const code = AuthorizationCode.create({
+      client_id: req.query.client_id as string,
+      user_id: session.passport.user as string,
+      scope: req.query.scope as string,
+      redirect_uri: req.query.redirect_uri as string,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      code: UUID.v4(),
+    });
+    return res.redirect(
+      `${req.query.redirect_uri}?code=${code}&state=${req.query.state}&scope=${req.query.scope}`
+    );
+  } catch (error: unknown) {
+    if (
+      error instanceof ValidationError ||
+      error instanceof UniqueConstraintError
+    ) {
+      const parsedErrors = error.errors.map((err) => ({
+        field: err.path,
+        message: err.message,
+      }));
+      return errorResponse(res, "Validation gagal", parsedErrors, 422);
+    } else if (
+      error instanceof DatabaseError ||
+      error instanceof ConnectionError
+    ) {
+      const parsedErrors = error.message;
+      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
+    } else if (error instanceof ConnectionError) {
+      const parsedErrors = { message: "Gagal terhubung ke database" };
+      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
+    } else if (error instanceof AxiosError) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "isAxiosError" in error &&
+        (error as AxiosError).isAxiosError
+      ) {
+        const axiosError = error as AxiosError;
+        const statusCode = axiosError.response?.status || 500;
+        const message =
+          (axiosError.response?.data as { message?: string })?.message ||
+          axiosError.message ||
+          "Kesalahan pada permintaan eksternal";
+        const details = axiosError.response?.data || null;
+        return errorResponse(res, message, details, statusCode);
+      }
+      return errorResponse(res, "Terjadi kesalahan", null, 500);
+    } else if (error instanceof Error) {
+      const parsedErrors = { message: error.message };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+    } else {
+      const parsedErrors = { message: "Kesalahan tidak diketahui" };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+    }
+  }
+};
