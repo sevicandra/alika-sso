@@ -39,7 +39,6 @@ export const checkRequest = async (
         },
         {
           association: "Scopes",
-          attributes: ["scope"],
         },
       ],
     });

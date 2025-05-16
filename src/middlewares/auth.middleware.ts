@@ -15,7 +15,7 @@ export const isAuthenticated = (
     return next();
   } else {
     return res.redirect(
-      appConfig.URL + "login?ReturnUrl=" + encodeURIComponent(req.originalUrl)
+      appConfig.URL + "/login?ReturnUrl=" + encodeURIComponent(req.originalUrl)
     );
   }
 };

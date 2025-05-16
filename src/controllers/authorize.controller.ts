@@ -9,10 +9,10 @@ import {
   ConnectionError,
 } from "sequelize";
 import { AxiosError } from "axios";
-export const authorizationCode = (req: Request, res: Response) => {
+export const authorizationCode = async(req: Request, res: Response) => {
   try {
     const session = req.session as any;
-    const code = AuthorizationCode.create({
+    const code = await AuthorizationCode.create({
       client_id: req.query.client_id as string,
       user_id: session.passport.user as string,
       scope: req.query.scope as string,

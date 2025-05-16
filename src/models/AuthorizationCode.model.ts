@@ -56,7 +56,7 @@ AuthorizationCode.init(
       onDelete: "CASCADE",
     },
     scope: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     redirect_uri: {
