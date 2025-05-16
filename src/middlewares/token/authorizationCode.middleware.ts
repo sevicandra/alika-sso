@@ -107,12 +107,12 @@ export const authorizationCodeGrant = async (
       },
       expiresIn: "30m",
     });
-    req.access_token = accessToken;
-    if (req.client.scopes.includes("refresh_token")) {
+    req.access_token = accessToken;    
+    if (req.client.grant_types.includes("refresh_token")) {
       const token = await RefreshToken.create({
         token: UUID.v4(),
-        userId: user.userId,
-        clientId: req.client.client_id,
+        userId: user.id,
+        clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         scope: authorizationCode.scope,
       });

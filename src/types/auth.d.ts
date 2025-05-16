@@ -20,6 +20,7 @@ export interface TokenRequest extends Request {
   refresh_token?: string;
   scope?: string;
   client?: {
+    id: string;
     client_id: string;
     grant_types: string[];
     redirect_uris: string[];

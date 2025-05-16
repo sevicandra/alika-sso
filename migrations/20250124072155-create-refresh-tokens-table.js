@@ -37,7 +37,7 @@ module.exports = {
         allowNull: false,
       },
       scope: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
       },
       createdAt: {

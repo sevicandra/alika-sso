@@ -63,6 +63,7 @@ export const verifyClient = async (
       return errorResponse(res, "Invalid client", null, 401);
     }
     req.client = {
+      id: client.id,
       client_id: client.client_id,
       grant_types: client.GrantTypes.map((gt) => gt.grant),
       scopes: client.Scopes.map(

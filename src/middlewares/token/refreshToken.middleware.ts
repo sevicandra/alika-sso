@@ -26,22 +26,27 @@ export const refreshTokenGrant = async (
       return errorResponse(res, "Invalid grant type", null, 401);
     }
 
+    const token = await JwtUtil.verifyToken(req.body.refresh_token);
+    if (!token) {
+      return errorResponse(res, "Invalid refresh token", null, 401);
+    }    
     const refreshToken = await RefreshToken.findOne({
       where: {
-        token: req.body.refresh_token,
+        token: token.token,
       },
     });
 
     if (!refreshToken) {
       return errorResponse(res, "Invalid refresh token", null, 401);
     }
-
-    if (refreshToken.clientId !== req.client.client_id) {
+    if (refreshToken.clientId !== req.client.id) {
       return errorResponse(res, "Invalid client", null, 401);
     }
-    req.scope = refreshToken.scope;
-    if (refreshToken.userId) {
-      const user = await User.findByPk(refreshToken.userId, {
+    req.scope = req.scope || "";
+    const userId = refreshToken.userId || null;
+    refreshToken.destroy();
+    if (userId) {
+      const user = await User.findByPk(userId, {
         include: [
           {
             association: "Users",
@@ -85,7 +90,7 @@ export const refreshTokenGrant = async (
               nama: r.role,
             };
           }),
-          scope: refreshToken.scope,
+          scope: req.scope || "",
         },
         expiresIn: "30m",
       });
@@ -94,9 +99,9 @@ export const refreshTokenGrant = async (
       const token = await RefreshToken.create({
         token: UUID.v4(),
         userId: refreshToken.userId,
-        clientId: req.client.client_id,
+        clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        scope: refreshToken.scope,
+        scope: req.scope || "",
       });
       const refresh_token = await JwtUtil.generateToken({
         data: {
@@ -112,7 +117,7 @@ export const refreshTokenGrant = async (
         data: {
           userId: null,
           clientId: req.client.client_id,
-          scope: refreshToken.scope,
+          scope: req.scope || "",
         },
         expiresIn: "30m",
       });
@@ -122,9 +127,9 @@ export const refreshTokenGrant = async (
       const token = await RefreshToken.create({
         token: UUID.v4(),
         userId: null,
-        clientId: req.client.client_id,
+        clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        scope: refreshToken.scope,
+        scope: req.scope || "",
       });
       const refresh_token = await JwtUtil.generateToken({
         data: {

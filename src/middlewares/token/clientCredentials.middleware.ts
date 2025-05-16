@@ -47,11 +47,11 @@ export const clientCredentialsGrant = async (
       expiresIn: "30m",
     });
     req.access_token = access_token;
-    if (req.client.scopes.includes("refresh_token")) {
+    if (req.client.grant_types.includes("refresh_token")) {
       const token = await RefreshToken.create({
         token: UUID.v4(),
         userId: null,
-        clientId: req.client.client_id,
+        clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         scope: req.body.scope,
       });

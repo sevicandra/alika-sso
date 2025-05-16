@@ -60,7 +60,7 @@ RefreshToken.init(
       allowNull: false,
     },
     scope: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
   },
