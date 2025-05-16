@@ -6,7 +6,7 @@ import {
   BelongsTo,
   BelongsToMany,
 } from "sequelize";
-import { hashPassword } from "@/utils/hashPassword.util";
+import { hash } from "@/utils/crypt.util";
 import User from "./User.model";
 import Role from "./Role.model";
 import { UUID } from "@/utils/uuid.util";
@@ -107,7 +107,7 @@ UserAssignments.init(
     hooks: {
       afterValidate: async (user: UserAssignments) => {
         if (user.password) {
-          user.password = await hashPassword(user.password);
+          user.password = await hash(user.password);
         }
       },
 

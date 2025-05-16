@@ -9,7 +9,7 @@ import {
 } from "sequelize";
 import Grant from "./GrantType.model";
 import RedirectUri from "./RedirectUri.model";
-import { hashPassword } from "@/utils/hashPassword.util";
+import { hash } from "@/utils/crypt.util";
 import { UUID } from "@/utils/uuid.util";
 import ClientScopes from "./ClientScope.model";
 type ClientAttributes = {
@@ -133,7 +133,7 @@ Client.init(
           client.client_secret &&
           !options.skip?.some((s) => s === "client_secret")
         ) {
-          client.client_secret = await hashPassword(client.client_secret);
+          client.client_secret = await hash(client.client_secret);
         }
       },
 

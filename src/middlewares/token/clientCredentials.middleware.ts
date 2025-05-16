@@ -16,6 +16,7 @@ import { AxiosError } from "axios";
 import { JwtUtil } from "@/utils/jwt.util";
 import { UUID } from "@/utils/uuid.util";
 import { TokenRequest } from "@/types/auth";
+import crypto from "crypto";
 
 export const clientCredentialsGrant = async (
   req: TokenRequest,
@@ -31,33 +32,30 @@ export const clientCredentialsGrant = async (
       return errorResponse(res, "Invalid grant type", null, 401);
     }
     const reqScope = req.body.scope as string;
-    const allScopesValid = reqScope.split(" ").every((s) => req.client?.scopes.includes(s))
-    if (!allScopesValid) {
-      return errorResponse(res, "Invalid scope", null, 403);
-    }
-
-    req.scope = req.body.scope;
-
+    const validScopes = (reqScope.split(" ").filter((s) => req.client?.scopes.includes(s))).join(" ");
+    req.scope = validScopes;
     const access_token = await JwtUtil.generateToken({
       data: {
         userId: null,
         clientId: req.client.client_id,
-        scope: req.body.scope,
+        scope: req.scope,
       },
       expiresIn: "30m",
     });
     req.access_token = access_token;
     if (req.client.grant_types.includes("refresh_token")) {
+      const generatedRefreshToken = crypto.randomBytes(32).toString("hex");
       const token = await RefreshToken.create({
-        token: UUID.v4(),
+        token: generatedRefreshToken,
         userId: null,
         clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        scope: req.body.scope,
+        scope: req.scope,
       });
       const refreshToken = await JwtUtil.generateToken({
         data: {
-          token: token.token,
+          token: generatedRefreshToken,
+          id: token.id,
         },
         expiresIn: "30d",
       });

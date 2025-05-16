@@ -4,7 +4,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('authorization_codes', {
       code: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(64),
         allowNull: false,
         unique: true,
       },

@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
       },
       token: {
-        type: Sequelize.UUID,
+        type: Sequelize.string(64),
         allowNull: false,
         unique: true,
       },

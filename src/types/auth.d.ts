@@ -27,3 +27,8 @@ export interface TokenRequest extends Request {
     scopes: string[];
   };
 }
+
+export interface CodeRequest extends Request {
+  state?: string;
+  scope?: string;
+}

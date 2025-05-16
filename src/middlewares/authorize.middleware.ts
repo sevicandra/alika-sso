@@ -1,6 +1,7 @@
 import { Client } from "@/models";
 import { errorResponse } from "@/helpers/respose.helper";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
+import { CodeRequest } from "@/types/auth";
 import {
   ValidationError,
   UniqueConstraintError,
@@ -9,7 +10,7 @@ import {
 } from "sequelize";
 import { AxiosError } from "axios";
 export const checkRequest = async (
-  req: Request,
+  req: CodeRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -57,10 +58,11 @@ export const checkRequest = async (
     const clientScopes = client.Scopes.map(
       (s) => s.Scope.Service.name + "." + s.Scope.scope + "." + s.Action.name
     );
-    const allScopesValid = scope.split(" ").every((s) => clientScopes.includes(s))
-    if (!allScopesValid) {
-      return errorResponse(res, "Client scope is not valid", null, 403);
-    }
+    const validScopes = scope
+      .split(" ")
+      .filter((s) => clientScopes.includes(s))
+      .join(" ");
+    req.scope = validScopes;
     next();
   } catch (error: unknown) {
     if (

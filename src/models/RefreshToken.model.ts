@@ -1,6 +1,8 @@
 import sequelize from "@/config/db.config";
 import { Model, Optional, DataTypes, Op } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
+import { hash } from "@/utils/crypt.util";
+
 type RefreshTokenAttributes = {
   id?: string;
   token: string;
@@ -27,11 +29,11 @@ class RefreshToken
 RefreshToken.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       primaryKey: true,
     },
     token: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(64),
       allowNull: false,
       unique: true,
     },
@@ -72,7 +74,10 @@ RefreshToken.init(
       beforeCreate: (data) => {
         data.id = UUID.v7();
       },
-    }
+      afterValidate: async (token: RefreshToken) => {
+        token.token = await hash(token.token);
+      },
+    },
   }
 );
 

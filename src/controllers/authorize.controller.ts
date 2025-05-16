@@ -9,19 +9,19 @@ import {
   ConnectionError,
 } from "sequelize";
 import { AxiosError } from "axios";
-export const authorizationCode = async(req: Request, res: Response) => {
+import { CodeRequest } from "@/types/auth";
+export const authorizationCode = async (req: CodeRequest, res: Response) => {
   try {
-    const session = req.session as any;    
+    const session = req.session as any;
     const code = await AuthorizationCode.create({
       client_id: req.query.client_id as string,
       user_id: session.passport.user as string,
-      scope: req.query.scope as string,
+      scope: req.scope || "",
       redirect_uri: req.query.redirect_uri as string,
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-      code: UUID.v4(),
     });
     return res.redirect(
-      `${req.query.redirect_uri}?code=${code.code}&state=${req.query.state}&scope=${req.query.scope}`
+      `${req.query.redirect_uri}?code=${code.code}&state=${req.query.state}`
     );
   } catch (error: unknown) {
     if (

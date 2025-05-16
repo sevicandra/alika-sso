@@ -11,21 +11,22 @@ import { AxiosError } from "axios";
 import { JwtUtil } from "@/utils/jwt.util";
 import { UUID } from "@/utils/uuid.util";
 import { TokenRequest } from "@/types/auth";
+import crypto from "crypto";
 
 export const authorizationCodeGrant = async (
   req: TokenRequest,
   res: Response,
   next: NextFunction
 ) => {
+  if (
+    !req.body.grant_type ||
+    !req.body.code ||
+    !req.body.redirect_uri ||
+    !req.client
+  ) {
+    return errorResponse(res, "Missing required parameters", null, 400);
+  }
   try {
-    if (
-      !req.body.grant_type ||
-      !req.body.code ||
-      !req.body.redirect_uri ||
-      !req.client
-    ) {
-      return errorResponse(res, "Missing required parameters", null, 400);
-    }
 
     if (!req.client.grant_types.includes("authorization_code")) {
       return errorResponse(res, "Invalid grant type", null, 401);
@@ -107,10 +108,12 @@ export const authorizationCodeGrant = async (
       },
       expiresIn: "30m",
     });
-    req.access_token = accessToken;    
+    req.access_token = accessToken;
     if (req.client.grant_types.includes("refresh_token")) {
+      const generatedRefreshToken = crypto.randomBytes(32).toString("hex");
+
       const token = await RefreshToken.create({
-        token: UUID.v4(),
+        token: generatedRefreshToken,
         userId: user.id,
         clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -118,13 +121,13 @@ export const authorizationCodeGrant = async (
       });
       const refreshToken = await JwtUtil.generateToken({
         data: {
-          token: token.token,
+          token: generatedRefreshToken,
+          id: token.id,
         },
         expiresIn: "30d",
       });
       req.refresh_token = refreshToken;
     }
-
     return next();
   } catch (error: unknown) {
     if (
@@ -169,5 +172,11 @@ export const authorizationCodeGrant = async (
       const parsedErrors = { message: "Kesalahan tidak diketahui" };
       return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
     }
+  }finally{
+    await AuthorizationCode.destroy({
+      where: {
+        code: req.body.code,
+      },
+    });
   }
 };

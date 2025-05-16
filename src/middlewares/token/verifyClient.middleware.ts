@@ -2,7 +2,7 @@ import { TokenRequest } from "@/types/auth";
 import { errorResponse } from "@/helpers/respose.helper";
 import { NextFunction, Response } from "express";
 import { Client, ClientScope } from "@/models";
-import { verifyPassword } from "@/utils/hashPassword.util";
+import { verify } from "@/utils/crypt.util";
 import { AxiosError } from "axios";
 import { clientCredentialsGrant } from "./clientCredentials.middleware";
 import { authorizationCodeGrant } from "./authorizationCode.middleware";
@@ -59,7 +59,7 @@ export const verifyClient = async (
     if (!client) {
       return errorResponse(res, "Client not found", null, 401);
     }
-    if (!(await verifyPassword(client_secret, client.client_secret))) {
+    if (!(await verify(client_secret, client.client_secret))) {
       return errorResponse(res, "Invalid client", null, 401);
     }
     req.client = {

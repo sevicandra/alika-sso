@@ -7,7 +7,7 @@ import * as jose from "node-jose";
 
 export class JwtUtil {
   private static publicKey = fs.readFileSync(
-    (process.env.PRIVATE_KEY_FILE as string) ||
+    (process.env.PUBLIC_KEY_FILE as string) ||
       path.join(__dirname, "../../public.pem"),
     "utf8"
   );

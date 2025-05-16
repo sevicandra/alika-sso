@@ -1,5 +1,6 @@
 import sequelize from "@/config/db.config";
 import { Model, Optional, DataTypes, Op } from "sequelize";
+import crypto from "crypto";
 
 type AuthorizationCodeAttributes = {
   code: string;
@@ -30,8 +31,7 @@ class AuthorizationCode extends Model<
 AuthorizationCode.init(
   {
     code: {
-      type: DataTypes.UUID,
-      allowNull: false,
+      type: DataTypes.STRING(64),
       unique: true,
       primaryKey: true,
     },
@@ -73,6 +73,11 @@ AuthorizationCode.init(
     tableName: "authorization_codes",
     timestamps: false,
     modelName: "AuthorizationCode",
+    hooks: {
+      beforeCreate: (authorizationCode) => {
+        authorizationCode.code = crypto.randomBytes(32).toString("hex");
+      },
+    },
   }
 );
 

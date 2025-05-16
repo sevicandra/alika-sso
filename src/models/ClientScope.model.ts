@@ -5,7 +5,7 @@ import RedirectUri from "./RedirectUri.model";
 import Scope from "./Scope.model";
 import Client from "./Client.model";
 import ScopeAction from "./ScopeAction.model";
-import { hashPassword } from "@/utils/hashPassword.util";
+import { hash } from "@/utils/crypt.util";
 import { UUID } from "@/utils/uuid.util";
 
 type ClientScopesAttributes = {

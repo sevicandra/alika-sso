@@ -11,6 +11,8 @@ import { AxiosError } from "axios";
 import { JwtUtil } from "@/utils/jwt.util";
 import { UUID } from "@/utils/uuid.util";
 import { TokenRequest } from "@/types/auth";
+import { verify } from "@/utils/crypt.util";
+import crypto from "crypto";
 
 export const refreshTokenGrant = async (
   req: TokenRequest,
@@ -25,16 +27,11 @@ export const refreshTokenGrant = async (
     if (!req.client.grant_types.includes("refresh_token")) {
       return errorResponse(res, "Invalid grant type", null, 401);
     }
-
     const token = await JwtUtil.verifyToken(req.body.refresh_token);
     if (!token) {
       return errorResponse(res, "Invalid refresh token", null, 401);
-    }    
-    const refreshToken = await RefreshToken.findOne({
-      where: {
-        token: token.token,
-      },
-    });
+    }
+    const refreshToken = await RefreshToken.findByPk(token.id);
 
     if (!refreshToken) {
       return errorResponse(res, "Invalid refresh token", null, 401);
@@ -42,7 +39,19 @@ export const refreshTokenGrant = async (
     if (refreshToken.clientId !== req.client.id) {
       return errorResponse(res, "Invalid client", null, 401);
     }
-    req.scope = req.scope || "";
+    if (!(await verify(token.token, refreshToken.token))) {
+      return errorResponse(res, "Invalid token", null, 401);
+    }
+
+    if (req.body.scope) {
+      const validScopes = req.body.scope
+        .split(" ")
+        .filter((s: string) => req.client?.scopes.includes(s))
+        .join(" ");
+      req.scope = validScopes;
+    } else {
+      req.scope = refreshToken.scope;
+    }
     const userId = refreshToken.userId || null;
     refreshToken.destroy();
     if (userId) {
@@ -67,6 +76,7 @@ export const refreshTokenGrant = async (
           nip: user.nip,
           kode_satker: user.kode_satker,
           satker: user.satker,
+          gravatar: user.gravatar,
           account: user.UserAssignments?.map((u) => {
             return {
               kode_satker: u.kd_satker,
@@ -96,8 +106,9 @@ export const refreshTokenGrant = async (
       });
 
       req.access_token = access_token;
+      const generatedRefreshToken = crypto.randomBytes(32).toString("hex");
       const token = await RefreshToken.create({
-        token: UUID.v4(),
+        token: generatedRefreshToken,
         userId: refreshToken.userId,
         clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -105,7 +116,8 @@ export const refreshTokenGrant = async (
       });
       const refresh_token = await JwtUtil.generateToken({
         data: {
-          token: token.token,
+          token: generatedRefreshToken,
+          id: token.id,
         },
         expiresIn: "30d",
       });
@@ -123,9 +135,9 @@ export const refreshTokenGrant = async (
       });
 
       req.access_token = access_token;
-
+      const generatedRefreshToken = crypto.randomBytes(32).toString("hex");
       const token = await RefreshToken.create({
-        token: UUID.v4(),
+        token: generatedRefreshToken,
         userId: null,
         clientId: req.client.id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -133,7 +145,8 @@ export const refreshTokenGrant = async (
       });
       const refresh_token = await JwtUtil.generateToken({
         data: {
-          token: token.token,
+          token: generatedRefreshToken,
+          id: token.id,
         },
         expiresIn: "30d",
       });
