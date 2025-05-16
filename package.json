@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit",
     "dev": "ts-node-dev --respawn --transpile-only -r ./src/register-alias.ts src/app.ts && npx postcss ./src/global.css -o ./public/styles/main.css --watch",
     "start": "node -r ./dist/register-alias.js dist/app.js",
-    "build": "npx postcss ./src/global.css -o ./public/styles/main.css && tsc"
+    "build": "npx postcss ./src/global.css -o ./public/styles/main.css && tsc && npm run copy-views",
+    "copy-views": "mkdir -p dist/views && cp -r src/views/* dist/views/"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.6",
