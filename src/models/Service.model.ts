@@ -62,13 +62,10 @@ class Service
     name: string;
     action: string;
   }) {
-
-    
     await Scope.create({
       service_kode: this.kode,
       kode,
       scope: name,
-      action_kode: action,
     });
     return this.Scopes;
   }
@@ -127,6 +124,5 @@ Service.hasMany(Role, {
   sourceKey: "kode",
   as: "Roles",
 });
-
 
 export default Service;
