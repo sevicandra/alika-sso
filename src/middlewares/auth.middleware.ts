@@ -43,20 +43,6 @@ export function verifyToken(requiredScopes?: string[]) {
         "exp",
         "iat",
         "jti",
-        "sub",
-        "iss",
-        "aud",
-      ]);
-      req.roles = decoded.account || [];
-      req.globalRoles = decoded.globalRoles || [];
-      req.user = omit(decoded, [
-        "scope",
-        "account",
-        "globalRoles",
-        "exp",
-        "iat",
-        "jti",
-        "sub",
         "iss",
         "aud",
       ]);
@@ -67,7 +53,7 @@ export function verifyToken(requiredScopes?: string[]) {
         const hasRequiredScopes = requiredScopes.every((scope) => {
           const [service, resource, action] = scope.split(".");
           return (
-            tokenScopes.includes(scope) ||
+            tokenScopes.includes(`${service}.${resource}.${action}`) ||
             tokenScopes.includes(`${service}.${resource}.manage`) ||
             tokenScopes.includes(`${service}.${resource}.*`)
           );

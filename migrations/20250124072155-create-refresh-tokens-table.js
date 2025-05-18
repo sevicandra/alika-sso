@@ -1,5 +1,7 @@
 'use strict';
 
+const { session } = require("passport");
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('refresh_tokens', {
@@ -8,7 +10,7 @@ module.exports = {
         primaryKey: true,
       },
       token: {
-        type: Sequelize.string(64),
+        type: Sequelize.STRING(64),
         allowNull: false,
         unique: true,
       },
@@ -17,17 +19,17 @@ module.exports = {
         allowNull: true,
         references: {
           model: 'users',
-          key: 'id',
+          key: 'sub',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
       clientId: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING,
         allowNull: false,
         references: {
           model: 'clients',
-          key: 'id',
+          key: 'client_id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
@@ -39,6 +41,10 @@ module.exports = {
       scope: {
         type: Sequelize.TEXT,
         allowNull: false,
+      },
+      sessionId:{
+        type: Sequelize.UUID,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,

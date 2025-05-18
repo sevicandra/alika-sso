@@ -3,7 +3,6 @@ import {
   Model,
   Optional,
   DataTypes,
-  Op,
   HasMany,
   BelongsToMany,
 } from "sequelize";
@@ -185,22 +184,6 @@ Client.belongsToMany(Grant, {
   sourceKey: "id",
   targetKey: "kode",
   as: "GrantTypes",
-});
-Client.hasMany(RedirectUri, {
-  foreignKey: "clientId",
-  as: "RedirectUris",
-});
-RedirectUri.belongsTo(Client, {
-  foreignKey: "clientId",
-  as: "Client",
-});
-Client.hasMany(ClientScopes, {
-  foreignKey: "clientId",
-  as: "Scopes",
-});
-ClientScopes.belongsTo(Client, {
-  foreignKey: "clientId",
-  as: "Client",
 });
 
 export default Client;

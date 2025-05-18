@@ -1,5 +1,5 @@
 import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, Op, literal, HasMany } from "sequelize";
+import { Model, Optional, DataTypes, HasMany } from "sequelize";
 import Role from "./Role.model";
 import Scope from "./Scope.model";
 import { UUID } from "@/utils/uuid.util";
@@ -53,15 +53,7 @@ class Service
     return this.Roles;
   }
 
-  async addScope({
-    kode,
-    name,
-    action,
-  }: {
-    kode: string;
-    name: string;
-    action: string;
-  }) {
+  async addScope({ kode, name }: { kode: string; name: string }) {
     await Scope.create({
       service_kode: this.kode,
       kode,
@@ -112,17 +104,5 @@ Service.init(
     },
   }
 );
-
-Role.belongsTo(Service, {
-  foreignKey: "service_kode",
-  targetKey: "kode",
-  as: "Service",
-});
-
-Service.hasMany(Role, {
-  foreignKey: "service_kode",
-  sourceKey: "kode",
-  as: "Roles",
-});
 
 export default Service;

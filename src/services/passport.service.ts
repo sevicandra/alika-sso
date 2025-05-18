@@ -1,8 +1,9 @@
 import { passportConfig } from "@/config/passport.config";
 import passport from "passport";
 import { Strategy as OAuth2Strategy, VerifyCallback } from "passport-oauth2";
-import { User } from "@/models";
+import User from "../models/User.model";
 import axios from "axios";
+
 passport.use(
   new OAuth2Strategy(
     {
@@ -16,7 +17,7 @@ passport.use(
     async function (
       accessToken: string,
       refreshToken: string,
-      profile: any,
+      profile: User,
       cb: VerifyCallback
     ) {
       try {
@@ -51,8 +52,6 @@ passport.use(
             nik: userInfo.data.g2c_Nik,
             npwp: userInfo.data.g2c_Npwp,
           });
-          console.log(user);
-          
           cb(null, user);
         } else {
           const res = await User.create({
@@ -80,13 +79,10 @@ passport.use(
     }
   )
 );
-
-passport.serializeUser((user: any, done) => {
-  console.log(user);
-  
+passport.serializeUser((user: Express.User, done) => {
   done(null, user.sub);
 });
-passport.deserializeUser(async (sub: string, done) => {  
+passport.deserializeUser(async (sub: string, done) => {
   User.findOne({ where: { sub: sub } }).then(async (user) => {
     if (user) {
       done(null, user);

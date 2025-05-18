@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "@/types/auth";
 import { ClientScope } from "@/models";
-import { Op } from "sequelize";
 import { successResponse, errorResponse } from "@/helpers/respose.helper";
 import {
   ValidationError,

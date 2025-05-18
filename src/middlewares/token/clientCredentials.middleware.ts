@@ -1,10 +1,5 @@
 import { NextFunction, Response } from "express";
-import {
-  Client,
-  AuthorizationCode,
-  User,
-  RefreshToken,
-} from "@/models";
+import { RefreshToken } from "@/models";
 import { errorResponse } from "@/helpers/respose.helper";
 import {
   ValidationError,
@@ -14,7 +9,6 @@ import {
 } from "sequelize";
 import { AxiosError } from "axios";
 import { JwtUtil } from "@/utils/jwt.util";
-import { UUID } from "@/utils/uuid.util";
 import { TokenRequest } from "@/types/auth";
 import crypto from "crypto";
 
@@ -32,15 +26,17 @@ export const clientCredentialsGrant = async (
       return errorResponse(res, "Invalid grant type", null, 401);
     }
     const reqScope = req.body.scope as string;
-    const validScopes = (reqScope.split(" ").filter((s) => req.client?.scopes.includes(s))).join(" ");
+    const validScopes = reqScope
+      .split(" ")
+      .filter((s) => req.client?.scopes.includes(s))
+      .join(" ");
     req.scope = validScopes;
     const access_token = await JwtUtil.generateToken({
       data: {
-        userId: null,
         clientId: req.client.client_id,
         scope: req.scope,
       },
-      expiresIn: "30m",
+      expiresIn: "5m",
     });
     req.access_token = access_token;
     if (req.client.grant_types.includes("refresh_token")) {
@@ -48,7 +44,7 @@ export const clientCredentialsGrant = async (
       const token = await RefreshToken.create({
         token: generatedRefreshToken,
         userId: null,
-        clientId: req.client.id,
+        clientId: req.client.client_id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         scope: req.scope,
       });

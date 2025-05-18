@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { Client, AuthorizationCode, User, RefreshToken } from "@/models";
+import { AuthorizationCode, User, RefreshToken } from "@/models";
 import { errorResponse } from "@/helpers/respose.helper";
 import {
   ValidationError,
@@ -9,7 +9,6 @@ import {
 } from "sequelize";
 import { AxiosError } from "axios";
 import { JwtUtil } from "@/utils/jwt.util";
-import { UUID } from "@/utils/uuid.util";
 import { TokenRequest } from "@/types/auth";
 import crypto from "crypto";
 
@@ -26,8 +25,7 @@ export const authorizationCodeGrant = async (
   ) {
     return errorResponse(res, "Missing required parameters", null, 400);
   }
-  try {
-
+  try {    
     if (!req.client.grant_types.includes("authorization_code")) {
       return errorResponse(res, "Invalid grant type", null, 401);
     }
@@ -106,7 +104,7 @@ export const authorizationCodeGrant = async (
         }),
         scope: authorizationCode.scope,
       },
-      expiresIn: "30m",
+      expiresIn: "5m",
     });
     req.access_token = accessToken;
     if (req.client.grant_types.includes("refresh_token")) {
@@ -114,8 +112,8 @@ export const authorizationCodeGrant = async (
 
       const token = await RefreshToken.create({
         token: generatedRefreshToken,
-        userId: user.id,
-        clientId: req.client.id,
+        userId: user.sub,
+        clientId: req.client.client_id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         scope: authorizationCode.scope,
       });
@@ -123,6 +121,7 @@ export const authorizationCodeGrant = async (
         data: {
           token: generatedRefreshToken,
           id: token.id,
+          sessionId: authorizationCode.sessionId,
         },
         expiresIn: "30d",
       });
@@ -172,7 +171,7 @@ export const authorizationCodeGrant = async (
       const parsedErrors = { message: "Kesalahan tidak diketahui" };
       return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
     }
-  }finally{
+  } finally {
     await AuthorizationCode.destroy({
       where: {
         code: req.body.code,

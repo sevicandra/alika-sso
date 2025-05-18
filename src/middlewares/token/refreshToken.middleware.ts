@@ -9,7 +9,6 @@ import {
 } from "sequelize";
 import { AxiosError } from "axios";
 import { JwtUtil } from "@/utils/jwt.util";
-import { UUID } from "@/utils/uuid.util";
 import { TokenRequest } from "@/types/auth";
 import { verify } from "@/utils/crypt.util";
 import crypto from "crypto";
@@ -36,7 +35,7 @@ export const refreshTokenGrant = async (
     if (!refreshToken) {
       return errorResponse(res, "Invalid refresh token", null, 401);
     }
-    if (refreshToken.clientId !== req.client.id) {
+    if (refreshToken.clientId !== req.client.client_id) {
       return errorResponse(res, "Invalid client", null, 401);
     }
     if (!(await verify(token.token, refreshToken.token))) {
@@ -53,9 +52,11 @@ export const refreshTokenGrant = async (
       req.scope = refreshToken.scope;
     }
     const userId = refreshToken.userId || null;
+    const sessionId = refreshToken.sessionId;
     refreshToken.destroy();
     if (userId) {
-      const user = await User.findByPk(userId, {
+      const user = await User.findOne({
+        where: { sub: userId },
         include: [
           {
             association: "Users",
@@ -102,15 +103,15 @@ export const refreshTokenGrant = async (
           }),
           scope: req.scope || "",
         },
-        expiresIn: "30m",
+        expiresIn: "5m",
       });
 
       req.access_token = access_token;
       const generatedRefreshToken = crypto.randomBytes(32).toString("hex");
       const token = await RefreshToken.create({
         token: generatedRefreshToken,
-        userId: refreshToken.userId,
-        clientId: req.client.id,
+        userId: userId,
+        clientId: req.client.client_id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         scope: req.scope || "",
       });
@@ -118,6 +119,7 @@ export const refreshTokenGrant = async (
         data: {
           token: generatedRefreshToken,
           id: token.id,
+          sessionId: sessionId,
         },
         expiresIn: "30d",
       });
@@ -127,11 +129,10 @@ export const refreshTokenGrant = async (
     } else {
       const access_token = await JwtUtil.generateToken({
         data: {
-          userId: null,
           clientId: req.client.client_id,
           scope: req.scope || "",
         },
-        expiresIn: "30m",
+        expiresIn: "5m",
       });
 
       req.access_token = access_token;
@@ -139,7 +140,7 @@ export const refreshTokenGrant = async (
       const token = await RefreshToken.create({
         token: generatedRefreshToken,
         userId: null,
-        clientId: req.client.id,
+        clientId: req.client.client_id,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         scope: req.scope || "",
       });

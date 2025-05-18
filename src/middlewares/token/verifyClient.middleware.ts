@@ -1,13 +1,13 @@
 import { TokenRequest } from "@/types/auth";
 import { errorResponse } from "@/helpers/respose.helper";
 import { NextFunction, Response } from "express";
-import { Client, ClientScope } from "@/models";
+import { Client } from "@/models";
 import { verify } from "@/utils/crypt.util";
 import { AxiosError } from "axios";
 import { clientCredentialsGrant } from "./clientCredentials.middleware";
 import { authorizationCodeGrant } from "./authorizationCode.middleware";
 import { refreshTokenGrant } from "./refreshToken.middleware";
-import sequelize from "@/config/db.config";
+
 import {
   ValidationError,
   UniqueConstraintError,

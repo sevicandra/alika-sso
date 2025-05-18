@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import path from "path";
@@ -18,7 +18,7 @@ const publicPath = path.join(__dirname, "../public");
 const app = express();
 
 app.use(express.json());
-// app.use(logger("dev"));
+app.use(logger("dev"));
 app.set("trust proxy", 1);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

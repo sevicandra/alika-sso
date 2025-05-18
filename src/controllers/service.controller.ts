@@ -558,7 +558,7 @@ export const getServiceScope = async (
     if (!service) {
       return errorResponse(res, "Service not found", null, 404);
     }
-    
+
     return successResponse(res, "Success get service scope", service.Scopes);
   } catch (error: unknown) {
     if (
@@ -612,7 +612,7 @@ export const createServiceScope = async (
 ) => {
   try {
     const { id } = req.params;
-    const { name, action, kode } = req.body;
+    const { name, kode } = req.body;
     if (!id) {
       return errorResponse(res, "Missing required parameters", null, 400);
     }
@@ -620,7 +620,7 @@ export const createServiceScope = async (
     if (!service) {
       return errorResponse(res, "Service not found", null, 404);
     }
-    const data = await service.addScope({ name, action, kode });
+    const data = await service.addScope({ name, kode });
     return successResponse(res, "Success create service scope", data);
   } catch (error: unknown) {
     if (

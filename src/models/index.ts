@@ -13,6 +13,58 @@ import Service from "./Service.model";
 import ScopeAction from "./ScopeAction.model";
 import ClientScope from "./ClientScope.model";
 
+Role.belongsTo(Service, {
+  foreignKey: "service_kode",
+  targetKey: "kode",
+  as: "Service",
+});
+
+Client.hasMany(RedirectUri, {
+  foreignKey: "clientId",
+  as: "RedirectUris",
+});
+Client.hasMany(ClientScope, {
+  foreignKey: "clientId",
+  as: "Scopes",
+});
+
+Service.hasMany(Role, {
+  foreignKey: "service_kode",
+  sourceKey: "kode",
+  as: "Roles",
+});
+Service.hasMany(Scope, {
+  foreignKey: "service_kode",
+  sourceKey: "kode",
+  as: "Scopes",
+});
+
+RedirectUri.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "Client",
+});
+
+ClientScope.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "Client",
+});
+ClientScope.belongsTo(Scope, {
+  foreignKey: "scopeId",
+  targetKey: "id",
+  as: "Scope",
+});
+ClientScope.belongsTo(ScopeAction, {
+  foreignKey: "action_kode",
+  targetKey: "kode",
+  as: "Action",
+});
+
+Scope.belongsTo(Service, {
+  foreignKey: "service_kode",
+  targetKey: "kode",
+  as: "Service",
+});
+
 export {
   AuthorizationCode,
   Client,

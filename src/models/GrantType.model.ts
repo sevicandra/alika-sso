@@ -1,5 +1,5 @@
 import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, Op } from "sequelize";
+import { Model, Optional, DataTypes } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
 
 type GrantTypeAttributes = {

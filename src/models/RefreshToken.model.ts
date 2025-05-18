@@ -1,5 +1,5 @@
 import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, Op } from "sequelize";
+import { Model, Optional, DataTypes } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
 import { hash } from "@/utils/crypt.util";
 
@@ -10,6 +10,7 @@ type RefreshTokenAttributes = {
   clientId: string;
   expiresAt: Date;
   scope: string;
+  sessionId?: string;
 };
 
 type RefreshTokenCreationAttributes = Optional<RefreshTokenAttributes, "id">;
@@ -24,6 +25,7 @@ class RefreshToken
   declare clientId: string;
   declare expiresAt: Date;
   declare scope: string;
+  declare sessionId?: string;
 }
 
 RefreshToken.init(
@@ -42,7 +44,7 @@ RefreshToken.init(
       allowNull: true,
       references: {
         model: "Users",
-        key: "id",
+        key: "sub",
       },
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
@@ -52,7 +54,7 @@ RefreshToken.init(
       allowNull: false,
       references: {
         model: "Clients",
-        key: "id",
+        key: "client_id",
       },
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
@@ -60,6 +62,10 @@ RefreshToken.init(
     expiresAt: {
       type: DataTypes.DATE,
       allowNull: false,
+    },
+    sessionId: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     scope: {
       type: DataTypes.TEXT,

@@ -215,7 +215,7 @@ export const updateScope = async (req: AuthenticatedRequest, res: Response) => {
     if (!id) {
       return errorResponse(res, "Missing required parameters", null, 400);
     }
-    const { kode, scope, service_kode, action_kode } = req.body;
+    const { kode, scope, service_kode } = req.body;
     const data = await Scope.findByPk(id);
     if (!data) {
       return errorResponse(res, "Scope not found", null, 404);

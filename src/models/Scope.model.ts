@@ -2,7 +2,7 @@ import sequelize from "@/config/db.config";
 import { Model, Optional, DataTypes, BelongsTo } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
 import Service from "./Service.model";
-import ScopeAction from "./ScopeAction.model";
+
 type ScopeAttributes = {
   id: string;
   kode: string;
@@ -76,18 +76,6 @@ Scope.init(
     ],
   }
 );
-
-Scope.belongsTo(Service, {
-  foreignKey: "service_kode",
-  targetKey: "kode",
-  as: "Service",
-});
-
-Service.hasMany(Scope, {
-  foreignKey: "service_kode",
-  sourceKey: "kode",
-  as: "Scopes",
-});
 
 
 export default Scope;

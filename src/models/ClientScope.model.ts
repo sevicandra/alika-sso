@@ -1,12 +1,8 @@
 import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, Op, HasMany, BelongsTo } from "sequelize";
-import Grant from "./GrantType.model";
-import RedirectUri from "./RedirectUri.model";
+import { Model, DataTypes, BelongsTo } from "sequelize";
 import Scope from "./Scope.model";
 import Client from "./Client.model";
 import ScopeAction from "./ScopeAction.model";
-import { hash } from "@/utils/crypt.util";
-import { UUID } from "@/utils/uuid.util";
 
 type ClientScopesAttributes = {
   clientId: string;
@@ -62,17 +58,5 @@ ClientScope.init(
     },
   }
 );
-
-
-ClientScope.belongsTo(Scope, {
-  foreignKey: "scopeId",
-  targetKey: "id",
-  as: "Scope",
-});
-ClientScope.belongsTo(ScopeAction, {
-  foreignKey: "action_kode",
-  targetKey: "kode",
-  as: "Action",
-});
 
 export default ClientScope;

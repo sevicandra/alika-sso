@@ -1,6 +1,9 @@
+import { AuthenticatedRequest } from "@/types/auth";
 import { Response } from "express";
-import { AuthorizationCode } from "@/models";
-import { errorResponse } from "@/helpers/respose.helper";
+import { JwtUtil } from "@/utils/jwt.util";
+import { verify } from "@/utils/crypt.util";
+import { RefreshToken } from "@/models";
+import { errorResponse, successResponse } from "@/helpers/respose.helper";
 import {
   ValidationError,
   UniqueConstraintError,
@@ -8,24 +11,45 @@ import {
   ConnectionError,
 } from "sequelize";
 import { AxiosError } from "axios";
-import { CodeRequest } from "@/types/auth";
+import { Session } from "@/models";
 
-export const authorizationCode = async (req: CodeRequest, res: Response) => {
+export const logout = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const session = req.session as any;
-    console.log("session", req.sessionID);
-    
-    const code = await AuthorizationCode.create({
-      client_id: req.query.client_id as string,
-      user_id: session.passport.user as string,
-      scope: req.scope || "",
-      redirect_uri: req.query.redirect_uri as string,
-      sessionId: req.sessionID,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+    const refresh_token = req.body.refresh_token;
+    const decoded: any = await JwtUtil.verifyToken(refresh_token);
+    const token = decoded.token;
+    const sessionId = decoded.sessionId;
+    const { sub } = req.user;
+    if (!token) {
+      return errorResponse(res, "Invalid refresh token", null, 403);
+    }
+
+    const refreshToken = await RefreshToken.findByPk(decoded.id);
+
+    if (!refreshToken) {
+      return errorResponse(res, "Invalid refresh token", null, 403);
+    }
+    console.log("refreshToken", refreshToken);
+    console.log("sub", sub);
+
+    if (refreshToken.userId !== sub) {
+      return errorResponse(res, "Invalid client", null, 403);
+    }
+    console.log(token);
+    console.log("refreshToken", refreshToken);
+    console.log(await verify(token, refreshToken.token));
+
+    if (!(await verify(token, refreshToken.token))) {
+      return errorResponse(res, "Invalid refresh token", null, 403);
+    }
+    await refreshToken.destroy();
+    await Session.findByPk(sessionId).then((session) => {
+      if (session) {
+        session.destroy();
+      }
     });
-    return res.redirect(
-      `${req.query.redirect_uri}?code=${code.code}${req.query.state ? `&state=${req.query.state}` : ""}`
-    );
+    res.clearCookie(`${process.env.APP_NAME || "SSO"}.session`);
+    return successResponse(res, "Logout berhasil", null, 200);
   } catch (error: unknown) {
     if (
       error instanceof ValidationError ||

@@ -1,5 +1,4 @@
-import client from "@/config/redis.config"; // Mengimpor client yang sudah terkoneksi
-
+import client from "@/config/redis.config";
 export class RedisService {
   // Menyimpan data di Redis
   async setCache(key: string, value: string, ttl: number): Promise<void> {

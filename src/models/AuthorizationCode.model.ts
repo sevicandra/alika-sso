@@ -1,5 +1,5 @@
 import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, Op } from "sequelize";
+import { Model, Optional, DataTypes } from "sequelize";
 import crypto from "crypto";
 
 type AuthorizationCodeAttributes = {
@@ -9,6 +9,7 @@ type AuthorizationCodeAttributes = {
   scope: string;
   redirect_uri: string;
   expiresAt: Date;
+  sessionId?: string;
 };
 
 type AuthorizationCodeCreationAttributes = Optional<
@@ -25,6 +26,7 @@ class AuthorizationCode extends Model<
   declare user_id: string;
   declare scope: string;
   declare redirect_uri: string;
+  declare sessionId?: string;
   declare expiresAt: Date;
 }
 
@@ -62,6 +64,10 @@ AuthorizationCode.init(
     redirect_uri: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    sessionId: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     expiresAt: {
       type: DataTypes.DATE,

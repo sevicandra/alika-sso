@@ -17,8 +17,12 @@ module.exports = {
         allowNull: true,
       },
       scope: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
+      },
+      sessionId: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       redirect_uri: {
         type: Sequelize.STRING,
