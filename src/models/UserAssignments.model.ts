@@ -6,61 +6,69 @@ import {
   BelongsTo,
   BelongsToMany,
 } from "sequelize";
-import { hash } from "@/utils/crypt.util";
 import User from "./User.model";
 import Role from "./Role.model";
-import { UUID } from "@/utils/uuid.util";
+import Service from "./Service.model";
+import UserRole from "./UserRole.model";
 
 type UserAssignmentsAttributes = {
   id: string;
-  password: string;
   nip: string;
-  kd_satker: string;
   nama: string;
+  kd_satker: string | null;
+  service_kode: string;
 };
-type UserAssignmentsRoleAttributes = {
-  userId: string;
-  role: string;
-};
-type UserAssignmentsCreationAttributes = Optional<UserAssignmentsAttributes, "id" | "password">;
+
+type UserAssignmentsCreationAttributes = Optional<
+  UserAssignmentsAttributes,
+  "id"
+>;
 export class UserAssignments
   extends Model<UserAssignmentsAttributes, UserAssignmentsCreationAttributes>
   implements UserAssignmentsAttributes
 {
   public id!: string;
-  public password!: string;
   public nip!: string;
-  public kd_satker!: string;
+  public kd_satker!: string | null;
   public nama!: string;
+  public service_kode!: string;
 
   public Roles!: Role[] | [];
   public UserInfo!: User | null;
+  public Service!: Service;
+
+  async addRole(role: string) {
+    await UserRole.create({ userId: this.id, role_kode: role });
+  }
+
+  async removeRole(role: string) {
+    await UserRole.destroy({ where: { userId: this.id, role_kode: role } });
+  }
 
   public static associations: {
     User: BelongsTo<UserAssignments, User>;
     Roles: BelongsToMany<UserAssignments, Role>;
+    Service: BelongsTo<UserAssignments, Service>;
   };
-  
-  async addRole(role: string) {
-    await UserRole.create({ userId: this.id, role });
-  }
-
-  async removeRole(role: string) {
-    await UserRole.destroy({ where: { userId: this.id, role } });
-  }
 }
 UserAssignments.init(
   {
     id: {
-      type: DataTypes.STRING(18),
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     nip: {
       type: DataTypes.STRING(18),
       allowNull: false,
       validate: {
-        isNumeric: true,
-        len: [18, 18],
+        is: {
+          args: "^(19[6-9]\\d|20\\d{2})(0[1-9]|1[0-2])(0[1-9]|[1-2]\\d|3[0-1])(19[8-9]\\d|20\\d{2})(0[1-9]|1[0-2])([1-2])(\\d{3})$",
+          msg: "mohon masukkan nip yang valid",
+        },
+        notNull: {
+          msg: "NIP harus diisi",
+        },
       },
     },
     nama: {
@@ -69,34 +77,28 @@ UserAssignments.init(
     },
     kd_satker: {
       type: DataTypes.STRING(6),
-      allowNull: false,
-      validate: {
-        isNumeric: true,
-        len: [6, 6],
-      }
-    },
-    password: {
-      type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        minLength(value: string) {
-          if (value && value.length < 6) {
-            throw new Error("Password must be at least 6 characters");
-          }
-        },
-        strongPassword(value: string) {
-          if (
-            value &&
-            !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/.test(
-              value
-            )
-          ) {
-            throw new Error(
-              "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-            );
-          }
+        is: {
+          msg: "Mohon masukkan kode satker yang valid",
+          args: "^(d{6})$",
         },
       },
+    },
+    service_kode: {
+      type: DataTypes.STRING(3),
+      allowNull: false,
+      references: {
+        model: "Services",
+        key: "kode",
+      },
+      validate: {
+        notNull: {
+          msg: "Service harus diisi",
+        },
+      },
+      onUpdate: "CASCADE",
+      onDelete: "RESTRICT",
     },
   },
   {
@@ -104,60 +106,28 @@ UserAssignments.init(
     tableName: "user_assignments",
     modelName: "UserAssignments",
     timestamps: false,
-    hooks: {
-      afterValidate: async (user: UserAssignments) => {
-        if (user.password) {
-          user.password = await hash(user.password);
-        }
-      },
-
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
-      },
-    },
     indexes: [
       {
         unique: true,
-        fields: ["nip", "kode_satker"],
+        fields: ["nip", "kode_satker", "service_kode"],
       },
     ],
-    defaultScope: {
-      attributes: { exclude: ["password"] },
-    },
   }
 );
 
-class UserRole extends Model<UserAssignmentsRoleAttributes> {
-  public userId!: string;
-  public kode!: string;
-}
-
-UserRole.init(
-  {
-    userId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: true,
-    },
-    role: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: true,
-    },
-  },
-  {
-    sequelize,
-    tableName: "user_roles",
-    modelName: "UserRole",
-    timestamps: false,
-  }
-);
 UserAssignments.belongsToMany(Role, {
   through: UserRole,
   foreignKey: "userId",
-  otherKey: "role",
+  otherKey: "role_kode",
   sourceKey: "id",
   targetKey: "kode",
   as: "Roles",
 });
+
+UserAssignments.belongsTo(Service, {
+  foreignKey: "service_kode",
+  targetKey: "kode",
+  as: "Service",
+});
+
 export default UserAssignments;

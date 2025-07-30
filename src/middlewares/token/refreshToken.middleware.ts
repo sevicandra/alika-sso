@@ -59,10 +59,15 @@ export const refreshTokenGrant = async (
         where: { sub: userId },
         include: [
           {
-            association: "Users",
-          },
-          {
-            association: "GlobalRoles",
+            association: "UserAssignments",
+            include: [
+              {
+                association: "Roles",
+              },
+              {
+                association: "Service",
+              },
+            ],
           },
         ],
       });
@@ -78,29 +83,20 @@ export const refreshTokenGrant = async (
           kode_satker: user.kode_satker,
           satker: user.satker,
           gravatar: user.gravatar,
-          account: user.UserAssignments?.map((u) => {
-            return {
-              kode_satker: u.kd_satker,
-              roles:
-                u.Roles?.map((r) => {
-                  return {
-                    kode: r.kode,
-                    nama: r.role,
-                  };
-                }) || [],
-            };
-          }) || [
-            {
-              kode_satker: user.kode_satker,
-              roles: [],
-            },
-          ],
-          globalRoles: user.GlobalRoles?.map((r) => {
-            return {
-              kode: r.kode,
-              nama: r.role,
-            };
-          }),
+          account:
+            user.UserAssignments?.map((u) => {
+              return {
+                service: u.Service.name,
+                kode_satker: u.kd_satker,
+                roles:
+                  u.Roles?.map((r) => {
+                    return {
+                      kode: r.kode,
+                      nama: r.role,
+                    };
+                  }) || [],
+              };
+            }) || [],
           scope: req.scope || "",
         },
         expiresIn: "5m",

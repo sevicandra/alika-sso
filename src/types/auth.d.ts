@@ -77,16 +77,14 @@ export interface user_access_token extends access_token {
   satker: string;
   gravatar: string;
   account: {
-    kode_satker: string;
+    service: string;
+    kode_satker: string | null;
     roles: {
       kode: string;
       nama: string;
     }[];
   }[];
-  globalRoles: {
-    kode: string;
-    nama: string;
-  }[];
+
 }
 
 export interface refresh_token {

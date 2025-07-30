@@ -20,7 +20,6 @@ class Service
   public kode!: string;
   public name!: string;
   public description!: string;
-
   public Roles!: Role[];
   public Scopes!: Scope[];
 

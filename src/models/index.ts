@@ -8,10 +8,11 @@ import Scope from "./Scope.model";
 import Session from "./Session.model";
 import UserAssignments from "./UserAssignments.model";
 import User from "./User.model";
-import GlobalRole from "./GlobalRole.model";
 import Service from "./Service.model";
 import ScopeAction from "./ScopeAction.model";
 import ClientScope from "./ClientScope.model";
+import UserRole from "./UserRole.model";
+import sequelize from "@/config/db.config";
 
 Role.belongsTo(Service, {
   foreignKey: "service_kode",
@@ -76,8 +77,9 @@ export {
   Session,
   User,
   UserAssignments,
-  GlobalRole,
   Service,
   ScopeAction,
-  ClientScope
+  ClientScope,
+  sequelize,
+  UserRole,
 };

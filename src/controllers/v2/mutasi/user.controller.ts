@@ -1,43 +1,41 @@
-import { Response } from "express";
+import { UserAssignments, UserRole } from "@/models";
+import { errorResponse, successResponse } from "@/helpers/respose.helper";
 import { AuthenticatedRequest } from "@/types/auth";
-import { UserAssignments } from "@/models";
-import { Op } from "sequelize";
-import { successResponse, errorResponse } from "@/helpers/respose.helper";
+import { Response } from "express";
 import {
   ValidationError,
-  UniqueConstraintError,
   DatabaseError,
   ConnectionError,
+  UniqueConstraintError,
+  Op,
+  col,
 } from "sequelize";
 import { AxiosError } from "axios";
 
-export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
+export const getAllUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const search = req.query.search || undefined;
-    const kodeSatker = req.query.kodeSatker || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
     const offset = parseInt(req.query.offset as string) || undefined;
-    const where: any = {};
-    const order: any[] = [];
-    const sortField = (req.query.sortField as string) || "id";
+    const sortField = (req.query.sortField as string) || "nip";
     const sortOrder = (req.query.sortOrder as string) || "ASC";
-    order.push([sortField, sortOrder.toUpperCase()]);
+    const search = req.query.search || undefined;
+    const where: any = {
+      service_kode: "005",
+    };
     if (search)
       where[Op.or] = [
-        { nip: { [Op.like]: `%${search}%` } },
-        { nama: { [Op.like]: `%${search}%` } },
+        where(col("nama"), { [Op.like]: `%${search}%` }),
+        where(col("nip"), { [Op.like]: `%${search}%` }),
       ];
-    if (kodeSatker) where.kd_satker = kodeSatker;
-    const users = await UserAssignments.findAll({
+
+    const { rows: data, count } = await UserAssignments.findAndCountAll({
       where,
-      order,
       limit,
       offset,
+      order: [[sortField, sortOrder.toUpperCase()]],
     });
-    const count = await UserAssignments.count({
-      where,
-    });
-    return successResponse(res, "Success get all users", users, {
+
+    return successResponse(res, "Success get all user", data, {
       limit,
       offset,
       total: count,
@@ -90,17 +88,20 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    if (!id) {
-      return errorResponse(res, "Missing required parameters", null, 400);
+    const data = await UserAssignments.findOne({
+      where: {
+        id,
+        service_kode: "005",
+      },
+    });
+
+    if (!data) {
+      return errorResponse(res, "Data tidak ditemukan", null, 404);
     }
 
-    const user = await UserAssignments.findByPk(id);
-    if (!user) {
-      return errorResponse(res, "User not found", null, 404);
-    }
-    return successResponse(res, "Success get user by id", user);
+    return successResponse(res, "Success get user by id", data);
   } catch (error: unknown) {
     if (
       error instanceof ValidationError ||
@@ -149,14 +150,15 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
 
 export const createUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { nip, kd_satker, nama, service_kode } = req.body;
-    const user = await UserAssignments.create({
+    const { nip, nama } = req.body;
+    const data = await UserAssignments.create({
       nip,
-      kd_satker,
       nama,
-      service_kode,
+      service_kode: "005",
+      kd_satker: null,
     });
-    return successResponse(res, "Success create user", user);
+
+    return successResponse(res, "Success create user", data);
   } catch (error: unknown) {
     if (
       error instanceof ValidationError ||
@@ -205,20 +207,25 @@ export const createUser = async (req: AuthenticatedRequest, res: Response) => {
 
 export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    const { nip, nama } = req.body;
     const { id } = req.params;
-    if (!id) {
-      return errorResponse(res, "Missing required parameters", null, 400);
+    const data = await UserAssignments.findOne({
+      where: {
+        id,
+        service_kode: "005",
+      },
+    });
+
+    if (!data) {
+      return errorResponse(res, "Data tidak ditemukan", null, 404);
     }
-    const { nip, kd_satker, nama } = req.body;
-    const user = await UserAssignments.findByPk(id);
-    if (!user) {
-      return errorResponse(res, "User not found", null, 404);
-    }
-    if (nip) user.nip = nip;
-    if (kd_satker) user.kd_satker = kd_satker;
-    if (nama) user.nama = nama;
-    await user.save();
-    return successResponse(res, "Success update user", user);
+
+    if (nip) data.nip = nip;
+    if (nama) data.nama = nama;
+
+    await data.save();
+
+    return successResponse(res, "Success update user", data);
   } catch (error: unknown) {
     if (
       error instanceof ValidationError ||
@@ -268,92 +275,20 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
 export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    if (!id) {
-      return errorResponse(res, "Missing required parameters", null, 400);
-    }
-    const user = await UserAssignments.findByPk(id);
-    if (!user) {
-      return errorResponse(res, "User not found", null, 404);
-    }
-    await UserAssignments.destroy();
-    return successResponse(res, "Success delete user", { id });
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
-      }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    }
-  }
-};
-
-export const getUserRole = async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      return errorResponse(res, "Missing required parameters", null, 400);
-    }
-
-    const user = await UserAssignments.findByPk(id, {
-      include: {
-        association: "Roles",
-        attributes: ["kode", "role"],
-        through: { attributes: [] },
-        include: [
-          {
-            association: "Service",
-            attributes: ["name"],
-          }
-        ],
+    const data = await UserAssignments.findOne({
+      where: {
+        id,
+        service_kode: "005",
       },
     });
-    if (!user) {
-      return errorResponse(res, "User not found", null, 404);
+
+    if (!data) {
+      return errorResponse(res, "Data tidak ditemukan", null, 404);
     }
 
-    const data = user.Roles.map((role) => ({
-      role: role.role,
-      kode: role.kode,
-      service: role.Service.name,
-    }));
+    await data.destroy();
 
-    return successResponse(res, "Success get user role", data);
+    return successResponse(res, "Success delete user", data);
   } catch (error: unknown) {
     if (
       error instanceof ValidationError ||
@@ -400,22 +335,141 @@ export const getUserRole = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const addUserRole = async (req: AuthenticatedRequest, res: Response) => {
+export const getAllRole = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    if (!id) {
-      return errorResponse(res, "Missing required parameters", null, 400);
+    const limit = parseInt(req.query.limit as string) || undefined;
+    const offset = parseInt(req.query.offset as string) || undefined;
+    const { rows: data, count } = await UserRole.findAndCountAll({
+      where: {
+        userId: id,
+      },
+      limit,
+      offset,
+    });
+
+    return successResponse(res, "Success get all role", data, {
+      limit,
+      offset,
+      total: count,
+      totalPages: limit ? Math.ceil(count / limit) : 1,
+    });
+  } catch (error: unknown) {
+    if (
+      error instanceof ValidationError ||
+      error instanceof UniqueConstraintError
+    ) {
+      const parsedErrors = error.errors.map((err) => ({
+        field: err.path,
+        message: err.message,
+      }));
+      return errorResponse(res, "Validation gagal", parsedErrors, 422);
+    } else if (
+      error instanceof DatabaseError ||
+      error instanceof ConnectionError
+    ) {
+      const parsedErrors = error.message;
+      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
+    } else if (error instanceof ConnectionError) {
+      const parsedErrors = { message: "Gagal terhubung ke database" };
+      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
+    } else if (error instanceof AxiosError) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "isAxiosError" in error &&
+        (error as AxiosError).isAxiosError
+      ) {
+        const axiosError = error as AxiosError;
+        const statusCode = axiosError.response?.status || 500;
+        const message =
+          (axiosError.response?.data as { message?: string })?.message ||
+          axiosError.message ||
+          "Kesalahan pada permintaan eksternal";
+        const details = axiosError.response?.data || null;
+        return errorResponse(res, message, details, statusCode);
+      }
+      return errorResponse(res, "Terjadi kesalahan", null, 500);
+    } else if (error instanceof Error) {
+      const parsedErrors = { message: error.message };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+    } else {
+      const parsedErrors = { message: "Kesalahan tidak diketahui" };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
     }
-    const user = await UserAssignments.findByPk(id);
-    if (!user) {
-      return errorResponse(res, "User not found", null, 404);
-    }
+  }
+};
+
+export const addRole = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
     const { role } = req.body;
-    if (!role) {
-      return errorResponse(res, "Missing required parameters", null, 400);
+    const data = await UserRole.create({
+      userId: id,
+      role_kode: role,
+    });
+
+    return successResponse(res, "Success add role", data);
+  } catch (error: unknown) {
+    if (
+      error instanceof ValidationError ||
+      error instanceof UniqueConstraintError
+    ) {
+      const parsedErrors = error.errors.map((err) => ({
+        field: err.path,
+        message: err.message,
+      }));
+      return errorResponse(res, "Validation gagal", parsedErrors, 422);
+    } else if (
+      error instanceof DatabaseError ||
+      error instanceof ConnectionError
+    ) {
+      const parsedErrors = error.message;
+      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
+    } else if (error instanceof ConnectionError) {
+      const parsedErrors = { message: "Gagal terhubung ke database" };
+      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
+    } else if (error instanceof AxiosError) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "isAxiosError" in error &&
+        (error as AxiosError).isAxiosError
+      ) {
+        const axiosError = error as AxiosError;
+        const statusCode = axiosError.response?.status || 500;
+        const message =
+          (axiosError.response?.data as { message?: string })?.message ||
+          axiosError.message ||
+          "Kesalahan pada permintaan eksternal";
+        const details = axiosError.response?.data || null;
+        return errorResponse(res, message, details, statusCode);
+      }
+      return errorResponse(res, "Terjadi kesalahan", null, 500);
+    } else if (error instanceof Error) {
+      const parsedErrors = { message: error.message };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+    } else {
+      const parsedErrors = { message: "Kesalahan tidak diketahui" };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
     }
-    const data = await user.addRole(role);
-    return successResponse(res, "Success add user role", data);
+  }
+};
+
+export const removeRole = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id, role } = req.params;
+    const data = await UserRole.findOne({
+      where: {
+        userId: id,
+        role_kode: role,
+      },
+    });
+    if (!data) {
+      return errorResponse(res, "Data tidak ditemukan", null, 404);
+    }
+    await data.destroy();
+    return successResponse(res, "Success remove role");
   } catch (error: unknown) {
     if (
       error instanceof ValidationError ||

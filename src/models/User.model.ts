@@ -1,7 +1,7 @@
 import sequelize from "@/config/db.config";
 import { Model, Optional, DataTypes, HasMany } from "sequelize";
 import UserAssignments from "./UserAssignments.model";
-import GlobalRole from "./GlobalRole.model";
+// import GlobalRole from "./GlobalRole.model";
 import { UUID } from "@/utils/uuid.util";
 type UserGlobalRoleAttributes = {
   userId: string;
@@ -79,11 +79,11 @@ class User
   public nik!: string;
 
   public UserAssignments!: UserAssignments[] | [];
-  public GlobalRoles!: GlobalRole[] | [];
+  // public GlobalRoles!: GlobalRole[] | [];
 
   public static associations: {
     UserAssignments: HasMany<User, UserAssignments>;
-    GlobalRoles: HasMany<User, GlobalRole>;
+    // GlobalRoles: HasMany<User, GlobalRole>;
   };
 
   async addRole(role: string) {
@@ -190,28 +190,28 @@ User.init(
 User.hasMany(UserAssignments, {
   foreignKey: "nip",
   sourceKey: "nip",
-  as: "Users",
+  as: "UserAssignments",
 });
 UserAssignments.belongsTo(User, {
   foreignKey: "nip",
   targetKey: "nip",
   as: "User",
 });
-User.belongsToMany(GlobalRole, {
-  through: UserGlobalRole,
-  foreignKey: "userId",
-  otherKey: "role",
-  sourceKey: "sub",
-  targetKey: "kode",
-  as: "GlobalRoles",
-});
-GlobalRole.belongsToMany(User, {
-  through: UserGlobalRole,
-  foreignKey: "role",
-  otherKey: "userId",
-  sourceKey: "role",
-  targetKey: "sub",
-  as: "Users",
-});
+// User.belongsToMany(GlobalRole, {
+//   through: UserGlobalRole,
+//   foreignKey: "userId",
+//   otherKey: "role",
+//   sourceKey: "sub",
+//   targetKey: "kode",
+//   as: "GlobalRoles",
+// });
+// GlobalRole.belongsToMany(User, {
+//   through: UserGlobalRole,
+//   foreignKey: "role",
+//   otherKey: "userId",
+//   sourceKey: "role",
+//   targetKey: "sub",
+//   as: "Users",
+// });
 
 export default User;

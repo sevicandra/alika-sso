@@ -7,10 +7,6 @@ module.exports = {
         type: Sequelize.UUID,
         primaryKey: true,
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
       nama: {
         type: Sequelize.STRING(125),
         allowNull: false,
@@ -19,20 +15,24 @@ module.exports = {
         type: Sequelize.STRING(18),
         allowNull: false,
         index: true,
-        references: {
-          model: "users",
-          key: "nip",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       kd_satker: {
         type: Sequelize.STRING(6),
+        allowNull: true,
+      },
+      service_kode: {
+        type: Sequelize.STRING(3),
         allowNull: false,
+        references: {
+          model: "services",
+          key: "kode",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "RESTRICT",
       },
     });
     await queryInterface.addConstraint("user_assignments", {
-      fields: ["nip", "kd_satker"],
+      fields: ["nip", "kd_satker", "service_kode"],
       name: "unique_nip",
       type: "unique",
     });

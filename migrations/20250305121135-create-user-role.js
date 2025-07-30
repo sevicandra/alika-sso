@@ -13,7 +13,7 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      role: {
+      role_kode: {
         type: Sequelize.STRING(3),
         primaryKey: true,
         references: {

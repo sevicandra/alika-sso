@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { AuthorizationCode, User, RefreshToken } from "@/models";
+import { AuthorizationCode, User, RefreshToken, sequelize } from "@/models";
 import { errorResponse } from "@/helpers/respose.helper";
 import {
   ValidationError,
@@ -25,7 +25,8 @@ export const authorizationCodeGrant = async (
   ) {
     return errorResponse(res, "Missing required parameters", null, 400);
   }
-  try {    
+  const t = await sequelize.transaction();
+  try {
     if (!req.client.grant_types.includes("authorization_code")) {
       return errorResponse(res, "Invalid grant type", null, 401);
     }
@@ -58,12 +59,18 @@ export const authorizationCodeGrant = async (
       },
       include: [
         {
-          association: "Users",
-        },
-        {
-          association: "GlobalRoles",
+          association: "UserAssignments",
+          include: [
+            {
+              association: "Roles",
+            },
+            {
+              association: "Service",
+            },
+          ],
         },
       ],
+      transaction: t,
     });
 
     if (!user) {
@@ -79,29 +86,20 @@ export const authorizationCodeGrant = async (
         kode_satker: user.kode_satker,
         satker: user.satker,
         gravatar: user.gravatar,
-        account: user.UserAssignments?.map((u) => {
-          return {
-            kode_satker: u.kd_satker,
-            roles:
-              u.Roles?.map((r) => {
-                return {
-                  kode: r.kode,
-                  nama: r.role,
-                };
-              }) || [],
-          };
-        }) || [
-          {
-            kode_satker: user.kode_satker,
-            roles: [],
-          },
-        ],
-        globalRoles: user.GlobalRoles?.map((r) => {
-          return {
-            kode: r.kode,
-            nama: r.role,
-          };
-        }),
+        account:
+          user.UserAssignments?.map((u) => {
+            return {
+              service: u.Service.name,
+              kode_satker: u.kd_satker,
+              roles:
+                u.Roles?.map((r) => {
+                  return {
+                    kode: r.kode,
+                    nama: r.role,
+                  };
+                }) || [],
+            };
+          }) || [],
         scope: authorizationCode.scope,
       },
       expiresIn: "5m",
@@ -127,8 +125,18 @@ export const authorizationCodeGrant = async (
       });
       req.refresh_token = refreshToken;
     }
+    await AuthorizationCode.destroy({
+      where: {
+        code: req.body.code,
+      },
+      transaction: t,
+    });
+    await t.commit();
     return next();
   } catch (error: unknown) {
+    console.log(error);
+    
+    await t.rollback();
     if (
       error instanceof ValidationError ||
       error instanceof UniqueConstraintError
@@ -171,11 +179,5 @@ export const authorizationCodeGrant = async (
       const parsedErrors = { message: "Kesalahan tidak diketahui" };
       return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
     }
-  } finally {
-    await AuthorizationCode.destroy({
-      where: {
-        code: req.body.code,
-      },
-    });
   }
 };
