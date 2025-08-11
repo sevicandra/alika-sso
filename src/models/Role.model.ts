@@ -11,10 +11,7 @@ type RoleAttributes = {
   description: string;
 };
 
-type RoleCreationAttributes = Optional<
-  RoleAttributes,
-  "id" | "description"
->;
+type RoleCreationAttributes = Optional<RoleAttributes, "id" | "description">;
 
 class Role
   extends Model<RoleAttributes, RoleCreationAttributes>
@@ -39,13 +36,30 @@ Role.init(
       primaryKey: true,
     },
     kode: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(3),
       allowNull: false,
-      unique: true,
+      unique: {
+        name: "kode",
+        msg: "Kode sudah digunakan",
+      },
+      validate: {
+        notNull: {
+          msg: "Kode harus diisi",
+        },
+        is: {
+          args: /^[0-9]{3}$/,
+          msg: "Kode tidak valid",
+        },
+      },
     },
     role: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Role harus diisi",
+        },
+      },
     },
     service_kode: {
       type: DataTypes.STRING(3),
@@ -53,6 +67,15 @@ Role.init(
       references: {
         model: Service,
         key: "kode",
+      },
+      validate: {
+        notNull: {
+          msg: "Kode harus diisi",
+        },
+        is: {
+          args: /^[0-9]{3}$/,
+          msg: "Kode tidak valid",
+        },
       },
       onUpdate: "CASCADE",
       onDelete: "RESTRICT",

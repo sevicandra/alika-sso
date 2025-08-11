@@ -38,11 +38,11 @@ export class UserAssignments
   public Service!: Service;
 
   async addRole(role: string) {
-    await UserRole.create({ userId: this.id, role_kode: role });
+    await UserRole.create({ user_id: this.id, role_kode: role });
   }
 
   async removeRole(role: string) {
-    await UserRole.destroy({ where: { userId: this.id, role_kode: role } });
+    await UserRole.destroy({ where: { user_id: this.id, role_kode: role } });
   }
 
   public static associations: {
@@ -114,20 +114,5 @@ UserAssignments.init(
     ],
   }
 );
-
-UserAssignments.belongsToMany(Role, {
-  through: UserRole,
-  foreignKey: "userId",
-  otherKey: "role_kode",
-  sourceKey: "id",
-  targetKey: "kode",
-  as: "Roles",
-});
-
-UserAssignments.belongsTo(Service, {
-  foreignKey: "service_kode",
-  targetKey: "kode",
-  as: "Service",
-});
 
 export default UserAssignments;

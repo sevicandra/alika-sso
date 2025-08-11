@@ -4,7 +4,7 @@ import { checkRequest } from "@/middlewares/authorize.middleware";
 import { authorizationCode } from "@/controllers/authorize.controller";
 import { verifyClient } from "@/middlewares/token/verifyClient.middleware";
 import { TokenRequest } from "@/types/auth";
-import { verifyToken } from "@/middlewares/auth.middleware";
+import { authenticate } from "@/middlewares/auth.middleware";
 import { logout } from "@/controllers/logout.controller";
 const router = Router();
 
@@ -18,6 +18,6 @@ router.post("/token", verifyClient, (req: TokenRequest, res: Response) => {
   });
 });
 
-router.post("/signout", verifyToken(), logout);
+router.post("/signout", authenticate(), logout);
 
 export default router;

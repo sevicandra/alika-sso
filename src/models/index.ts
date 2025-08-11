@@ -13,6 +13,7 @@ import ScopeAction from "./ScopeAction.model";
 import ClientScope from "./ClientScope.model";
 import UserRole from "./UserRole.model";
 import sequelize from "@/config/db.config";
+import ClientGrant from "./ClientGrant.model";
 
 Role.belongsTo(Service, {
   foreignKey: "service_kode",
@@ -21,12 +22,28 @@ Role.belongsTo(Service, {
 });
 
 Client.hasMany(RedirectUri, {
-  foreignKey: "clientId",
+  foreignKey: "client_id",
   as: "RedirectUris",
 });
 Client.hasMany(ClientScope, {
-  foreignKey: "clientId",
+  foreignKey: "client_id",
   as: "Scopes",
+});
+Client.hasMany(ClientGrant,{
+  foreignKey: "client_id",
+  as: "Grants",
+})
+
+Client.belongsToMany(Grant, {
+  through: {
+    model: ClientGrant,
+    unique: true,
+  },
+  foreignKey: "client_id",
+  otherKey: "grant_kode",
+  sourceKey: "id",
+  targetKey: "kode",
+  as: "GrantTypes",
 });
 
 Service.hasMany(Role, {
@@ -41,16 +58,16 @@ Service.hasMany(Scope, {
 });
 
 RedirectUri.belongsTo(Client, {
-  foreignKey: "clientId",
+  foreignKey: "client_id",
   as: "Client",
 });
 
 ClientScope.belongsTo(Client, {
-  foreignKey: "clientId",
+  foreignKey: "client_id",
   as: "Client",
 });
 ClientScope.belongsTo(Scope, {
-  foreignKey: "scopeId",
+  foreignKey: "scope_id",
   targetKey: "id",
   as: "Scope",
 });
@@ -61,6 +78,32 @@ ClientScope.belongsTo(ScopeAction, {
 });
 
 Scope.belongsTo(Service, {
+  foreignKey: "service_kode",
+  targetKey: "kode",
+  as: "Service",
+});
+
+ClientGrant.belongsTo(Client, {
+  foreignKey: "client_id",
+  as: "Client",
+});
+
+ClientGrant.belongsTo(Grant, {
+  foreignKey: "grant_kode",
+  targetKey: "kode",
+  as: "Grant",
+});
+
+UserAssignments.belongsToMany(Role, {
+  through: UserRole,
+  foreignKey: "user_id",
+  otherKey: "role_kode",
+  sourceKey: "id",
+  targetKey: "kode",
+  as: "Roles",
+});
+
+UserAssignments.belongsTo(Service, {
   foreignKey: "service_kode",
   targetKey: "kode",
   as: "Service",
@@ -82,4 +125,5 @@ export {
   ClientScope,
   sequelize,
   UserRole,
+  ClientGrant,
 };

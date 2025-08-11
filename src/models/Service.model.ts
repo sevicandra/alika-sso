@@ -80,11 +80,28 @@ Service.init(
     kode: {
       type: DataTypes.STRING(3),
       allowNull: false,
-      unique: true,
+      unique: {
+        name: "kode",
+        msg: "Kode sudah digunakan",
+      },
+      validate: {
+        notNull: {
+          msg: "Kode harus diisi",
+        },
+        is: {
+          args: /^[0-9]{3}$/,
+          msg: "Kode tidak valid",
+        },
+      },
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Nama harus diisi",
+        },
+      },
     },
     description: {
       type: DataTypes.STRING,

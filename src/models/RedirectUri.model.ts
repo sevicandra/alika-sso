@@ -4,7 +4,7 @@ import Client from "./Client.model";
 import { UUID } from "@/utils/uuid.util";
 type RedirectUriAttributes = {
   id: string;
-  clientId: string;
+  client_id: string;
   uri: string;
 };
 type RedirectUriCreationAttributes = Optional<RedirectUriAttributes, "id">;
@@ -13,7 +13,7 @@ class RedirectUri
   implements RedirectUriAttributes
 {
   public id!: string;
-  public clientId!: string;
+  public client_id!: string;
   public uri!: string;
 }
 
@@ -23,7 +23,7 @@ RedirectUri.init(
       type: DataTypes.STRING,
       primaryKey: true,
     },
-    clientId: {
+    client_id: {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
@@ -37,8 +37,16 @@ RedirectUri.init(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isUrl: true,
-      }
+        isUrl: {
+          msg: "Url tidak valid",
+        },
+        notEmpty: {
+          msg: "Url harus diisi",
+        },
+        notNull: {
+          msg: "Url harus diisi",
+        },
+      },
     },
   },
   {
@@ -50,7 +58,7 @@ RedirectUri.init(
       beforeCreate: (data) => {
         data.id = UUID.v7();
       },
-    }
+    },
   }
 );
 

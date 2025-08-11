@@ -1,25 +1,16 @@
 import sequelize from "@/config/db.config";
-import {
-  Model,
-  Optional,
-  DataTypes,
-  HasMany,
-  BelongsToMany,
-} from "sequelize";
+import { Model, Optional, DataTypes, HasMany, BelongsToMany } from "sequelize";
 import Grant from "./GrantType.model";
 import RedirectUri from "./RedirectUri.model";
 import { hash } from "@/utils/crypt.util";
 import { UUID } from "@/utils/uuid.util";
 import ClientScopes from "./ClientScope.model";
+import ClientGrant from "./ClientGrant.model";
+
 type ClientAttributes = {
   id: string;
   client_id: string;
   client_secret: string;
-};
-
-type ClientGrantTypeAttributes = {
-  clientId: string;
-  grant: string;
 };
 
 type ClientCreationAttributes = Optional<ClientAttributes, "id">;
@@ -49,7 +40,11 @@ class Client
     scopeId: string;
     action_kode: string;
   }) {
-    await ClientScopes.create({ clientId: this.id, scopeId, action_kode });
+    await ClientScopes.create({
+      client_id: this.id,
+      scope_id: scopeId,
+      action_kode,
+    });
   }
   async removeScope({
     scopeId,
@@ -59,23 +54,23 @@ class Client
     action_kode: string;
   }) {
     await ClientScopes.destroy({
-      where: { clientId: this.id, scopeId, action_kode },
+      where: { client_id: this.id, scope_id: scopeId, action_kode },
     });
   }
   async addGrantType(grantType: string) {
-    await ClientGrantType.create({ clientId: this.id, grant: grantType });
+    await ClientGrant.create({ client_id: this.id, grant_kode: grantType });
   }
   async removeGrantType(grantType: string) {
-    await ClientGrantType.destroy({
-      where: { clientId: this.id, grant: grantType },
+    await ClientGrant.destroy({
+      where: { client_id: this.id, grant_kode: grantType },
     });
   }
   async addRedirectUri(redirectUri: string) {
-    await RedirectUri.create({ clientId: this.id, uri: redirectUri });
+    await RedirectUri.create({ client_id: this.id, uri: redirectUri });
   }
   async removeRedirectUri(redirectId: string) {
     await RedirectUri.destroy({
-      where: { clientId: this.id, id: redirectId },
+      where: { client_id: this.id, id: redirectId },
     });
   }
 }
@@ -89,8 +84,15 @@ Client.init(
     client_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: {
+        name: "id",
+        msg: "Client ID already exists",
+      },
       validate: {
+        min: {
+          args: [6],
+          msg: "Client ID must be at least 6 characters",
+        },
         notEmpty: {
           msg: "Client ID is required",
         },
@@ -115,7 +117,7 @@ Client.init(
         },
         is: {
           args: [
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&'~])[A-Za-z\d@$!%*?#&'~]{6,}$/,
           ],
           msg: "Secret must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
         },
@@ -150,40 +152,5 @@ Client.init(
     },
   }
 );
-
-class ClientGrantType extends Model<ClientGrantTypeAttributes> {
-  public clientId!: string;
-  public grant!: string;
-}
-ClientGrantType.init(
-  {
-    clientId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: true,
-    },
-    grant: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: true,
-    },
-  },
-  {
-    sequelize,
-    modelName: "ClientGrantType",
-    tableName: "client_grant_types",
-  }
-);
-Client.belongsToMany(Grant, {
-  through: {
-    model: ClientGrantType,
-    unique: true,
-  },
-  foreignKey: "clientId",
-  otherKey: "grant",
-  sourceKey: "id",
-  targetKey: "kode",
-  as: "GrantTypes",
-});
 
 export default Client;

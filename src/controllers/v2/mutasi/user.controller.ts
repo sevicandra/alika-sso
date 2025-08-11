@@ -342,7 +342,7 @@ export const getAllRole = async (req: AuthenticatedRequest, res: Response) => {
     const offset = parseInt(req.query.offset as string) || undefined;
     const { rows: data, count } = await UserRole.findAndCountAll({
       where: {
-        userId: id,
+        user_id: id,
       },
       limit,
       offset,
@@ -405,7 +405,7 @@ export const addRole = async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
     const { role } = req.body;
     const data = await UserRole.create({
-      userId: id,
+      user_id: id,
       role_kode: role,
     });
 
@@ -461,7 +461,7 @@ export const removeRole = async (req: AuthenticatedRequest, res: Response) => {
     const { id, role } = req.params;
     const data = await UserRole.findOne({
       where: {
-        userId: id,
+        user_id: id,
         role_kode: role,
       },
     });

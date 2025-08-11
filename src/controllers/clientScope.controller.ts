@@ -152,8 +152,8 @@ export const createClientScope = async (
     }
     const clientScope = await ClientScope.create({
       action_kode,
-      scopeId,
-      clientId,
+      scope_id:scopeId,
+      client_id:clientId,
     });
     return successResponse(res, "Success create client scope", clientScope);
   } catch (error: unknown) {
@@ -217,7 +217,7 @@ export const updateClientScope = async (
       return errorResponse(res, "Client scope not found", null, 404);
     }
     if (action_kode) clientScope.action_kode = action_kode;
-    if (scopeId) clientScope.scopeId = scopeId;
+    if (scopeId) clientScope.scope_id = scopeId;
 
     await clientScope.save();
     return successResponse(res, "Success update client scope", clientScope);

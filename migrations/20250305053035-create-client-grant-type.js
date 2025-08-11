@@ -3,9 +3,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("client_grant_types", {
-      clientId: {
+      id:{
         type: Sequelize.UUID,
         primaryKey: true,
+      },
+      client_id: {
+        type: Sequelize.UUID,
         references: {
           model: "clients",
           key: "id",
@@ -13,9 +16,8 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      grant: {
+      grant_kode: {
         type: Sequelize.STRING(3),
-        primaryKey: true,
         references: {
           model: "grant_types",
           key: "kode",
@@ -23,6 +25,10 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+    });
+        await queryInterface.addConstraint("client_scopes", {
+      type: "unique",
+      fields: ["client_id", "grant_kode"],
     });
   },
   async down(queryInterface, Sequelize) {

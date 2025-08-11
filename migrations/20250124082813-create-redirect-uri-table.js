@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.UUID,
         primaryKey: true,
       },
-      clientId: {
+      client_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references:{

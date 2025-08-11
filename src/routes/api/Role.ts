@@ -6,14 +6,14 @@ import {
   updateRole,
   deleteRole,
 } from "@/controllers/role.controller";
-import { verifyToken } from "@/middlewares/auth.middleware";
+import { authenticate } from "@/middlewares/auth.middleware";
 
 const router = Router();
 
-router.get("/", verifyToken(["account.role.read"]), getAllRole);
-router.get("/:id", verifyToken(["account.role.read"]), getRoleById);
-router.post("/", verifyToken(["account.role.write"]), createRole);
-router.patch("/:id", verifyToken(["account.role.update"]), updateRole);
-router.delete("/:id", verifyToken(["account.role.delete"]), deleteRole);
+router.get("/", authenticate(["account.role.read"]), getAllRole);
+router.get("/:id", authenticate(["account.role.read"]), getRoleById);
+router.post("/", authenticate(["account.role.write"]), createRole);
+router.patch("/:id", authenticate(["account.role.update"]), updateRole);
+router.delete("/:id", authenticate(["account.role.delete"]), deleteRole);
 
 export default router;

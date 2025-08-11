@@ -12,41 +12,41 @@ import {
   createServiceScope,
   deleteServiceScope,
 } from "@/controllers/service.controller";
-import { verifyToken } from "@/middlewares/auth.middleware";
+import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 
-router.get("/", verifyToken(["account.service.read"]), getAllServices);
-router.get("/:id", verifyToken(["account.service.read"]), getServiceById);
-router.get("/:id/roles", verifyToken(["account.service.read"]), getServiceRole);
+router.get("/", authenticate(["account.service.read"]), getAllServices);
+router.get("/:id", authenticate(["account.service.read"]), getServiceById);
+router.get("/:id/roles", authenticate(["account.service.read"]), getServiceRole);
 router.get(
   "/:id/scopes",
-  verifyToken(["account.service.read"]),
+  authenticate(["account.service.read"]),
   getServiceScope
 );
 
-router.post("/", verifyToken(["account.service.write"]), createService);
+router.post("/", authenticate(["account.service.write"]), createService);
 router.post(
   "/:id/roles",
-  verifyToken(["account.service.write", "account.role.write"]),
+  authenticate(["account.service.write", "account.role.write"]),
   createServiceRole
 );
 router.post(
   "/:id/scopes",
-  verifyToken(["account.service.write", "account.scope.write"]),
+  authenticate(["account.service.write", "account.scope.write"]),
   createServiceScope
 );
 
-router.patch("/:id", verifyToken(["account.service.update"]), updateService);
+router.patch("/:id", authenticate(["account.service.update"]), updateService);
 
-router.delete("/:id", verifyToken(["account.service.delete"]), deleteService);
+router.delete("/:id", authenticate(["account.service.delete"]), deleteService);
 router.delete(
   "/:id/roles/:role_id",
-  verifyToken(["account.service.delete", "account.role.delete"]),
+  authenticate(["account.service.delete", "account.role.delete"]),
   deleteServiceRole
 );
 router.delete(
   "/:id/scopes/:scope_id",
-  verifyToken(["account.service.delete", "account.scope.delete"]),
+  authenticate(["account.service.delete", "account.scope.delete"]),
   deleteServiceScope
 );
 

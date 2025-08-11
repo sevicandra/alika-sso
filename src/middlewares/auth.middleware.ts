@@ -20,7 +20,10 @@ export const isAuthenticated = (
   }
 };
 
-export function verifyToken(requiredScopes?: string[]) {
+export function authenticate(
+  requiredScopes?: string[],
+  requiredRoles?: string[]
+) {
   return async (
     req: AuthenticatedRequest,
     res: Response,
@@ -35,7 +38,25 @@ export function verifyToken(requiredScopes?: string[]) {
       if (!token) {
         return errorResponse(res, "Unauthorized", null, 401);
       }
-      const decoded = await JwtUtil.verifyToken(token);
+      const decoded = (await JwtUtil.verifyToken(token)) as {
+        sub?: string;
+        clientId?: string;
+        scope: string;
+        name: string;
+        nik: string;
+        nip: string;
+        kode_satker: string;
+        satker: string;
+        gravatar: string;
+        account: {
+          service: string;
+          kode_satker: string | null;
+          roles: {
+            kode: string;
+            nama: string;
+          }[];
+        }[];
+      };
       req.user = omit(decoded, [
         "scope",
         "account",
@@ -43,13 +64,27 @@ export function verifyToken(requiredScopes?: string[]) {
         "exp",
         "iat",
         "jti",
+        "sub",
         "iss",
         "aud",
       ]);
-      req.roles = decoded.account || [];
-      req.globalRoles = decoded.globalRoles || [];
+      req.roles = decoded.account.find(
+        (a) => a.service.toLowerCase() === "account"
+      )?.roles;
+      req.user = omit(decoded, [
+        "scope",
+        "account",
+        "globalRoles",
+        "exp",
+        "iat",
+        "jti",
+        "sub",
+        "iss",
+        "aud",
+      ]);
+
       if (requiredScopes) {
-        const tokenScopes = decoded.scope || [];
+        const tokenScopes = decoded.scope;
         const hasRequiredScopes = requiredScopes.every((scope) => {
           const [service, resource, action] = scope.split(".");
           return (
@@ -59,6 +94,20 @@ export function verifyToken(requiredScopes?: string[]) {
           );
         });
         if (!hasRequiredScopes) {
+          return errorResponse(res, "Unauthorized", null, 401);
+        }
+      }
+      if (requiredRoles) {
+        const hasRequiredRoles = requiredRoles.every((r) => {
+          const [service, role] = r.split(".");
+          const userRole = decoded.account.find(
+            (a) => a.service.toLowerCase() === service
+          )?.roles;
+          return userRole?.some(
+            (r) => r.nama.toUpperCase() === role.toUpperCase()
+          );
+        });
+        if (!hasRequiredRoles) {
           return errorResponse(res, "Unauthorized", null, 401);
         }
       }

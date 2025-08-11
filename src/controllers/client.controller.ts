@@ -420,7 +420,7 @@ export const getClientScopes = async (
     }
     const data = client.Scopes.map((scope) => {
       return {
-        clientId: scope.clientId,
+        clientId: scope.client_id,
         service: scope.Scope.Service.name,
         scope: scope.Scope.scope,
         action: scope.Action.name,
@@ -495,7 +495,7 @@ export const addClientScope = async (
     }
     if (
       client.Scopes.find(
-        (s) => s.action_kode === action_kode && s.scopeId === scopeId
+        (s) => s.action_kode === action_kode && s.scope_id === scopeId
       )
     ) {
       return errorResponse(res, "Scope already exists", null, 400);
@@ -572,7 +572,7 @@ export const deleteClientScope = async (
       return errorResponse(res, "Client not found", null, 404);
     }
 
-    if (!client.Scopes.find((s) => s.action_kode === action_kode && s.scopeId === scopeId)) {
+    if (!client.Scopes.find((s) => s.action_kode === action_kode && s.scope_id === scopeId)) {
       return errorResponse(res, "Scope not found", null, 404);
     }
     await client.removeScope({

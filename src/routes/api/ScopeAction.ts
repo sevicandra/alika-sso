@@ -6,13 +6,13 @@ import {
   updateScopeAction,
   deleteScopeAction,
 } from "@/controllers/scopeAction.controller";
-import { verifyToken } from "@/middlewares/auth.middleware";
+import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 
-router.get("/", verifyToken(["account.scopeaction.read"]), getAllScopeActions);
-router.get("/:id", verifyToken(["account.scopeaction.read"]), getScopeActionById);
-router.post("/", verifyToken(["account.scopeaction.write"]), createScopeAction);
-router.patch("/:id", verifyToken(["account.scopeaction.update"]), updateScopeAction);
-router.delete("/:id", verifyToken(["account.scopeaction.delete"]), deleteScopeAction);
+router.get("/", authenticate(["account.scopeaction.read"]), getAllScopeActions);
+router.get("/:id", authenticate(["account.scopeaction.read"]), getScopeActionById);
+router.post("/", authenticate(["account.scopeaction.write"]), createScopeAction);
+router.patch("/:id", authenticate(["account.scopeaction.update"]), updateScopeAction);
+router.delete("/:id", authenticate(["account.scopeaction.delete"]), deleteScopeAction);
 
 export default router;

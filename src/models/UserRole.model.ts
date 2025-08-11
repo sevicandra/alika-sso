@@ -2,18 +2,18 @@ import sequelize from "@/config/db.config";
 import { Model, DataTypes } from "sequelize";
 
 type UserRoleAttributes = {
-  userId: string;
+  user_id: string;
   role_kode: string;
 };
 
 class UserRole extends Model<UserRoleAttributes> implements UserRoleAttributes {
-  public userId!: string;
+  public user_id!: string;
   public role_kode!: string;
 }
 
 UserRole.init(
   {
-    userId: {
+    user_id: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,

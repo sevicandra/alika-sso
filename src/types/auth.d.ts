@@ -26,16 +26,10 @@ export interface AuthenticatedRequest extends Request {
       }
     | any;
   roles?: {
-    kode_satker: string;
-    roles: {
-      kode: string;
-      nama: string;
-    }[];
-  }[];
-  globalRoles?: {
     kode: string;
     nama: string;
   }[];
+
   client?: {
     id: string;
     client_id: string;
@@ -84,7 +78,6 @@ export interface user_access_token extends access_token {
       nama: string;
     }[];
   }[];
-
 }
 
 export interface refresh_token {

@@ -6,13 +6,13 @@ import {
   updateGrant,
   deleteGrant,
 } from "@/controllers/grant.controller";
-import { verifyToken } from "@/middlewares/auth.middleware";
+import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 
-router.get("/", verifyToken(["account.grant.read"]),getAllGrant);
-router.get("/:id", verifyToken(["account.grant.read"]),getGrantById);
-router.post("/", verifyToken(["account.grant.write"]),createGrant);
-router.patch("/:id", verifyToken(["account.grant.update"]),updateGrant);
-router.delete("/:id", verifyToken(["account.grant.delete"]),deleteGrant);
+router.get("/", authenticate(["account.grant.read"]),getAllGrant);
+router.get("/:id", authenticate(["account.grant.read"]),getGrantById);
+router.post("/", authenticate(["account.grant.write"]),createGrant);
+router.patch("/:id", authenticate(["account.grant.update"]),updateGrant);
+router.delete("/:id", authenticate(["account.grant.delete"]),deleteGrant);
 
 export default router;

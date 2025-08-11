@@ -26,6 +26,7 @@ export const authorizationCodeGrant = async (
     return errorResponse(res, "Missing required parameters", null, 400);
   }
   const t = await sequelize.transaction();
+  
   try {
     if (!req.client.grant_types.includes("authorization_code")) {
       return errorResponse(res, "Invalid grant type", null, 401);

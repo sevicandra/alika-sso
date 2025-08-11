@@ -5,32 +5,33 @@ module.exports = {
     await queryInterface.createTable(
       "client_scopes",
       {
-        clientId: {
+        id: {
           type: Sequelize.UUID,
           primaryKey: true,
+        },
+        client_id: {
+          type: Sequelize.UUID,
           references: {
-            model: "clients", 
-            key: "id", 
+            model: "clients",
+            key: "id",
           },
           onUpdate: "CASCADE",
           onDelete: "CASCADE",
         },
-        action_kode:{
+        action_kode: {
           type: Sequelize.STRING(3),
-          primaryKey: true,
           references: {
-            model: "scope_actions", 
-            key: "kode", 
+            model: "scope_actions",
+            key: "kode",
           },
           onUpdate: "CASCADE",
           onDelete: "RESTRICT",
         },
-        scopeId: {
+        scope_id: {
           type: Sequelize.UUID,
-          primaryKey: true,
           references: {
-            model: "scopes", 
-            key: "id", 
+            model: "scopes",
+            key: "id",
           },
           onUpdate: "CASCADE",
           onDelete: "RESTRICT",
@@ -40,6 +41,10 @@ module.exports = {
         timestamps: false,
       }
     );
+    await queryInterface.addConstraint("client_scopes", {
+      type: "unique",
+      fields: ["clientId", "action_kode", "scopeId"],
+    });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("client_scopes");

@@ -18,6 +18,7 @@ class Scope
   public kode!: string;
   public scope!: string;
   public service_kode!: string;
+
   public Service!: Service;
   public static associations: {
     Service: BelongsTo<Scope, Service>;
@@ -37,16 +38,39 @@ Scope.init(
         model: Service,
         key: "kode",
       },
+      validate: {
+        notNull: {
+          msg: "Kode harus diisi",
+        },
+        is: {
+          args: /^[0-9]{3}$/,
+          msg: "Kode tidak valid",
+        },
+      },
       onUpdate: "CASCADE",
       onDelete: "RESTRICT",
     },
     kode: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Kode harus diisi",
+        },
+        is: {
+          args: /^[0-9]{3}$/,
+          msg: "Kode tidak valid",
+        },
+      },
     },
     scope: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Nama harus diisi",
+        },
+      },
     },
   },
   {
@@ -72,10 +96,10 @@ Scope.init(
       {
         unique: true,
         fields: ["service_kode", "kode"],
+        name: "kode",
       },
     ],
   }
 );
-
 
 export default Scope;
