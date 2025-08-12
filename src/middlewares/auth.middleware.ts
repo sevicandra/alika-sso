@@ -64,25 +64,12 @@ export function authenticate(
         "exp",
         "iat",
         "jti",
-        "sub",
         "iss",
         "aud",
       ]);
       req.roles = decoded.account.find(
         (a) => a.service.toLowerCase() === "account"
       )?.roles;
-      req.user = omit(decoded, [
-        "scope",
-        "account",
-        "globalRoles",
-        "exp",
-        "iat",
-        "jti",
-        "sub",
-        "iss",
-        "aud",
-      ]);
-
       if (requiredScopes) {
         const tokenScopes = decoded.scope;
         const hasRequiredScopes = requiredScopes.every((scope) => {
