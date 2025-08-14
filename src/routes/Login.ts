@@ -3,9 +3,7 @@ import passport from "@/services/passport.service";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  return res.render("auth/login");
-});
+router.get("/", passport.authenticate("oauth2"));
 
 router.post(
   "/",
