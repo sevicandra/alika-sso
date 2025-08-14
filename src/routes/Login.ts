@@ -14,7 +14,7 @@ router.post(
   }),
   (req: Request, res: Response) => {
     req.user = req.user as Express.User;
-    res.redirect((req.query.ReturnUrl as string) || "/");
+    return res.redirect((req.query.ReturnUrl as string) || "/");
   }
 );
 
@@ -25,7 +25,7 @@ router.get(
     failureRedirect: `${process.env.APP_HOST}login`,
   }),
   (req: Request, res: Response) => {
-    res.redirect("/");
+    return res.redirect("/api/auth/signin");
   }
 );
 
