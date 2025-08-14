@@ -10,7 +10,6 @@ type RefreshTokenAttributes = {
   clientId: string;
   expiresAt: Date;
   scope: string;
-  sessionId?: string;
 };
 
 type RefreshTokenCreationAttributes = Optional<RefreshTokenAttributes, "id">;
@@ -25,7 +24,6 @@ class RefreshToken
   declare clientId: string;
   declare expiresAt: Date;
   declare scope: string;
-  declare sessionId?: string;
 }
 
 RefreshToken.init(
@@ -62,10 +60,6 @@ RefreshToken.init(
     expiresAt: {
       type: DataTypes.DATE,
       allowNull: false,
-    },
-    sessionId: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     scope: {
       type: DataTypes.TEXT,

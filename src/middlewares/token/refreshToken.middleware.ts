@@ -52,7 +52,7 @@ export const refreshTokenGrant = async (
       req.scope = refreshToken.scope;
     }
     const userId = refreshToken.userId || null;
-    const sessionId = refreshToken.sessionId;
+    const sessionId = token.sessionId;
     refreshToken.destroy();
     if (userId) {
       const user = await User.findOne({
