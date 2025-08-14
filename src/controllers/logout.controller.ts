@@ -29,23 +29,17 @@ export const logout = async (req: AuthenticatedRequest, res: Response) => {
     if (!refreshToken) {
       return errorResponse(res, "Invalid refresh token", null, 403);
     }
-    console.log("refreshToken", refreshToken);
-    console.log("sub", sub);
 
     if (refreshToken.userId !== sub) {
       return errorResponse(res, "Invalid client", null, 403);
     }
-    console.log(token);
-    console.log("refreshToken", refreshToken);
-    console.log(await verify(token, refreshToken.token));
-
     if (!(await verify(token, refreshToken.token))) {
       return errorResponse(res, "Invalid refresh token", null, 403);
     }
     await refreshToken.destroy();
-    await Session.findByPk(sessionId).then((session) => {
+    await Session.findByPk(sessionId).then(async (session) => {
       if (session) {
-        session.destroy();
+        await session.destroy();
       }
     });
     res.clearCookie(`${process.env.APP_NAME || "SSO"}.session`);

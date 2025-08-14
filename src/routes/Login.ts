@@ -25,7 +25,7 @@ router.get(
     failureRedirect: `${process.env.APP_HOST}login`,
   }),
   (req: Request, res: Response) => {
-    res.redirect((req.query.ReturnUrl as string) || "/");
+    res.redirect("/");
   }
 );
 
