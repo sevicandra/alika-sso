@@ -35,7 +35,7 @@ passport.use(
           },
         });
         if (user) {
-          user.update({
+          await user.update({
             name: userInfo.data.name,
             email: userInfo.data.email,
             kode_kl: userInfo.data.kode_kl,
@@ -83,7 +83,7 @@ passport.serializeUser((user: Express.User, done) => {
   done(null, user.sub);
 });
 passport.deserializeUser(async (sub: string, done) => {
-  User.findOne({ where: { sub: sub } }).then(async (user) => {
+  await User.findOne({ where: { sub: sub } }).then(async (user) => {
     if (user) {
       done(null, user);
     } else {
