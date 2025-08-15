@@ -3,7 +3,9 @@ import passport from "@/services/passport.service";
 
 const router = Router();
 
-router.get("/", passport.authenticate("oauth2"));
+router.get("/", (req: Request, res: Response) => {
+  return res.render("auth/login");
+});
 
 router.post(
   "/",
@@ -23,7 +25,7 @@ router.get(
     failureRedirect: `${process.env.APP_HOST}login`,
   }),
   (req: Request, res: Response) => {
-    return res.redirect("/api/auth/signin");
+    res.redirect((req.query.ReturnUrl as string) || "/");
   }
 );
 
