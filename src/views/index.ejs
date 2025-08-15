@@ -11,15 +11,13 @@
   >
     <div class="bg-white/20 p-8 rounded shadow w-full max-w-md m-auto">
       <div class="my-4 font-bold text-center w-full">
-        <form action="<%= url %>/login/KemenkeuID" method="post">
-          <button
-            type="submit"
-            class="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Login With Kemenkeu ID
-          </button>
-        </form>
+        <span class="loading loading-spinner text-primary"></span>
       </div>
     </div>
   </body>
+  <script>
+    setTimeout(function () {
+      window.location.href = "/";
+    }, 500);
+  </script>
 </html>

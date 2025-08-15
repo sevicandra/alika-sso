@@ -4,9 +4,15 @@ import Auth from "./Auth";
 import Api from "./api";
 import { JwtUtil } from "@/utils/jwt.util";
 import { errorResponse } from "@/helpers/respose.helper";
-
+import { isAuthenticated } from "@/middlewares/auth.middleware";
+import { appConfig } from "@/config/app.config";
 const router = Router();
 
+router.get("/", isAuthenticated, (req: Request, res: Response) => {
+  return res.render("index",{
+    url: appConfig.URL,
+  });
+});
 router.use("/login", Login);
 router.use("/auth", Auth);
 router.use("/api", Api);

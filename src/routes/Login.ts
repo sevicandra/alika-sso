@@ -1,10 +1,13 @@
 import { Router, Request, Response } from "express";
 import passport from "@/services/passport.service";
+import { appConfig } from "@/config/app.config";
 
 const router = Router();
 
 router.get("/", (req: Request, res: Response) => {
-  return res.render("auth/login");
+  return res.render("auth/login", {
+    url: appConfig.URL,
+  });
 });
 
 router.post(
@@ -22,10 +25,14 @@ router.post("/KemenkeuID", passport.authenticate("oauth2"));
 router.get(
   "/Callback",
   passport.authenticate("oauth2", {
-    failureRedirect: `${process.env.APP_HOST}login`,
+    failureRedirect: `${appConfig.URL}/login`,
   }),
   (req: Request, res: Response) => {
-    res.redirect((req.query.ReturnUrl as string) || "/");
+    const searchParams = new URLSearchParams();
+
+    if (req.query.ReturnUrl)
+      searchParams.append("ReturnUrl", req.query.ReturnUrl as string);
+    return res.redirect(`${appConfig.URL}?${searchParams.toString()}`);
   }
 );
 
