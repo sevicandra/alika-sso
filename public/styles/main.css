@@ -367,6 +367,9 @@
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
   .flex-col {
     flex-direction: column;
   }
@@ -518,6 +521,9 @@
   .py-1 {
     padding-block: calc(var(--spacing) * 1);
   }
+  .py-5 {
+    padding-block: calc(var(--spacing) * 5);
+  }
   .pt-0 {
     padding-top: calc(var(--spacing) * 0);
   }
@@ -569,8 +575,8 @@
   .text-base-content {
     color: var(--color-base-content);
   }
-  .text-neutral-content {
-    color: var(--color-neutral-content);
+  .text-neutral {
+    color: var(--color-neutral);
   }
   .text-primary {
     color: var(--color-primary);
