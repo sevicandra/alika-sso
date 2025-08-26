@@ -5,7 +5,7 @@ import {
   createClientScope,
   updateClientScope,
   deleteClientScope,
-} from "@/controllers/clientScope.controller";
+} from "@/controllers/v1/clientScope.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 

@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 export const appConfig = {
@@ -10,4 +10,5 @@ export const appConfig = {
   TIMEZONE: process.env.APP_TIMEZONE || "Asia/Jakarta",
   LOCALE: process.env.APP_LOCALE || "id",
   JWT_SECRET: process.env.JWT_SECRET || "secret",
+  LEVEL_LOG: process.env.APP_LEVEL_LOG || "info",
 };

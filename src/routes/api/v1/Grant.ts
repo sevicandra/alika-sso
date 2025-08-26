@@ -5,7 +5,7 @@ import {
   createGrant,
   updateGrant,
   deleteGrant,
-} from "@/controllers/grant.controller";
+} from "@/controllers/v1/grant.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 

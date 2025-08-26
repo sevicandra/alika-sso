@@ -14,7 +14,7 @@ import {
   deleteClient,
   updateClient,
   createClient,
-} from "@/controllers/client.controller";
+} from "@/controllers/v1/client.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 

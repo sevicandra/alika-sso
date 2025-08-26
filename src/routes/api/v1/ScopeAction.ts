@@ -5,7 +5,7 @@ import {
   createScopeAction,
   updateScopeAction,
   deleteScopeAction,
-} from "@/controllers/scopeAction.controller";
+} from "@/controllers/v1/scopeAction.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 

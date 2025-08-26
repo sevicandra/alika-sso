@@ -7,11 +7,13 @@ import {
   deleteUser,
   getUserRole,
   addUserRole,
-} from "@/controllers/user.controller";
+  getUserByRole,
+} from "@/controllers/v1/user.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 
 router.get("/", authenticate(["account.user.read"]), getAllUsers);
+router.get("/getByRole", authenticate(["account.user.read"]), getUserByRole);
 router.get("/:id", authenticate(["account.user.read"]), getUserById);
 router.post("/", authenticate(["account.user.write"]), createUser);
 router.patch("/:id", authenticate(["account.user.update"]), updateUser);

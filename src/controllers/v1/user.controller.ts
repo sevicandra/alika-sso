@@ -28,16 +28,14 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
         { nama: { [Op.like]: `%${search}%` } },
       ];
     if (kodeSatker) where.kd_satker = kodeSatker;
-    const users = await UserAssignments.findAll({
+    const { rows: data, count } = await UserAssignments.findAndCountAll({
       where,
       order,
       limit,
       offset,
     });
-    const count = await UserAssignments.count({
-      where,
-    });
-    return successResponse(res, "Success get all users", users, {
+
+    return successResponse(res, "Success get all users", data, {
       limit,
       offset,
       total: count,
@@ -339,7 +337,7 @@ export const getUserRole = async (req: AuthenticatedRequest, res: Response) => {
           {
             association: "Service",
             attributes: ["name"],
-          }
+          },
         ],
       },
     });
@@ -417,6 +415,91 @@ export const addUserRole = async (req: AuthenticatedRequest, res: Response) => {
     const data = await user.addRole(role);
     return successResponse(res, "Success add user role", data);
   } catch (error: unknown) {
+    if (
+      error instanceof ValidationError ||
+      error instanceof UniqueConstraintError
+    ) {
+      const parsedErrors = error.errors.map((err) => ({
+        field: err.path,
+        message: err.message,
+      }));
+      return errorResponse(res, "Validation gagal", parsedErrors, 422);
+    } else if (
+      error instanceof DatabaseError ||
+      error instanceof ConnectionError
+    ) {
+      const parsedErrors = error.message;
+      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
+    } else if (error instanceof ConnectionError) {
+      const parsedErrors = { message: "Gagal terhubung ke database" };
+      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
+    } else if (error instanceof AxiosError) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "isAxiosError" in error &&
+        (error as AxiosError).isAxiosError
+      ) {
+        const axiosError = error as AxiosError;
+        const statusCode = axiosError.response?.status || 500;
+        const message =
+          (axiosError.response?.data as { message?: string })?.message ||
+          axiosError.message ||
+          "Kesalahan pada permintaan eksternal";
+        const details = axiosError.response?.data || null;
+        return errorResponse(res, message, details, statusCode);
+      }
+      return errorResponse(res, "Terjadi kesalahan", null, 500);
+    } else if (error instanceof Error) {
+      const parsedErrors = { message: error.message };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+    } else {
+      const parsedErrors = { message: "Kesalahan tidak diketahui" };
+      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+    }
+  }
+};
+
+export const getUserByRole = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || undefined;
+    const offset = parseInt(req.query.offset as string) || undefined;
+    const service_kode = req.query.service_kode as string | undefined;
+    const role = req.query.role as string | undefined;
+    if (!service_kode || !role) {
+      return errorResponse(res, "Missing required parameters", null, 400);
+    }
+
+    const { rows: data, count } = await UserAssignments.findAndCountAll({
+      where: {
+        service_kode,
+      },
+      include: [
+        {
+          association: "Roles",
+          where: {
+            kode: role,
+          },
+          required: true,
+          attributes: [],
+        },
+      ],
+      limit,
+      offset,
+    });
+
+    return successResponse(res, "Success get user by role", data, {
+      limit,
+      offset,
+      total: count,
+      totalPages: limit ? Math.ceil(count / limit) : 1,
+    });
+  } catch (error: unknown) {
+    console.log(error);
+
     if (
       error instanceof ValidationError ||
       error instanceof UniqueConstraintError

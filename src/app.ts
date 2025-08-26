@@ -11,6 +11,10 @@ import "./register-alias";
 import SessionStore from "./utils/session.util";
 import passport from "@/services/passport.service";
 import methodOverride from "method-override";
+import cron from "node-cron";
+import { AuthorizationCode, RefreshToken, Session } from "./models";
+import { Op } from "sequelize";
+
 dotenv.config();
 const sessionStore = new SessionStore();
 const port = appConfig.PORT;
@@ -52,6 +56,34 @@ app.use("/", router);
 
 app.listen(port, () => {
   console.log(`${appConfig.NAME} Server is up on port ${port}`);
+});
+
+cron.schedule("0 * * * * *", async () => {
+  console.log("Running cron job");
+  
+  await AuthorizationCode.destroy({
+    where: {
+      expiresAt: {
+        [Op.lt]: new Date(),
+      },
+    },
+  });
+  await RefreshToken.destroy({
+    where: {
+      expiresAt: {
+        [Op.lt]: new Date(),
+      },
+    },
+  });
+
+  await Session.destroy({
+    where: {
+      expires: {
+        [Op.lt]: new Date(),
+      },
+    },
+  });
+  console.log("Cron job finished");
 });
 
 export default app;

@@ -11,7 +11,7 @@ import {
   getServiceScope,
   createServiceScope,
   deleteServiceScope,
-} from "@/controllers/service.controller";
+} from "@/controllers/v1/service.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 const router = Router();
 

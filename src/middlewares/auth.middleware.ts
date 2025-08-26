@@ -67,9 +67,6 @@ export function authenticate(
         "iss",
         "aud",
       ]);
-      req.roles = decoded.account.find(
-        (a) => a.service.toLowerCase() === "account"
-      )?.roles;
       if (requiredScopes) {
         const tokenScopes = decoded.scope;
         const hasRequiredScopes = requiredScopes.every((scope) => {
@@ -85,6 +82,9 @@ export function authenticate(
         }
       }
       if (requiredRoles) {
+        req.roles = decoded.account?.find(
+          (a) => a.service.toLowerCase() === "account"
+        )?.roles;
         const hasRequiredRoles = requiredRoles.every((r) => {
           const [service, role] = r.split(".");
           const userRole = decoded.account.find(
@@ -100,6 +100,8 @@ export function authenticate(
       }
       next();
     } catch (e: unknown) {
+      console.log(e);
+
       if (e instanceof JsonWebTokenError) {
         return errorResponse(res, e.message, null, 401);
       } else if (e instanceof TokenExpiredError) {
@@ -109,7 +111,7 @@ export function authenticate(
           res,
           "Internal Server Error",
           {
-            message: "Unknown error",
+            message: e instanceof Error ? e.message : "Unknown error",
           },
           500
         );

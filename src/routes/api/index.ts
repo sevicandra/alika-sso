@@ -1,24 +1,9 @@
 import { Router } from "express";
-import Client from "./Client";
-// import GlobalRole from "./GlobalRole";
-import Grant from "./Grant";
-import Service from "./Service";
-import Role from "./Role";
-import Scope from "./Scope";
-import User from "./User";
-import ScopeAction from "./ScopeAction";
-import ClientScope from "./ClientScope";
 import v2 from "./v2";
+import v1 from "./v1"
 
 const router = Router();
-router.use("/client", Client);
-// router.use("/globalRole", GlobalRole);
-router.use("/grant", Grant);
-router.use("/service", Service);
-router.use("/role", Role);
-router.use("/scope", Scope);
-router.use("/user", User);
-router.use("/scopeAction", ScopeAction);
-router.use("/clientScope", ClientScope);
+router.use("/v1", v1);
 router.use("/v2", v2);
+
 export default router;
