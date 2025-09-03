@@ -50,7 +50,7 @@ passport.use(
             gravatar: userInfo.data.gravatar,
             preferred_username: userInfo.data.preferred_username,
             nik: userInfo.data.g2c_Nik,
-            npwp: userInfo.data.g2c_Npwp,
+            npwp: userInfo.data.g2c_Npwp.replace(/\D/g, ""),
           });
           cb(null, user);
         } else {
@@ -69,7 +69,7 @@ passport.use(
             gravatar: userInfo.data.gravatar,
             preferred_username: userInfo.data.preferred_username,
             nik: userInfo.data.g2c_Nik,
-            npwp: userInfo.data.g2c_Npwp,
+            npwp: userInfo.data.g2c_Npwp.replace(/\D/g, ""),
           });
           cb(null, res);
         }

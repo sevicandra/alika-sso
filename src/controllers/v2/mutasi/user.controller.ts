@@ -1,4 +1,4 @@
-import { UserAssignments, UserRole } from "@/models";
+import { sequelize, UserAssignments, UserRole } from "@/models";
 import { errorResponse, successResponse } from "@/helpers/respose.helper";
 import { AuthenticatedRequest } from "@/types/auth";
 import { Response } from "express";
@@ -220,6 +220,15 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
       return errorResponse(res, "Data tidak ditemukan", null, 404);
     }
 
+    if (data.nip === nip) {
+      return errorResponse(
+        res,
+        "Anda tidak dapat menghapus data ini",
+        null,
+        403
+      );
+    }
+
     if (nip) data.nip = nip;
     if (nama) data.nama = nama;
 
@@ -274,6 +283,7 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
 
 export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    const { nip } = req.user;
     const { id } = req.params;
     const data = await UserAssignments.findOne({
       where: {
@@ -284,6 +294,15 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
 
     if (!data) {
       return errorResponse(res, "Data tidak ditemukan", null, 404);
+    }
+
+    if (data.nip === nip) {
+      return errorResponse(
+        res,
+        "Anda tidak dapat menghapus data ini",
+        null,
+        403
+      );
     }
 
     await data.destroy();
@@ -457,8 +476,19 @@ export const addRole = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 export const removeRole = async (req: AuthenticatedRequest, res: Response) => {
+  const t = await sequelize.transaction();
   try {
     const { id, role } = req.params;
+    const currentUser = await UserRole.count({
+      where: {
+        role_kode: role,
+      },
+    });
+
+    if (currentUser <= 1) {
+      await t.rollback();
+      return errorResponse(res, "Tidak dapat menghapus role", null, 404);
+    }
     const data = await UserRole.findOne({
       where: {
         user_id: id,
@@ -468,9 +498,11 @@ export const removeRole = async (req: AuthenticatedRequest, res: Response) => {
     if (!data) {
       return errorResponse(res, "Data tidak ditemukan", null, 404);
     }
-    await data.destroy();
+    await data.destroy({ transaction: t });
+    await t.commit();
     return successResponse(res, "Success remove role");
   } catch (error: unknown) {
+    await t.rollback();
     if (
       error instanceof ValidationError ||
       error instanceof UniqueConstraintError

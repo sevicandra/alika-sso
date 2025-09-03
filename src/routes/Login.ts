@@ -29,7 +29,6 @@ router.get(
   }),
   (req: Request, res: Response) => {
     const searchParams = new URLSearchParams();
-
     if (req.query.ReturnUrl)
       searchParams.append("ReturnUrl", req.query.ReturnUrl as string);
     return res.redirect(`${appConfig.URL}?${searchParams.toString()}`);
