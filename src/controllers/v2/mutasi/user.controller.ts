@@ -8,7 +8,6 @@ import {
   ConnectionError,
   UniqueConstraintError,
   Op,
-  col,
 } from "sequelize";
 import { AxiosError } from "axios";
 
@@ -24,8 +23,8 @@ export const getAllUser = async (req: AuthenticatedRequest, res: Response) => {
     };
     if (search)
       where[Op.or] = [
-        where(col("nama"), { [Op.like]: `%${search}%` }),
-        where(col("nip"), { [Op.like]: `%${search}%` }),
+        { nama: { [Op.like]: `%${search}%` } },
+        { nip: { [Op.like]: `%${search}%` } },
       ];
 
     const { rows: data, count } = await UserAssignments.findAndCountAll({
