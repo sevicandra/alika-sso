@@ -12,16 +12,14 @@ import { CodeRequest } from "@/types/auth";
 
 export const authorizationCode = async (req: CodeRequest, res: Response) => {
   try {
-    const session = req.session as any;
-    console.log("session", req.sessionID);
-    
+    const session = req.session as any;    
     const code = await AuthorizationCode.create({
       client_id: req.query.client_id as string,
       user_id: session.passport.user as string,
       scope: req.scope || "",
       redirect_uri: req.query.redirect_uri as string,
       sessionId: req.sessionID,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 2 * 60 * 1000),
     });
     return res.redirect(
       `${req.query.redirect_uri}?code=${code.code}${req.query.state ? `&state=${req.query.state}` : ""}`
