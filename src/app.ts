@@ -58,7 +58,7 @@ app.listen(port, () => {
   console.log(`${appConfig.NAME} Server is up on port ${port}`);
 });
 
-cron.schedule("0 * * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   console.log("Running cron job");
   
   await AuthorizationCode.destroy({
