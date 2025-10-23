@@ -45,7 +45,7 @@ export const clientCredentialsGrant = async (
         token: generatedRefreshToken,
         userId: null,
         clientId: req.client.client_id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
         scope: req.scope,
       });
       const refreshToken = await JwtUtil.generateToken({
@@ -53,7 +53,7 @@ export const clientCredentialsGrant = async (
           token: generatedRefreshToken,
           id: token.id,
         },
-        expiresIn: "30d",
+        expiresIn: "4h",
       });
       req.refresh_token = refreshToken;
     }

@@ -26,7 +26,7 @@ export const authorizationCodeGrant = async (
     return errorResponse(res, "Missing required parameters", null, 400);
   }
   const t = await sequelize.transaction();
-  
+
   try {
     if (!req.client.grant_types.includes("authorization_code")) {
       return errorResponse(res, "Invalid grant type", null, 401);
@@ -113,7 +113,7 @@ export const authorizationCodeGrant = async (
         token: generatedRefreshToken,
         userId: user.sub,
         clientId: req.client.client_id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
         scope: authorizationCode.scope,
       });
       const refreshToken = await JwtUtil.generateToken({
@@ -122,7 +122,7 @@ export const authorizationCodeGrant = async (
           id: token.id,
           sessionId: authorizationCode.sessionId,
         },
-        expiresIn: "30d",
+        expiresIn: "4h",
       });
       req.refresh_token = refreshToken;
     }
@@ -136,7 +136,7 @@ export const authorizationCodeGrant = async (
     return next();
   } catch (error: unknown) {
     console.log(error);
-    
+
     await t.rollback();
     if (
       error instanceof ValidationError ||
