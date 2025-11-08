@@ -12,6 +12,8 @@ import {
 } from "sequelize";
 import { AxiosError } from "axios";
 import { Session } from "@/models";
+import { appConfig } from "@/config/app.config";
+import { passportConfig } from "@/config/passport.config";
 
 export const logout = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -42,8 +44,15 @@ export const logout = async (req: AuthenticatedRequest, res: Response) => {
         await session.destroy();
       }
     });
-    res.clearCookie(`${process.env.APP_NAME || "SSO"}.session`);
-    return successResponse(res, "Logout berhasil", null, 200);
+    res.clearCookie(`${appConfig.NAME || "SSO"}.session`);
+    return successResponse(
+      res,
+      "Logout berhasil",
+      {
+        redirect: `${passportConfig.BASE_URI}/${passportConfig.ENDSESSION_ENDPOINT}`,
+      },
+      200
+    );
   } catch (error: unknown) {
     if (
       error instanceof ValidationError ||

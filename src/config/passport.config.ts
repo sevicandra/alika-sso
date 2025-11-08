@@ -7,6 +7,7 @@ export const passportConfig = {
   AUTHORIZE_ENDPOINT: process.env.SSO_AUTHORIZE_ENDPOINT || "",
   TOKEN_ENDPOINT: process.env.SSO_TOKEN_ENDPOINT || "",
   REDIRECT_URI: process.env.SSO_REDIRECT_URI || "",
+  ENDSESSION_ENDPOINT: process.env.SSO_ENDSESSION_ENDPOINT || "",
   USERINFO_ENDPOINT: process.env.SSO_USERINFO_ENDPOINT || "",
   SCOPE: process.env.SSO_SCOPE || "",
   CLIENT_ID: process.env.SSO_CLIENT_ID_FILE

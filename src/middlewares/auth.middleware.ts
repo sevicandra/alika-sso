@@ -100,8 +100,6 @@ export function authenticate(
       }
       next();
     } catch (e: unknown) {
-      console.log(e);
-
       if (e instanceof JsonWebTokenError) {
         return errorResponse(res, e.message, null, 401);
       } else if (e instanceof TokenExpiredError) {
