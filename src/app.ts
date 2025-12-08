@@ -24,6 +24,9 @@ import {
 import { AxiosError } from "axios";
 import jwt from "jsonwebtoken";
 import { errorResponse } from "@/helpers/respose.helper";
+import redisClient from "@/config/redis.config";
+
+redisClient.connect();
 
 dotenv.config();
 const sessionStore = new SessionStore();

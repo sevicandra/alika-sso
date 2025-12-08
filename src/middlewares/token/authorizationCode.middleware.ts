@@ -135,8 +135,6 @@ export const authorizationCodeGrant = async (
     await t.commit();
     return next();
   } catch (error: unknown) {
-    console.log(error);
-
     await t.rollback();
     if (
       error instanceof ValidationError ||

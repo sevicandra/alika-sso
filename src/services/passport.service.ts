@@ -3,6 +3,7 @@ import passport from "passport";
 import { Strategy as OAuth2Strategy, VerifyCallback } from "passport-oauth2";
 import User from "../models/User.model";
 import axios from "axios";
+import { KemenkeuService } from "./kemenkeu.service";
 
 passport.use(
   new OAuth2Strategy(
@@ -29,47 +30,75 @@ passport.use(
             },
           }
         );
+        const profile = await KemenkeuService.getProfilHris2({
+          nip: userInfo.data.nip,
+        });
+
         const user = await User.findOne({
           where: {
-            nip: userInfo.data.nip,
+            nip: profile.nip18,
           },
         });
         if (user) {
           await user.update({
-            name: userInfo.data.name,
-            email: userInfo.data.email,
+            name: profile.nama,
+            email: profile.email,
             kode_kl: userInfo.data.kode_kl,
             nama_kl: userInfo.data.nama_kl,
-            nip: userInfo.data.nip,
-            jabatan: userInfo.data.jabatan,
-            jenis_jabatan: userInfo.data.jenis_jabatan,
-            kode_organisasi: userInfo.data.kode_organisasi,
-            organisasi: userInfo.data.organisasi,
-            kode_satker: userInfo.data.kode_satker,
-            satker: userInfo.data.satker,
+            nip: profile.nip18,
+            jabatan:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.namaJabatan || profile.jabatan[0].namaJabatan,
+            jenis_jabatan:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.jenisJabatan || profile.jabatan[0].jenisJabatan,
+            kode_organisasi:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.kodeOrganisasi || profile.jabatan[0].kodeOrganisasi,
+            organisasi:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.organisasi || profile.jabatan[0].organisasi,
+            kode_satker: profile.kdSatker,
+            satker: profile.namaSatker,
             gravatar: userInfo.data.gravatar,
             preferred_username: userInfo.data.preferred_username,
-            nik: userInfo.data.g2c_Nik,
-            npwp: userInfo.data.g2c_Npwp.replace(/\D/g, ""),
+            nik: profile.nik,
+            npwp: profile.npwp.replace(/\D/g, ""),
           });
           cb(null, user);
         } else {
           const res = await User.create({
-            name: userInfo.data.name,
-            email: userInfo.data.email,
+            name: profile.nama,
+            email: profile.email,
             kode_kl: userInfo.data.kode_kl,
             nama_kl: userInfo.data.nama_kl,
-            nip: userInfo.data.nip,
-            jabatan: userInfo.data.jabatan,
-            jenis_jabatan: userInfo.data.jenis_jabatan,
-            kode_organisasi: userInfo.data.kode_organisasi,
-            organisasi: userInfo.data.organisasi,
-            kode_satker: userInfo.data.kode_satker,
-            satker: userInfo.data.satker,
+            nip: profile.nip18,
+            jabatan:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.namaJabatan || profile.jabatan[0].namaJabatan,
+            jenis_jabatan:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.jenisJabatan || profile.jabatan[0].jenisJabatan,
+            kode_organisasi:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.kodeOrganisasi || profile.jabatan[0].kodeOrganisasi,
+            organisasi:
+              profile.jabatan.find(
+                (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
+              )?.organisasi || profile.jabatan[0].organisasi,
+            kode_satker: profile.kdSatker,
+            satker: profile.namaSatker,
             gravatar: userInfo.data.gravatar,
             preferred_username: userInfo.data.preferred_username,
-            nik: userInfo.data.g2c_Nik,
-            npwp: userInfo.data.g2c_Npwp.replace(/\D/g, ""),
+            nik: profile.nik,
+            npwp: profile.npwp.replace(/\D/g, ""),
           });
           cb(null, res);
         }
