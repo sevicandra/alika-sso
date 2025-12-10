@@ -53,7 +53,7 @@ export const clientCredentialsGrant = async (
           token: generatedRefreshToken,
           id: token.id,
         },
-        expiresIn: "4h",
+        expiresIn: "1h",
       });
       req.refresh_token = refreshToken;
     }

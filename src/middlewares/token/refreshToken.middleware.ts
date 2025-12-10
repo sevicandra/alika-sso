@@ -117,7 +117,7 @@ export const refreshTokenGrant = async (
           id: token.id,
           sessionId: sessionId,
         },
-        expiresIn: "4h",
+        expiresIn: "1h",
       });
 
       req.refresh_token = refresh_token;

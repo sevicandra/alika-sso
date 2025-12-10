@@ -122,7 +122,7 @@ export const authorizationCodeGrant = async (
           id: token.id,
           sessionId: authorizationCode.sessionId,
         },
-        expiresIn: "4h",
+        expiresIn: "1h",
       });
       req.refresh_token = refreshToken;
     }
