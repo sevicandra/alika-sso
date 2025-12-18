@@ -108,7 +108,7 @@ export const refreshTokenGrant = async (
         token: generatedRefreshToken,
         userId: userId,
         clientId: req.client.client_id,
-        expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
         scope: req.scope || "",
       });
       const refresh_token = await JwtUtil.generateToken({
@@ -137,7 +137,7 @@ export const refreshTokenGrant = async (
         token: generatedRefreshToken,
         userId: null,
         clientId: req.client.client_id,
-        expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
         scope: req.scope || "",
       });
       const refresh_token = await JwtUtil.generateToken({
@@ -145,7 +145,7 @@ export const refreshTokenGrant = async (
           token: generatedRefreshToken,
           id: token.id,
         },
-        expiresIn: "4h",
+        expiresIn: "1h",
       });
 
       req.refresh_token = refresh_token;

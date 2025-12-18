@@ -113,7 +113,7 @@ export const authorizationCodeGrant = async (
         token: generatedRefreshToken,
         userId: user.sub,
         clientId: req.client.client_id,
-        expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
         scope: authorizationCode.scope,
       });
       const refreshToken = await JwtUtil.generateToken({
