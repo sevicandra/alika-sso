@@ -1,26 +1,14 @@
-import { TokenRequest } from "@/types/auth";
-import { errorResponse } from "@/helpers/respose.helper";
-import { NextFunction, Response } from "express";
-import { Client } from "@/models";
+import { NextFunction, Response, Request } from "express";
+import { Client } from "@/repositories";
 import { verify } from "@/utils/crypt.util";
-import { AxiosError } from "axios";
 import { clientCredentialsGrant } from "./clientCredentials.middleware";
 import { authorizationCodeGrant } from "./authorizationCode.middleware";
 import { refreshTokenGrant } from "./refreshToken.middleware";
+import { asyncHandler } from "../async-handler.middleware";
+import { AuthenticationError } from "@/utils/errors";
 
-import {
-  ValidationError,
-  UniqueConstraintError,
-  DatabaseError,
-  ConnectionError,
-} from "sequelize";
-
-export const verifyClient = async (
-  req: TokenRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+export const verifyClient = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const decode = async (authorization: string) => {
       return Buffer.from(authorization, "base64").toString("utf-8");
     };
@@ -37,12 +25,8 @@ export const verifyClient = async (
         (
           await decode(req.headers.authorization?.split(" ")[1]?.toString())
         ).split(":")[1]);
-    const grant_type = await req.body.grant_type;
-    if (!client_id || !client_secret || !grant_type) {
-      return errorResponse(res, "Missing required parameters", null, 400);
-    }
 
-    const client = await Client.scope("withSecret").findOne({
+    const client = await Client.findOne({
       where: { client_id: client_id },
       include: [
         {
@@ -55,12 +39,17 @@ export const verifyClient = async (
           association: "RedirectUris",
         },
       ],
+      attributes: {
+        include: ["client_id", "client_secret"],
+      },
     });
+
     if (!client) {
-      return errorResponse(res, "Client not found", null, 401);
+      throw new AuthenticationError("Client not found");
     }
+
     if (!(await verify(client_secret, client.client_secret))) {
-      return errorResponse(res, "Invalid client", null, 401);
+      throw new AuthenticationError("Client not found");
     }
     req.client = {
       id: client.id,
@@ -73,56 +62,17 @@ export const verifyClient = async (
     };
     switch (req.body.grant_type) {
       case "client_credentials":
-        return clientCredentialsGrant(req, res, next);
+        await clientCredentialsGrant(req, res, next);
+        break;
       case "authorization_code":
-        return authorizationCodeGrant(req, res, next);
+        await authorizationCodeGrant(req, res, next);
+        break;
       case "refresh_token":
-        return refreshTokenGrant(req, res, next);
+        await refreshTokenGrant(req, res, next);
+        break;
       default:
-        return errorResponse(res, "Invalid grant type", null, 400);
-    }
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
-      }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+        throw new AuthenticationError("Invalid grant type");
+        break;
     }
   }
-};
+);

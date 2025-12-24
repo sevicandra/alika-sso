@@ -1,12 +1,16 @@
 import { Router, Request, Response } from "express";
 import passport from "@/services/passport.service";
 import { appConfig } from "@/config/app.config";
+import lusca from "lusca";
 
 const router = Router();
+
+router.use(lusca.csrf());
 
 router.get("/", (req: Request, res: Response) => {
   return res.render("auth/login", {
     url: appConfig.URL,
+    csrfToken: res.locals._csrf,
   });
 });
 

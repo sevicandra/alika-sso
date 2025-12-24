@@ -1,9 +1,10 @@
 import axios from "axios";
 import { ServiceKemenkeuConfig } from "@/config/serviceKemenkeu.config";
 import { appConfig } from "@/config/app.config";
-import { RedisService } from "./redis.service";
+import { redisService } from "@/services/redis-service";
 import { Keluarga, Profile, Profile2 } from "@/types/serviceKemenkeu";
-const redis = new RedisService();
+import { ExternalServiceError } from "@/utils/errors";
+import logger from "@/utils/Logger.utils";
 
 export class KemenkeuService {
   private static token: string | null = null;
@@ -33,17 +34,22 @@ export class KemenkeuService {
       this.tokenExpiration = currentTime + response.data.expires_in;
       return this.token;
     } catch (error) {
-      console.error("Error requesting OAuth2 token:", error);
-      throw new Error("Failed to get access token");
+      logger.error("Failed to get access token", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new ExternalServiceError(
+        "KemenkeuService",
+        "Failed to get access token"
+      );
     }
   }
   static async getProfil({ nip }: { nip: string }): Promise<Profile> {
     try {
-      const cachedProfil = await redis.getCache(
+      const cachedProfil = await redisService.get<Profile>(
         `${appConfig.NAME}:KemenkeuService:Profil:${nip}`
       );
       if (cachedProfil) {
-        return JSON.parse(cachedProfil);
+        return cachedProfil;
       }
       const response = await axios.get(
         `${ServiceKemenkeuConfig.BASE_URI}/hris/profil/Pegawai/GetByNip/${nip}`,
@@ -53,24 +59,26 @@ export class KemenkeuService {
           },
         }
       );
-      await redis.setCache(
+      await redisService.setWithTimeout(
         `${appConfig.NAME}:KemenkeuService:Profil:${nip}`,
         JSON.stringify(response.data.Data),
         3600
       );
-      return response.data.Data;
+      return response.data.Data as Profile;
     } catch (error) {
-      console.error("Error requesting Profil:", error);
-      throw new Error("Failed to get Profil");
+      logger.error("Failed to get access token", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new ExternalServiceError("KemenkeuService", "Failed to get Profil");
     }
   }
-  static async getKeluarga({ nip }: { nip: string }): Promise<Keluarga> {
+  static async getKeluarga({ nip }: { nip: string }): Promise<Keluarga[]> {
     try {
-      const cachedKeluarga = await redis.getCache(
+      const cachedKeluarga = await redisService.get<Keluarga[]>(
         `${appConfig.NAME}:KemenkeuService:Keluarga:${nip}`
       );
       if (cachedKeluarga) {
-        return JSON.parse(cachedKeluarga);
+        return cachedKeluarga;
       }
       const response = await axios.get(
         `${ServiceKemenkeuConfig.BASE_URI}/hris/keluarga/Riwayat/GetKeluargaByNip/${nip}`,
@@ -80,24 +88,26 @@ export class KemenkeuService {
           },
         }
       );
-      await redis.setCache(
+      await redisService.setWithTimeout(
         `${appConfig.NAME}:KemenkeuService:Keluarga:${nip}`,
         JSON.stringify(response.data.Data),
         3600
       );
-      return response.data.Data;
+      return response.data.Data as Keluarga[];
     } catch (error) {
-      console.error("Error requesting Profil:", error);
-      throw new Error("Failed to get Profil");
+      logger.error("Failed to get access token", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new Error("Failed to get Keluarga");
     }
   }
   static async getProfilHris2({ nip }: { nip: string }): Promise<Profile2> {
     try {
-      const cachedProfil = await redis.getCache(
+      const cachedProfil = await redisService.get<Profile2>(
         `${appConfig.NAME}:KemenkeuService:Profil2:${nip}`
       );
       if (cachedProfil) {
-        return JSON.parse(cachedProfil);
+        return cachedProfil;
       }
       const response = await axios.get(
         `${ServiceKemenkeuConfig.BASE_URI2}/HrisProfil/2.0/api/Profile/GetPegawai?nip=${nip}`,
@@ -107,15 +117,17 @@ export class KemenkeuService {
           },
         }
       );
-      await redis.setCache(
+      await redisService.setWithTimeout(
         `${appConfig.NAME}:KemenkeuService:Profil2:${nip}`,
         JSON.stringify(response.data.data),
         3600
       );
       return response.data.data;
     } catch (error) {
-      console.error("Error requesting Profil:", error);
-      throw new Error("Failed to get Profil");
+      logger.error("Failed to get access token", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new ExternalServiceError("KemenkeuService", "Failed to get Profil");
     }
   }
 }

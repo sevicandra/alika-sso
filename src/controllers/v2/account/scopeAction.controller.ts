@@ -1,325 +1,104 @@
-import { ScopeAction } from "@/models";
-import { errorResponse, successResponse } from "@/helpers/respose.helper";
-import { AuthenticatedRequest } from "@/types/auth";
-import { Response } from "express";
-import {
-  ValidationError,
-  DatabaseError,
-  ConnectionError,
-  UniqueConstraintError,
-  Op,
-} from "sequelize";
-import { AxiosError } from "axios";
+import { ScopeAction } from "@/repositories";
+import { successResponse } from "@/helpers/respose.helper";
+import { Response, Request } from "express";
+import { Op } from "sequelize";
+import { asyncHandler } from "@/middlewares/async-handler.middleware";
+import { InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { sortBuilder } from "@/helpers/sequelizer.helper";
 
-export const getAllScopeAction = async (req: AuthenticatedRequest, res: Response) => {
-  try {
+export const ScopeActionControllerV2 = {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || undefined;
     const offset = parseInt(req.query.offset as string) || undefined;
-    const sortField = (req.query.sortField as string) || "kode";
-    const sortOrder = (req.query.sortOrder as string) || "ASC";
+    const sort = req.query.sort as string;
+    const order = sortBuilder(sort);
     const search = req.query.search || undefined;
     const where: any = {};
     if (search) where.name = { [Op.like]: `%${search}%` };
-
-    const { rows: data, count } = await ScopeAction.findAndCountAll({
-      where,
-      limit,
-      offset,
-      order: [[sortField, sortOrder.toUpperCase()]],
-    });
-
-    return successResponse(res, "Success get all data scope action", data, {
-      limit,
-      offset,
-      total: count,
-      totalPages: limit ? Math.ceil(count / limit) : 1,
-    });
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
+    const { items: data, pagination } = await ScopeAction.findAllWithPagination(
+      {
+        where,
+        limit,
+        offset,
+        order,
       }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    }
-  }
-};
-
-export const getScopeActionById = async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  try {
-    const data = await ScopeAction.findOne({
-      where: {
-        id,
-      },
-    });
-
+    );
+    successResponse(
+      res,
+      "Success get all scope action",
+      data.map((item) => ({
+        id: item.id,
+        kode: item.kode,
+        name: item.name,
+        description: item.description,
+      })),
+      pagination
+    );
+  }),
+  getById: asyncHandler(async (req: Request, res: Response) => {
+    const { ScopeActionId } = req.params;
+    const data = await ScopeAction.findById(ScopeActionId);
     if (!data) {
-      return errorResponse(res, "Data tidak ditemukan", null, 404);
+      throw new NotFoundError("Scope action not found");
     }
-
-    return successResponse(res, "Success get data scope action by id", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
-      }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    }
-  }
-};
-
-export const createScopeAction = async (req: AuthenticatedRequest, res: Response) => {
-  try {
+    successResponse(res, "Success get scope action", data);
+  }),
+  create: asyncHandler(async (req: Request, res: Response) => {
     const { kode, name, description } = req.body;
+
     const data = await ScopeAction.create({
       kode,
       name,
       description,
     });
-
-    return successResponse(res, "Success create data scope action", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
+    successResponse(res, "Success create scope action", data);
+  }),
+  update: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+      const { ScopeActionId } = req.params;
+      const { kode, name, description } = req.body;
+      const data = await ScopeAction.updateOne(
+        {
+          where: {
+            id: ScopeActionId,
+          },
+        },
+        {
+          kode,
+          name,
+          description,
+        },
+        t
+      );
+      successResponse(res, "Success update scope action", data);
+    },
+    {
+      useTransaction: true,
     }
-  }
-};
-
-export const updateScopeAction = async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const { kode, name, description } = req.body;
-    const { id } = req.params;
-    const data = await ScopeAction.findOne({
-      where: {
-        id,
-      },
-    });
-
-    if (!data) {
-      return errorResponse(res, "Data tidak ditemukan", null, 404);
-    }
-
-    if (kode) data.kode = kode;
-    if (description) data.description = description;
-    if (name) data.name = name;
-    await data.save();
-
-    return successResponse(res, "Success update data scope action", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
+  ),
+  delete: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+      const { ScopeActionId } = req.params;
+      await ScopeAction.deleteOne(
+        {
+          where: {
+            id: ScopeActionId,
+          },
+        },
+        t
+      );
+      successResponse(res, "Success delete scope action", null);
+    },
+    {
+      useTransaction: true,
     }
-  }
-};
-
-export const deleteScopeAction = async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const { id } = req.params;
-    const data = await ScopeAction.findOne({
-      where: {
-        id,
-      },
-    });
-
-    if (!data) {
-      return errorResponse(res, "Data tidak ditemukan", null, 404);
-    }
-
-    await data.destroy();
-
-    return successResponse(res, "Success delete data scope action", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
-      }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    }
-  }
+  ),
 };

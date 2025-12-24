@@ -15,13 +15,13 @@ type UserAssignmentsAttributes = {
   id: string;
   nip: string;
   nama: string;
-  kd_satker: string | null;
+  kd_satker: string;
   service_kode: string;
 };
 
 type UserAssignmentsCreationAttributes = Optional<
   UserAssignmentsAttributes,
-  "id"
+  "id" | "kd_satker"
 >;
 export class UserAssignments
   extends Model<UserAssignmentsAttributes, UserAssignmentsCreationAttributes>
@@ -29,7 +29,7 @@ export class UserAssignments
 {
   public id!: string;
   public nip!: string;
-  public kd_satker!: string | null;
+  public kd_satker!: string;
   public nama!: string;
   public service_kode!: string;
 
@@ -77,13 +77,14 @@ UserAssignments.init(
     },
     kd_satker: {
       type: DataTypes.STRING(6),
-      allowNull: true,
+      allowNull: false,
       validate: {
         is: {
           msg: "Mohon masukkan kode satker yang valid",
-          args: "^(d{6})$",
+          args: "^(d{6}|-)$",
         },
       },
+      defaultValue: "-"
     },
     service_kode: {
       type: DataTypes.STRING(3),

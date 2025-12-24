@@ -18,7 +18,7 @@ module.exports = {
       },
       kd_satker: {
         type: Sequelize.STRING(6),
-        allowNull: true,
+        allowNull: false,
       },
       service_kode: {
         type: Sequelize.STRING(3),
@@ -33,7 +33,7 @@ module.exports = {
     });
     await queryInterface.addConstraint("user_assignments", {
       fields: ["nip", "kd_satker", "service_kode"],
-      name: "unique_nip",
+      name: "nip",
       type: "unique",
     });
   },

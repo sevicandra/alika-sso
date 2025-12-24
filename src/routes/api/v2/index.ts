@@ -3,9 +3,9 @@ import Mutasi from "./Mutasi";
 import Account from "./Account";
 
 const router = Router({ mergeParams: true });
-import { authenticate } from "@/middlewares/auth.middleware";
+import { authorizeRoles } from "@/middlewares/authenticate.middleware";
 
-router.use("/Mutasi", authenticate([], ["mutasi.admin"]), Mutasi);
-router.use("/Account", authenticate([], ["account.admin"]), Account);
+router.use("/Mutasi", authorizeRoles(["mutasi.admin"]), Mutasi);
+router.use("/Account", authorizeRoles(["account.admin"]), Account);
 
 export default router;

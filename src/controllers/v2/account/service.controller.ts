@@ -1,340 +1,282 @@
-import { Service } from "@/models";
-import { errorResponse, successResponse } from "@/helpers/respose.helper";
-import { AuthenticatedRequest } from "@/types/auth";
-import { Response } from "express";
-import {
-  ValidationError,
-  DatabaseError,
-  ConnectionError,
-  UniqueConstraintError,
-  Op,
-} from "sequelize";
-import { AxiosError } from "axios";
+import { Service, Role, Scope } from "@/repositories";
+import { successResponse } from "@/helpers/respose.helper";
+import { Response, Request } from "express";
+import { Op } from "sequelize";
+import { asyncHandler } from "@/middlewares/async-handler.middleware";
+import { InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { sortBuilder } from "@/helpers/sequelizer.helper";
 
-export const getAllService = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
-  try {
+export const ServiceControllerV2 = {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || undefined;
     const offset = parseInt(req.query.offset as string) || undefined;
-    const sortField = (req.query.sortField as string) || "nip";
-    const sortOrder = (req.query.sortOrder as string) || "ASC";
+    const sort = req.query.sort as string;
+    const order = sortBuilder(sort);
     const search = req.query.search || undefined;
     const where: any = {};
     if (search) where.name = { [Op.like]: `%${search}%` };
 
-    const { rows: data, count } = await Service.findAndCountAll({
+    const { items: data, pagination } = await Service.findAllWithPagination({
       where,
       limit,
       offset,
-      order: [[sortField, sortOrder.toUpperCase()]],
+      order,
     });
-
-    return successResponse(res, "Success get all data service", data, {
-      limit,
-      offset,
-      total: count,
-      totalPages: limit ? Math.ceil(count / limit) : 1,
-    });
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
-      }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    }
-  }
-};
-
-export const getServiceById = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
-  const { id } = req.params;
-  try {
+    successResponse(res, "Success get all data service", data, pagination);
+  }),
+  getById: asyncHandler(async (req: Request, res: Response) => {
+    const { ServiceKode } = req.params;
     const data = await Service.findOne({
       where: {
-        id,
+        kode: ServiceKode,
       },
     });
-
     if (!data) {
-      return errorResponse(res, "Data tidak ditemukan", null, 404);
+      throw new NotFoundError("Service not found");
     }
-
-    return successResponse(res, "Success get data service by id", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
-      }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    }
-  }
-};
-
-export const createService = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
-  try {
+    successResponse(res, "Success get data service by id", data);
+  }),
+  create: asyncHandler(async (req: Request, res: Response) => {
     const { kode, name, description } = req.body;
     const data = await Service.create({
       kode,
       name,
       description,
     });
-
-    return successResponse(res, "Success create data service", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
+    successResponse(res, "Success create data service", data);
+  }),
+  update: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+      const { ServiceKode } = req.params;
+      const { kode, name, description } = req.body;
+      const data = await Service.updateOne(
+        {
+          where: {
+            kode: ServiceKode,
+          },
+        },
+        {
+          kode,
+          name,
+          description,
+        },
+        t
+      );
+      successResponse(res, "Success update data service", data);
+    },
+    {
+      useTransaction: true,
     }
-  }
-};
+  ),
+  delete: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
+      }
+      const { ServiceKode } = req.params;
+      await Service.deleteOne(
+        {
+          where: {
+            kode: ServiceKode,
+          },
+        },
+        t
+      );
+      successResponse(res, "Success delete data service", null);
+    },
+    {
+      useTransaction: true,
+    }
+  ),
 
-export const updateService = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
-  try {
-    const { kode, name, description } = req.body;
-    const { id } = req.params;
-    const data = await Service.findOne({
+  getRoles: asyncHandler(async (req: Request, res: Response) => {
+    const { ServiceKode } = req.params;
+    const limit = parseInt(req.query.limit as string) || undefined;
+    const offset = parseInt(req.query.offset as string) || undefined;
+    const sort = req.query.sort as string;
+    const order = sortBuilder(sort);
+    const search = req.query.search || undefined;
+    const where: any = {};
+    if (search) where.name = { [Op.like]: `%${search}%` };
+
+    const { items: data, pagination } = await Role.findAllWithPagination({
       where: {
-        id,
+        service_kode: ServiceKode,
+      },
+      limit,
+      offset,
+      order,
+    });
+    successResponse(res, "Success get all data role", data, pagination);
+  }),
+  getRoleById: asyncHandler(async (req: Request, res: Response) => {
+    const { ServiceKode, RoleKode } = req.params;
+    const data = await Role.findOne({
+      where: {
+        kode: RoleKode,
+        service_kode: ServiceKode,
       },
     });
-
     if (!data) {
-      return errorResponse(res, "Data tidak ditemukan", null, 404);
+      throw new NotFoundError("Role not found");
     }
-
-    if (kode) data.kode = kode;
-    if (description) data.description = description;
-    if (name) data.name = name;
-    await data.save();
-
-    return successResponse(res, "Success update data service", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
+    successResponse(res, "Success get role by id", data);
+  }),
+  addRole: asyncHandler(
+    async (req: Request, res: Response) => {
+      const { ServiceKode } = req.params;
+      const { kode, role, description } = req.body;
+      const data = await Role.create({
+        kode,
+        role,
+        description,
+        service_kode: ServiceKode,
+      });
+      successResponse(res, "Success create data role", data);
+    },
+    {
+      useTransaction: true,
+    }
+  ),
+  updateRole: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+      const { kode, role, description } = req.body;
+      const { RoleKode, ServiceKode } = req.params;
+      const data = await Role.updateOne(
+        {
+          where: {
+            kode: RoleKode,
+            service_kode: ServiceKode,
+          },
+        },
+        {
+          kode,
+          role,
+          description,
+        },
+        t
+      );
+      successResponse(res, "Success update data role", data);
+    },
+    {
+      useTransaction: true,
     }
-  }
-};
+  ),
+  removeRole: asyncHandler(async (req: Request, res: Response) => {
+    const t = req.transaction;
+    if (!t) {
+      throw new InvalidRequestError("Transaksi tidak ditemukan");
+    }
+    const { RoleKode, ServiceKode } = req.params;
+    await Role.deleteOne(
+      {
+        where: {
+          kode: RoleKode,
+          service_kode: ServiceKode,
+        },
+      },
+      t
+    );
+    successResponse(res, "Success delete data role", null);
+  },{
+    useTransaction: true,
+  }),
 
-export const deleteService = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
-  try {
-    const { id } = req.params;
-    const data = await Service.findOne({
+  getScopes: asyncHandler(async (req: Request, res: Response) => {
+    const { ServiceKode } = req.params;
+    const limit = parseInt(req.query.limit as string) || undefined;
+    const offset = parseInt(req.query.offset as string) || undefined;
+    const sort = req.query.sort as string;
+    const order = sortBuilder(sort);
+    const search = req.query.search || undefined;
+    const where: any = {};
+    if (search) where.name = { [Op.like]: `%${search}%` };
+    const { items: data, pagination } = await Scope.findAllWithPagination({
       where: {
-        id,
+        service_kode: ServiceKode,
+      },
+      limit,
+      offset,
+      order,
+    });
+    successResponse(res, "Success get all data scope", data, pagination);
+  }),
+  getScopeById: asyncHandler(async (req: Request, res: Response) => {
+    const { ScopeKode, ServiceKode } = req.params;
+    const data = await Scope.findOne({
+      where: {
+        kode: ScopeKode,
+        service_kode: ServiceKode,
       },
     });
-
     if (!data) {
-      return errorResponse(res, "Data tidak ditemukan", null, 404);
+      throw new NotFoundError("Scope not found");
     }
-
-    await data.destroy();
-
-    return successResponse(res, "Success delete data service", data);
-  } catch (error: unknown) {
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
+    successResponse(res, "Success get data scope by id", data);
+  }),
+  addScope: asyncHandler(async (req: Request, res: Response) => {
+    const { ServiceKode } = req.params;
+    const { kode, scope } = req.body;
+    const data = await Scope.create({
+      kode,
+      scope,
+      service_kode: ServiceKode,
+    });
+    successResponse(res, "Success create data scope", data);
+  }),
+  updateScope: asyncHandler(async (req: Request, res: Response) => {
+    const t = req.transaction;
+    if (!t) {
+      throw new InvalidRequestError("Transaksi tidak ditemukan");
+    }
+    const { kode, scope } = req.body;
+    const { ScopeKode, ServiceKode } = req.params;
+    const data = await Scope.updateOne(
+      {
+        where: {
+          kode: ScopeKode,
+          service_kode: ServiceKode,
+        },
+      },
+      {
+        kode,
+        scope,
+      },
+      t
+    );
+    successResponse(res, "Success update data scope", data);
+  },{
+    useTransaction: true,
+  }),
+  removeScope: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
+      const { ScopeKode, ServiceKode } = req.params;
+      await Scope.deleteOne(
+        {
+          where: {
+            kode: ScopeKode,
+            service_kode: ServiceKode,
+          },
+        },
+        t
+      );
+      successResponse(res, "Success delete data scope", null);
+    },
+    {
+      useTransaction: true,
     }
-  }
+  ),
 };

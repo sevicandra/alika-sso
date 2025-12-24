@@ -1,18 +1,5 @@
 import { Request } from "express";
 
-declare global {
-  namespace Express {
-    interface User {
-      sub: string;
-      name: string;
-      nik: string;
-      nip: string;
-      kode_satker: string;
-      satker: string;
-      gravatar: string;
-    }
-  }
-}
 
 export interface AuthenticatedRequest extends Request {
   id?: string;

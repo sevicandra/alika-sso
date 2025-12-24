@@ -1,57 +1,34 @@
-import { NextFunction, Response } from "express";
-import { AuthorizationCode, User, RefreshToken, sequelize } from "@/models";
-import { errorResponse } from "@/helpers/respose.helper";
-import {
-  ValidationError,
-  UniqueConstraintError,
-  DatabaseError,
-  ConnectionError,
-} from "sequelize";
-import { AxiosError } from "axios";
+import { Request, Response, NextFunction } from "express";
+import { AuthorizationCode, User, RefreshToken } from "@/repositories";
 import { JwtUtil } from "@/utils/jwt.util";
-import { TokenRequest } from "@/types/auth";
 import crypto from "crypto";
+import { asyncHandler } from "../async-handler.middleware";
+import { AuthenticationError } from "@/utils/errors";
 
-export const authorizationCodeGrant = async (
-  req: TokenRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  if (
-    !req.body.grant_type ||
-    !req.body.code ||
-    !req.body.redirect_uri ||
-    !req.client
-  ) {
-    return errorResponse(res, "Missing required parameters", null, 400);
-  }
-  const t = await sequelize.transaction();
-
-  try {
-    if (!req.client.grant_types.includes("authorization_code")) {
-      return errorResponse(res, "Invalid grant type", null, 401);
+export const authorizationCodeGrant = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const t = req.transaction;
+    if (!t) {
+      throw new Error("Transaksi tidak ditemukan");
     }
-
-    if (!req.client.redirect_uris.includes(req.body.redirect_uri)) {
-      return errorResponse(res, "Invalid redirect uri", null, 401);
-    }
+    const { code, redirect_uri, client_id } = req.body;
 
     const authorizationCode = await AuthorizationCode.findOne({
       where: {
-        code: req.body.code,
+        code: code,
       },
     });
 
     if (!authorizationCode) {
-      return errorResponse(res, "Invalid code", null, 401);
+      throw new AuthenticationError("Invalid code");
     }
 
-    if (authorizationCode.redirect_uri !== req.body.redirect_uri) {
-      return errorResponse(res, "Invalid redirect uri", null, 401);
+    if (authorizationCode.redirect_uri !== redirect_uri) {
+      throw new AuthenticationError("Invalid redirect uri");
     }
 
-    if (req.client.client_id !== authorizationCode.client_id) {
-      return errorResponse(res, "Invalid client id", null, 401);
+    if (client_id !== authorizationCode.client_id) {
+      throw new AuthenticationError("Invalid client id");
     }
 
     const user = await User.findOne({
@@ -75,8 +52,9 @@ export const authorizationCodeGrant = async (
     });
 
     if (!user) {
-      return errorResponse(res, "User not found", null, 401);
+      throw new AuthenticationError("User not found");
     }
+
     req.scope = authorizationCode.scope;
     const accessToken = await JwtUtil.generateToken({
       data: {
@@ -106,7 +84,7 @@ export const authorizationCodeGrant = async (
       expiresIn: "5m",
     });
     req.access_token = accessToken;
-    if (req.client.grant_types.includes("refresh_token")) {
+    if (req.client?.grant_types.includes("refresh_token")) {
       const generatedRefreshToken = crypto.randomBytes(32).toString("hex");
 
       const token = await RefreshToken.create({
@@ -126,57 +104,17 @@ export const authorizationCodeGrant = async (
       });
       req.refresh_token = refreshToken;
     }
-    await AuthorizationCode.destroy({
-      where: {
-        code: req.body.code,
+    await AuthorizationCode.deleteOne(
+      {
+        where: {
+          code: req.body.code,
+        },
       },
-      transaction: t,
-    });
-    await t.commit();
-    return next();
-  } catch (error: unknown) {
-    await t.rollback();
-    if (
-      error instanceof ValidationError ||
-      error instanceof UniqueConstraintError
-    ) {
-      const parsedErrors = error.errors.map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return errorResponse(res, "Validation gagal", parsedErrors, 422);
-    } else if (
-      error instanceof DatabaseError ||
-      error instanceof ConnectionError
-    ) {
-      const parsedErrors = error.message;
-      return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-    } else if (error instanceof ConnectionError) {
-      const parsedErrors = { message: "Gagal terhubung ke database" };
-      return errorResponse(res, "Koneksi ke database gagal", parsedErrors, 503);
-    } else if (error instanceof AxiosError) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "isAxiosError" in error &&
-        (error as AxiosError).isAxiosError
-      ) {
-        const axiosError = error as AxiosError;
-        const statusCode = axiosError.response?.status || 500;
-        const message =
-          (axiosError.response?.data as { message?: string })?.message ||
-          axiosError.message ||
-          "Kesalahan pada permintaan eksternal";
-        const details = axiosError.response?.data || null;
-        return errorResponse(res, message, details, statusCode);
-      }
-      return errorResponse(res, "Terjadi kesalahan", null, 500);
-    } else if (error instanceof Error) {
-      const parsedErrors = { message: error.message };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    } else {
-      const parsedErrors = { message: "Kesalahan tidak diketahui" };
-      return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-    }
+      t
+    );
+    next();
+  },
+  {
+    useTransaction: true,
   }
-};
+);

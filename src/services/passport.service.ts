@@ -108,7 +108,7 @@ passport.use(
     }
   )
 );
-passport.serializeUser((user: Express.User, done) => {
+passport.serializeUser((user, done) => {
   done(null, user.sub);
 });
 passport.deserializeUser(async (sub: string, done) => {

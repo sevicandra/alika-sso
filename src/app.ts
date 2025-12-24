@@ -1,3 +1,4 @@
+import "./register-alias";
 import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -8,31 +9,34 @@ import morgan from "morgan";
 import logger from "./utils/Logger.utils";
 import session from "express-session";
 import { appConfig } from "@/config/app.config";
-import "./register-alias";
 import SessionStore from "./utils/session.util";
 import passport from "@/services/passport.service";
 import methodOverride from "method-override";
 import cron from "node-cron";
 import { AuthorizationCode, RefreshToken, Session } from "./models";
 import { Op } from "sequelize";
+import { redisService } from "@/services/redis-service";
+import { correlationIdMiddleware } from "@/middlewares/correlation-id.middleware";
 import {
-  ValidationError,
-  DatabaseError,
-  ConnectionError,
-  UniqueConstraintError,
-} from "sequelize";
-import { AxiosError } from "axios";
-import jwt from "jsonwebtoken";
-import { errorResponse } from "@/helpers/respose.helper";
-import redisClient from "@/config/redis.config";
+  notFoundHandler,
+  errorHandler,
+} from "./middlewares/error-handler.middleware";
 
-redisClient.connect();
+redisService.connect().catch((err) => {
+  logger.error("Failed to connect to Redis", {
+    error: err.message,
+    host: process.env.REDIS_HOST,
+  });
+  process.exit(1);
+});
 
 dotenv.config();
 const sessionStore = new SessionStore();
 const port = appConfig.PORT;
 const publicPath = path.join(__dirname, "../public");
 const app = express();
+
+app.use(correlationIdMiddleware);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.id = Math.random().toString(36).substr(2, 9);
@@ -50,7 +54,6 @@ app.use(
 );
 
 app.use(express.json());
-app.use(morgan("dev"));
 app.set("trust proxy", 1);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -65,8 +68,8 @@ app.use(
     store: sessionStore,
     cookie: {
       secure: process.env.APP_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 1000,
+      sameSite: "strict",
+      maxAge: 30 * 60 * 1000,
       httpOnly: true,
       path: "/",
     },
@@ -76,92 +79,18 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(publicPath));
 app.set("views", path.join(__dirname, "./views"));
 app.set("view engine", "ejs");
 
 app.use("/", router);
-
-app.all("*splat", (req: Request, res: Response) => {
-  return res.status(404).json({
-    success: false,
-    message: "Route not found",
-    data: null,
-    errors: null,
-    meta: null,
-    requestId: req.id,
+app.use(notFoundHandler);
+app.use(errorHandler);
+const server = app.listen(port, () => {
+  logger.info(`Server berjalan di port ${port}`, {
+    port: port,
+    environment: process.env.NODE_ENV,
+    nodeVersion: process.version,
   });
-});
-
-app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
-  if (
-    error instanceof ValidationError ||
-    error instanceof UniqueConstraintError
-  ) {
-    const parsedErrors = error.errors.map((err) => ({
-      field: err.path,
-      message: err.message,
-    }));
-    return errorResponse(res, "Validation gagal", parsedErrors, 422);
-  } else if (
-    error instanceof DatabaseError ||
-    error instanceof ConnectionError
-  ) {
-    const parsedErrors = error.message;
-    logger.error(error.message, {
-      stack: error.stack,
-      id: req.id,
-      method: req.method,
-      url: req.url,
-    });
-    return errorResponse(res, "Kesalahan pada database", parsedErrors, 500);
-  } else if (error instanceof AxiosError) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "isAxiosError" in error &&
-      (error as AxiosError).isAxiosError
-    ) {
-      const axiosError = error as AxiosError;
-      const statusCode = axiosError.response?.status || 500;
-      const message =
-        (axiosError.response?.data as { message?: string })?.message ||
-        axiosError.message ||
-        "Kesalahan pada permintaan eksternal";
-      const details = axiosError.response?.data || null;
-      logger.error(message, {
-        stack: error.stack,
-        id: req.id,
-        method: req.method,
-        url: req.url,
-      });
-      return errorResponse(res, message, details, statusCode);
-    }
-    logger.error(error.message, {
-      stack: error.stack,
-      id: req.id,
-      method: req.method,
-      url: req.url,
-    });
-    return errorResponse(res, "Terjadi kesalahan", null, 500);
-  } else if (error instanceof Error) {
-    const parsedErrors = { message: error.message };
-    logger.error(error.message, {
-      stack: error.stack,
-      id: req.id,
-      method: req.method,
-      url: req.url,
-    });
-    return errorResponse(res, "Terjadi kesalahan", parsedErrors, 500);
-  } else if (error instanceof jwt.TokenExpiredError) {
-    return errorResponse(res, "Token expired", null, 401);
-  } else if (error instanceof jwt.JsonWebTokenError) {
-    return errorResponse(res, "Invalid token", null, 401);
-  } else if (error instanceof jwt.NotBeforeError) {
-    return errorResponse(res, "Token not active", null, 401);
-  } else {
-    next();
-  }
 });
 
 cron.schedule("0 * * * *", async () => {
@@ -190,14 +119,6 @@ cron.schedule("0 * * * *", async () => {
     },
   });
   console.log("Cron job finished");
-});
-
-const server = app.listen(port, () => {
-  logger.info(`Server berjalan di port ${port}`, {
-    port: port,
-    environment: process.env.NODE_ENV,
-    nodeVersion: process.version,
-  });
 });
 
 process.on("SIGTERM", () => {

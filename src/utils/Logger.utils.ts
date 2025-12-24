@@ -1,9 +1,7 @@
 import winston from "winston";
 import Transport from "winston-transport";
 import { appConfig } from "@/config/app.config";
-import { MinioService } from "@/services/minio.service";
-
-const minioService = new MinioService();
+import { minioService } from "@/services/minio-service";
 
 class MinioTransport extends Transport {
   constructor(opts?: Transport.TransportStreamOptions) {
@@ -25,20 +23,12 @@ class MinioTransport extends Transport {
     try {
       let existingContent = Buffer.from("");
       try {
-        const stream = await minioService.downloadFile(fileName);
-        if (stream) {
-          const chunks: Buffer[] = [];
-          stream.on("data", (chunk) => chunks.push(chunk));
-          await new Promise((resolve, reject) => {
-            stream.on("end", () => {
-              existingContent = Buffer.concat(chunks);
-              resolve(null);
-            });
-            stream.on("error", reject);
-          });
+        const fileBuffer = await minioService.getFile(fileName);
+        if (fileBuffer) {
+          existingContent = Buffer.from(fileBuffer);
         }
-      } catch (error: any) {
-        if (error.message === "Object not found in MinIO") {
+      } catch (error: any) {        
+        if (error.message === "Failed to get file: The specified key does not exist.") {
           // File doesn't exist, proceed to create a new one
         } else {
           throw error;
@@ -49,7 +39,7 @@ class MinioTransport extends Transport {
         existingContent,
         Buffer.from(logEntry),
       ]);
-      await minioService.uploadFile(newContent, fileName);
+      await minioService.uploadFile(newContent, fileName, "application/json");
     } catch (error) {
       console.error("Error uploading log to MinIO:", error);
     }

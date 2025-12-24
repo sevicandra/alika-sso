@@ -1,18 +1,65 @@
 import { Router } from "express";
+import { GrantControllerV1 } from "@/controllers/v1/grant.controller";
 import {
-  getAllGrant,
-  getGrantById,
-  createGrant,
-  updateGrant,
-  deleteGrant,
-} from "@/controllers/v1/grant.controller";
-import { authenticate } from "@/middlewares/auth.middleware";
+  validateBody,
+  validateQuery,
+} from "@/middlewares/validate-request.middleware";
+import { authorizeScopes } from "@/middlewares/authenticate.middleware";
+import { z } from "zod";
 const router = Router();
 
-router.get("/", authenticate(["account.grant.read"]),getAllGrant);
-router.get("/:id", authenticate(["account.grant.read"]),getGrantById);
-router.post("/", authenticate(["account.grant.write"]),createGrant);
-router.patch("/:id", authenticate(["account.grant.update"]),updateGrant);
-router.delete("/:id", authenticate(["account.grant.delete"]),deleteGrant);
+const findQuerySchema = z.object({
+  search: z.string().optional(),
+  limit: z.string().regex(/^\d+$/, "Limit must be a number").optional(),
+  offset: z.string().regex(/^\d+$/, "Offset must be a number").optional(),
+  sort: z
+    .string()
+    .regex(/^-?[a-zA-Z_:]+(,-?[a-zA-Z_:]+)*$/, "Format sort tidak valid")
+    .optional(),
+});
+
+const grantCreateSchema = z.object({
+  grant: z.string("Grant is required").min(1, "Grant is required"),
+  kode: z
+    .string("Kode is required")
+    .regex(/^\d{3}$/, "Kode must be 3 digits number"),
+});
+
+const grantUpdateSchema = z.object({
+  grant: z.string("Grant is required").min(1, "Grant is required").optional(),
+  kode: z
+    .string("Kode is required")
+    .regex(/^\d{3}$/, "Kode must be 3 digits number")
+    .optional(),
+});
+
+router.get(
+  "/",
+  authorizeScopes(["account.grant.read"]),
+  validateQuery(findQuerySchema),
+  GrantControllerV1.getAll
+);
+router.get(
+  "/:id",
+  authorizeScopes(["account.grant.read"]),
+  GrantControllerV1.getById
+);
+router.post(
+  "/",
+  authorizeScopes(["account.grant.write"]),
+  validateBody(grantCreateSchema),
+  GrantControllerV1.create
+);
+router.patch(
+  "/:id",
+  authorizeScopes(["account.grant.update"]),
+  validateBody(grantUpdateSchema),
+  GrantControllerV1.update
+);
+router.delete(
+  "/:id",
+  authorizeScopes(["account.grant.delete"]),
+  GrantControllerV1.delete
+);
 
 export default router;

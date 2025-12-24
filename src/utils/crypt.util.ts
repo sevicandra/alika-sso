@@ -12,7 +12,7 @@ const syncHash = (plaintText: string) => {
   return bcrypt.hashSync(plaintText, salt);
 };
 
-const verify = async (plaintText: string, hashed: string) => {
+const verify = async (plaintText: string, hashed: string): Promise<boolean> => {
   const match = await bcrypt.compare(plaintText, hashed);
   return match;
 };
