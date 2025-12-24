@@ -1,11 +1,30 @@
 import { Client } from "minio";
 import logger from "@/utils/Logger.utils";
-import { StorageError, ValidationError } from "../utils/errors";
+import {
+  StorageError,
+  ValidationError,
+  FileUploadError,
+} from "../utils/errors";
 import { minioConfig } from "@/config/minio.config";
 
 export class MinIOService {
   private client: Client;
   private bucketName: string;
+  private validateObjectName(objectName: string): void {
+    if (!objectName || objectName.includes("..") || objectName.includes("//")) {
+      throw new ValidationError("Invalid object name");
+    }
+  }
+  private isAllowedContentType(contentType: string): boolean {
+    const allowed = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "text/plain",
+    ];
+    return allowed.includes(contentType);
+  }
 
   constructor() {
     this.client = new Client({
@@ -36,11 +55,22 @@ export class MinIOService {
   }
 
   async uploadFile(
-    file: Buffer<ArrayBuffer>|Buffer<ArrayBufferLike>,
+    file: Buffer<ArrayBuffer> | Buffer<ArrayBufferLike>,
     objectName: string,
-    contentType: string
+    contentType: string,
+    maxSizeBytes: number = 100 * 1024 * 1024
   ): Promise<string> {
     try {
+      this.validateObjectName(objectName);
+      if (file.byteLength > maxSizeBytes) {
+        throw new FileUploadError(
+          `File size ${file.byteLength} exceeds limit of ${maxSizeBytes} bytes`
+        );
+      }
+      if (!this.isAllowedContentType(contentType)) {
+        throw new FileUploadError(`Content type ${contentType} not allowed`);
+      }
+
       await this.client.putObject(
         this.bucketName,
         objectName,

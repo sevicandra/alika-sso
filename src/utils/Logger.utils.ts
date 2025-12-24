@@ -39,7 +39,7 @@ class MinioTransport extends Transport {
         existingContent,
         Buffer.from(logEntry),
       ]);
-      await minioService.uploadFile(newContent, fileName, "application/json");
+      await minioService.uploadFile(newContent, fileName, "text/plain");
     } catch (error) {
       console.error("Error uploading log to MinIO:", error);
     }

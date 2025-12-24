@@ -15,8 +15,8 @@ export class ValidationError extends BaseError {
 }
 
 export class AuthenticationError extends BaseError {
-  constructor(message: string = "Authentication failed") {
-    super(message, 401, "AUTHENTICATION_ERROR", true);
+  constructor(message: string = "Authentication failed", details?: Record<string, any>) {
+    super(message, 401, "AUTHENTICATION_ERROR", true, details);
     Object.setPrototypeOf(this, AuthenticationError.prototype);
   }
 }
