@@ -17,7 +17,10 @@ const getCodeSchema = z.object({
   client_id: z.string("Invalid client ID"),
   redirect_uri: z.url("Invalid redirect URI"),
   state: z.string().optional(),
-  scope: z.string().optional(),
+  scope: z.string().regex(
+        /^[a-zA-Z0-9._*\s]+$/,
+        "Invalid scope format"
+    ),
   response_type: z.enum(["code"]),
 });
 

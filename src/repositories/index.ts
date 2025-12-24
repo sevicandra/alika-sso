@@ -6,6 +6,7 @@ import { RefreshTokenRepository } from "./refresh-token";
 import { RoleRepository } from "./role";
 import { ScopeActionRepository } from "./scope-action";
 import { ScopeRepository } from "./scope";
+import { SessionRepository } from "./session";
 import { ServiceRepository } from "./service";
 import { UserRepository } from "./user";
 import { ClientScopeRepository } from "./client-scope";
@@ -22,6 +23,7 @@ const Role = new RoleRepository();
 const ScopeAction = new ScopeActionRepository();
 const Scope = new ScopeRepository();
 const Service = new ServiceRepository();
+const Session = new SessionRepository();
 const User = new UserRepository();
 const ClientScope = new ClientScopeRepository();
 const ClientGrant = new ClientGrantRepository();
@@ -43,4 +45,5 @@ export {
   ClientGrant,
   UserAssignments,
   UserRole,
+  Session,
 };

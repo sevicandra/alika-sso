@@ -9,18 +9,67 @@ import { appConfig } from "@/config/app.config";
 import path from "path";
 import * as jose from "node-jose";
 import { access_token, refresh_token, user_access_token } from "@/types/auth";
+import logger from "./Logger.utils";
 
 export class JwtUtil {
-  private static publicKey = fs.readFileSync(
-    (process.env.PUBLIC_KEY_FILE as string) ||
-      path.join(__dirname, "../../public.pem"),
-    "utf8"
-  );
-  private static privateKey = fs.readFileSync(
-    (process.env.PRIVATE_KEY_FILE as string) ||
-      path.join(__dirname, "../../private.key"),
-    "utf8"
-  );
+  private static publicKey: string = "";
+  private static privateKey: string = "";
+  private static initialized = false;
+
+  static async initialize(): Promise<void> {
+    try {
+      const publicKeyPath =
+        process.env.PUBLIC_KEY_FILE || path.join(__dirname, "../../public.pem");
+
+      const privateKeyPath =
+        process.env.PRIVATE_KEY_FILE ||
+        path.join(__dirname, "../../private.key");
+
+      if (!fs.existsSync(publicKeyPath)) {
+        throw new Error(`Public key file not found: ${publicKeyPath}`);
+      }
+      if (!fs.existsSync(privateKeyPath)) {
+        throw new Error(`Private key file not found: ${privateKeyPath}`);
+      }
+
+      this.publicKey = fs.readFileSync(publicKeyPath, "utf8");
+      this.privateKey = fs.readFileSync(privateKeyPath, "utf8");
+
+      try {
+        const testData = { test: true, iat: Date.now() };
+        const testToken = jwt.sign(testData, this.privateKey, {
+          algorithm: "RS256",
+          expiresIn: "1m",
+          issuer: appConfig.URL,
+        });
+
+        jwt.verify(testToken, this.publicKey, {
+          issuer: appConfig.URL,
+        });
+
+        logger.info("JWT keys validated successfully");
+      } catch (error) {
+        throw new Error(
+          `JWT keys are invalid or don't match: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      }
+
+      this.initialized = true;
+    } catch (error) {
+      logger.error("Failed to initialize JWT", { error });
+      throw error;
+    }
+  }
+
+  private static ensureInitialized(): void {
+    if (!this.initialized) {
+      throw new Error(
+        "JwtUtil not initialized. Call JwtUtil.initialize() first."
+      );
+    }
+  }
 
   static async generateToken({
     data,
@@ -29,6 +78,8 @@ export class JwtUtil {
     data: access_token | refresh_token | user_access_token;
     expiresIn?: StringValue;
   }): Promise<string> {
+    this.ensureInitialized();
+
     return new Promise((resolve, reject) => {
       try {
         const token = jwt.sign(data, this.privateKey, {
@@ -44,6 +95,8 @@ export class JwtUtil {
   }
 
   static async verifyToken(token: string): Promise<any> {
+    this.ensureInitialized();
+
     return new Promise((resolve, reject) => {
       try {
         const decoded = jwt.verify(token, this.publicKey, {
@@ -65,7 +118,10 @@ export class JwtUtil {
       }
     });
   }
+
   static async getJWKS() {
+    this.ensureInitialized();
+
     const key = await jose.JWK.asKey(this.publicKey, "pem");
     const jwk = key.toJSON(true) as jose.JWK.RawKey & {
       use?: string;
