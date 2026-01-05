@@ -91,7 +91,7 @@ export const authorizationCodeGrant = asyncHandler(
         token: generatedRefreshToken,
         userId: user.sub,
         clientId: req.client.client_id,
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 45 * 60 * 1000),
         scope: authorizationCode.scope,
       });
       const refreshToken = await JwtUtil.generateToken({
@@ -100,7 +100,7 @@ export const authorizationCodeGrant = asyncHandler(
           id: token.id,
           sessionId: authorizationCode.sessionId,
         },
-        expiresIn: "1h",
+        expiresIn: "45m",
       });
       req.refresh_token = refreshToken;
     }

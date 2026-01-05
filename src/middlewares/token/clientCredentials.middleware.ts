@@ -35,7 +35,7 @@ export const clientCredentialsGrant = asyncHandler(
         token: generatedRefreshToken,
         userId: null,
         clientId: client.client_id,
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 45 * 60 * 1000),
         scope: req.scope || "",
       });
       const refreshToken = await JwtUtil.generateToken({
@@ -43,7 +43,7 @@ export const clientCredentialsGrant = asyncHandler(
           token: generatedRefreshToken,
           id: token.id,
         },
-        expiresIn: "1h",
+        expiresIn: "45m",
       });
       req.refresh_token = refreshToken;
     }

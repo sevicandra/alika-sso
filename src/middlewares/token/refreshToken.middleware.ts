@@ -94,7 +94,7 @@ export const refreshTokenGrant = asyncHandler(
         token: generatedRefreshToken,
         userId: userId,
         clientId: client.client_id,
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 45 * 60 * 1000),
         scope: req.scope || "",
       });
       const refresh_token = await JwtUtil.generateToken({
@@ -103,7 +103,7 @@ export const refreshTokenGrant = asyncHandler(
           id: token.id,
           sessionId: sessionId,
         },
-        expiresIn: "1h",
+        expiresIn: "45m",
       });
 
       req.refresh_token = refresh_token;
@@ -121,7 +121,7 @@ export const refreshTokenGrant = asyncHandler(
         token: generatedRefreshToken,
         userId: null,
         clientId: client.client_id,
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 45 * 60 * 1000),
         scope: req.scope || "",
       });
       const refresh_token = await JwtUtil.generateToken({
@@ -129,7 +129,7 @@ export const refreshTokenGrant = asyncHandler(
           token: generatedRefreshToken,
           id: token.id,
         },
-        expiresIn: "1h",
+        expiresIn: "45m",
       });
       req.refresh_token = refresh_token;
     }

@@ -22,6 +22,8 @@ import {
   errorHandler,
 } from "./middlewares/error-handler.middleware";
 import { JwtUtil } from "@/utils/jwt.util";
+import ms from "ms";
+
 
 const startServer = async () => {
   try {
@@ -60,14 +62,14 @@ const startServer = async () => {
     app.use(methodOverride("_method"));
     app.use(
       session({
-        secret: appConfig.JWT_SECRET,
+        secret: appConfig.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         store: sessionStore,
         cookie: {
-          secure: process.env.APP_ENV === "production",
+          secure: appConfig.ENV === "production",
           sameSite: "strict",
-          maxAge: 30 * 60 * 1000,
+          maxAge: ms(appConfig.SESSION_EXPIRES_IN),
           httpOnly: true,
           path: "/",
         },
