@@ -14,17 +14,6 @@ router.get("/", (req: Request, res: Response) => {
   });
 });
 
-router.post(
-  "/",
-  passport.authenticate("local", {
-    failureRedirect: `${process.env.APP_HOST}login`,
-  }),
-  (req: Request, res: Response) => {
-    req.user = req.user as Express.User;
-    return res.redirect((req.query.ReturnUrl as string) || "/");
-  }
-);
-
 router.post("/KemenkeuID", passport.authenticate("oauth2"));
 router.get(
   "/Callback",

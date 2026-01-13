@@ -68,7 +68,7 @@ const startServer = async () => {
         store: sessionStore,
         cookie: {
           secure: appConfig.ENV === "production",
-          sameSite: "strict",
+          sameSite: "lax",
           maxAge: ms(appConfig.SESSION_EXPIRES_IN),
           httpOnly: true,
           path: "/",
