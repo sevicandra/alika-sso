@@ -16,8 +16,7 @@ export const GrantControllerV2 = {
     const service = req.query.service || undefined;
     const where: any = {};
     if (search) where.nama = { [Op.like]: `%${search}%` };
-    if (service)
-      where.push(where(col("Service.name"), { [Op.like]: `%${search}%` }));
+    if (service) where.push(where(col("Service.name"), { [Op.like]: `%${search}%` }));
     const { items: data, pagination } = await Grant.findAllWithPagination({
       where,
       limit,
@@ -28,6 +27,9 @@ export const GrantControllerV2 = {
   }),
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { GrantId } = req.params;
+    if (typeof GrantId !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Grant.findById(GrantId);
     if (!data) {
       throw new NotFoundError("Grant not found");

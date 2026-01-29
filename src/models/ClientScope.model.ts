@@ -13,7 +13,6 @@ type ClientScopesAttributes = {
 
 type ClientScopesCreationAttributes = Optional<ClientScopesAttributes, "id">;
 
-
 export class ClientScope
   extends Model<ClientScopesAttributes | ClientScopesCreationAttributes>
   implements ClientScopesAttributes

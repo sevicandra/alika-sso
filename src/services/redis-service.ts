@@ -116,11 +116,7 @@ export class RedisService {
     }
   }
 
-  async setWithTimeout<T>(
-    key: string,
-    value: T,
-    timeoutMs: number
-  ): Promise<T> {
+  async setWithTimeout<T>(key: string, value: T, timeoutMs: number): Promise<T> {
     try {
       await this.set(key, value, Math.ceil(timeoutMs / 1000));
       return value;

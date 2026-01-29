@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { RoleControllerV1 } from "@/controllers/v1/role.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 import { z } from "zod";
 
@@ -18,9 +15,7 @@ const findQuerySchema = z.object({
 });
 
 const roleCreateSchema = z.object({
-  kode: z
-    .string("Kode is required")
-    .regex(/^\d{3}$/, "Kode must be 3 digits number"),
+  kode: z.string("Kode is required").regex(/^\d{3}$/, "Kode must be 3 digits number"),
   role: z.string("Role is required").min(1, "Role is required"),
   service_kode: z
     .string("Service kode is required")
@@ -47,11 +42,7 @@ router.get(
   validateQuery(findQuerySchema),
   RoleControllerV1.getAll
 );
-router.get(
-  "/:id",
-  authorizeScopes(["account.role.read"]),
-  RoleControllerV1.getById
-);
+router.get("/:id", authorizeScopes(["account.role.read"]), RoleControllerV1.getById);
 router.post(
   "/",
   authorizeScopes(["account.role.write"]),
@@ -64,10 +55,6 @@ router.patch(
   validateBody(roleUpdateSchema),
   RoleControllerV1.update
 );
-router.delete(
-  "/:id",
-  authorizeScopes(["account.role.delete"]),
-  RoleControllerV1.delete
-);
+router.delete("/:id", authorizeScopes(["account.role.delete"]), RoleControllerV1.delete);
 
 export default router;

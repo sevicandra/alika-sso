@@ -4,7 +4,7 @@ import logger from "@/utils/Logger.utils";
 
 export const redisHealthCheck = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> => {
   if (!redisService.isHealthy()) {

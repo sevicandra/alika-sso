@@ -1,6 +1,6 @@
-import { Request, Response, ErrorRequestHandler, NextFunction } from "express";
-import { BaseError } from "@/utils/errors/base-error";
+import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import logger from "@/utils/Logger.utils";
+import { BaseError } from "@/utils/errors/base-error";
 import { UUID } from "@/utils/uuid.util";
 
 interface ErrorResponse {
@@ -34,7 +34,8 @@ export const errorHandler: ErrorRequestHandler = (
     method: req.method,
     path: req.path,
     ip: req.ip,
-    userId: (req as any).user?.id || "anonymous",
+    userId: (req as any).user?.nip || "anonymous",
+    userName: (req as any).user?.name || "anonymous",
     requestId,
   };
 
@@ -81,10 +82,7 @@ export const errorHandler: ErrorRequestHandler = (
     success: false,
     error: {
       code: "INTERNAL_SERVER_ERROR",
-      message:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message,
+      message: process.env.NODE_ENV === "production" ? "Internal server error" : error.message,
       statusCode: 500,
       timestamp,
       requestId,

@@ -64,11 +64,7 @@ export class ServiceRepository extends BaseRepository<Service> {
     }
   }
 
-  async removeRole(
-    ServiceId: string,
-    roleId: string,
-    t: Transaction
-  ): Promise<number> {
+  async removeRole(ServiceId: string, roleId: string, t: Transaction): Promise<number> {
     try {
       const service = await Service.findByPk(ServiceId, {
         transaction: t,
@@ -78,13 +74,15 @@ export class ServiceRepository extends BaseRepository<Service> {
         throw new NotFoundError("Service not found");
       }
 
-      return await Role.delete({
-        where: {
-          service_kode: service.kode,
-          id: roleId,
+      return await Role.deleteOne(
+        {
+          where: {
+            service_kode: service.kode,
+            id: roleId,
+          },
         },
-        transaction: t,
-      });
+        t
+      );
     } catch (error) {
       throw handleSequelizeError(error);
     }
@@ -110,11 +108,7 @@ export class ServiceRepository extends BaseRepository<Service> {
     }
   }
 
-  async addScope(
-    ServiceId: string,
-    payload: { scope: string; kode: string },
-    t: Transaction
-  ) {
+  async addScope(ServiceId: string, payload: { scope: string; kode: string }, t: Transaction) {
     try {
       const service = await Service.findByPk(ServiceId, {
         transaction: t,
@@ -140,11 +134,7 @@ export class ServiceRepository extends BaseRepository<Service> {
     }
   }
 
-  async removeScope(
-    ServiceId: string,
-    scopeId: string,
-    t: Transaction
-  ): Promise<number> {
+  async removeScope(ServiceId: string, scopeId: string, t: Transaction): Promise<number> {
     try {
       const service = await Service.findByPk(ServiceId, {
         transaction: t,
@@ -153,13 +143,15 @@ export class ServiceRepository extends BaseRepository<Service> {
       if (!service) {
         throw new NotFoundError("Service not found");
       }
-      return await Scope.delete({
-        where: {
-          service_kode: service.kode,
-          id: scopeId,
+      return await Scope.deleteOne(
+        {
+          where: {
+            service_kode: service.kode,
+            id: scopeId,
+          },
         },
-        transaction: t,
-      });
+        t
+      );
     } catch (error) {
       throw handleSequelizeError(error);
     }

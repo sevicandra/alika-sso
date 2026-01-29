@@ -7,7 +7,6 @@ import Scope from "./Scope";
 import User from "./User";
 import ScopeAction from "./ScopeAction";
 
-
 const router = Router();
 router.use("/client", Client);
 router.use("/grant", Grant);

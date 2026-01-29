@@ -12,8 +12,8 @@ export const ServiceControllerV1 = {
     const search = req.query.search || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
     const offset = parseInt(req.query.offset as string) || undefined;
-        const sort = req.query.sort as string;
-        const order = sortBuilder(sort);
+    const sort = req.query.sort as string;
+    const order = sortBuilder(sort);
     if (search)
       where.scope = {
         [Op.like]: `%${search}%`,
@@ -23,19 +23,17 @@ export const ServiceControllerV1 = {
       where,
       limit,
       offset,
-      order
+      order,
     });
 
-    successResponse(
-      res,
-      "Success get all clients",
-      data.items,
-      data.pagination
-    );
+    successResponse(res, "Success get all clients", data.items, data.pagination);
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Service.findById(id);
 
     successResponse(res, "Success get client by id", data);
@@ -68,10 +66,13 @@ export const ServiceControllerV1 = {
     }
     const id = req.params.id;
     const { name, description } = req.body;
-    const data = await Service.updateById(id, t, {
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
+    const data = await Service.updateById(id, {
       name,
       description,
-    });
+    },t);
     successResponse(res, "Success update client", data);
   }),
 
@@ -81,15 +82,18 @@ export const ServiceControllerV1 = {
       throw new InvalidRequestError("Transaction not found");
     }
     const { id } = req.params;
-    await Service.deleteById(id, {
-      transaction: t,
-    });
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
+    await Service.deleteById(id, t);
     successResponse(res, "Success delete client", { id });
   }),
 
   getRoles: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Service.getRoles(id);
 
     successResponse(res, "Success get roles", data);
@@ -103,6 +107,9 @@ export const ServiceControllerV1 = {
       }
       const { id } = req.params;
       const { role, kode, description } = req.body;
+      if (typeof id !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const data = await Service.addRole(id, { role, kode, description }, t);
       successResponse(res, "Success add role", data);
     },
@@ -118,6 +125,9 @@ export const ServiceControllerV1 = {
         throw new InvalidRequestError("Transaction not found");
       }
       const { id, roleId } = req.params;
+      if (typeof id !== "string" || typeof roleId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const data = await Service.removeRole(id, roleId, t);
       successResponse(res, "Success delete role", data);
     },
@@ -128,6 +138,9 @@ export const ServiceControllerV1 = {
 
   getScopes: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Service.getScopes(id);
 
     successResponse(res, "Success get scopes", data);
@@ -141,6 +154,9 @@ export const ServiceControllerV1 = {
       }
       const { id } = req.params;
       const { scope, kode } = req.body;
+      if (typeof id !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const data = await Service.addScope(id, { scope, kode }, t);
       successResponse(res, "Success add scope", data);
     },
@@ -156,6 +172,9 @@ export const ServiceControllerV1 = {
         throw new InvalidRequestError("Transaction not found");
       }
       const { id, scopeId } = req.params;
+      if (typeof id !== "string" || typeof scopeId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const data = await Service.removeScope(id, scopeId, t);
       successResponse(res, "Success delete scope", data);
     },

@@ -135,14 +135,16 @@ export class ClientRepository extends BaseRepository<Client> {
     t: Transaction
   ): Promise<void> {
     try {
-      await ClientScope.delete({
-        where: {
-          client_id: client_id,
-          scope_id: scope_id,
-          action_kode: action_kode,
+      await ClientScope.deleteOne(
+        {
+          where: {
+            client_id: client_id,
+            scope_id: scope_id,
+            action_kode: action_kode,
+          },
         },
-        transaction: t,
-      });
+        t
+      );
     } catch (error) {
       throw handleSequelizeError(error);
     }
@@ -196,11 +198,7 @@ export class ClientRepository extends BaseRepository<Client> {
     }
   }
 
-  async addGrant(
-    ClientId: string,
-    grant: string,
-    t: Transaction
-  ): Promise<void> {
+  async addGrant(ClientId: string, grant: string, t: Transaction): Promise<void> {
     try {
       await ClientGrant.create(
         { client_id: ClientId, grant_kode: grant },
@@ -213,12 +211,7 @@ export class ClientRepository extends BaseRepository<Client> {
     }
   }
 
-  async updateGrant(
-    ClientId: string,
-    GrantId: string,
-    grant: string,
-    t: Transaction
-  ) {
+  async updateGrant(ClientId: string, GrantId: string, grant: string, t: Transaction) {
     try {
       await ClientGrant.update(
         { grant_kode: grant },
@@ -235,19 +228,17 @@ export class ClientRepository extends BaseRepository<Client> {
     }
   }
 
-  async removeGrant(
-    ClientId: string,
-    grant: string,
-    t: Transaction
-  ): Promise<void> {
+  async removeGrant(ClientId: string, grant: string, t: Transaction): Promise<void> {
     try {
-      await ClientGrant.delete({
-        where: {
-          client_id: ClientId,
-          grant_kode: grant,
+      await ClientGrant.deleteOne(
+        {
+          where: {
+            client_id: ClientId,
+            grant_kode: grant,
+          },
         },
-        transaction: t,
-      });
+        t
+      );
     } catch (error) {
       throw handleSequelizeError(error);
     }
@@ -288,11 +279,7 @@ export class ClientRepository extends BaseRepository<Client> {
     }
   }
 
-  async addRedirectUri(
-    ClientId: string,
-    uri: string,
-    t: Transaction
-  ): Promise<void> {
+  async addRedirectUri(ClientId: string, uri: string, t: Transaction): Promise<void> {
     try {
       await RedirectUri.create(
         { client_id: ClientId, uri },
@@ -305,11 +292,7 @@ export class ClientRepository extends BaseRepository<Client> {
     }
   }
 
-  async updateRedirectUri(
-    ClientId: string,
-    uri: string,
-    t: Transaction
-  ): Promise<void> {
+  async updateRedirectUri(ClientId: string, uri: string, t: Transaction): Promise<void> {
     try {
       await RedirectUri.update(
         { uri },
@@ -325,19 +308,17 @@ export class ClientRepository extends BaseRepository<Client> {
     }
   }
 
-  async removeRedirectUri(
-    ClientId: string,
-    uri: string,
-    t: Transaction
-  ): Promise<void> {
+  async removeRedirectUri(ClientId: string, uri: string, t: Transaction): Promise<void> {
     try {
-      await RedirectUri.delete({
-        where: {
-          client_id: ClientId,
-          uri,
+      await RedirectUri.deleteOne(
+        {
+          where: {
+            client_id: ClientId,
+            uri,
+          },
         },
-        transaction: t,
-      });
+        t
+      );
     } catch (error) {
       throw handleSequelizeError(error);
     }

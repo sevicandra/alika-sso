@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { ClientControllerV1 } from "@/controllers/v1/client.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 
 import { z } from "zod";
@@ -57,9 +54,7 @@ const clientRedirectCreateSchema = z.object({
 
 const clientScopeCreateSchema = z.object({
   scopeId: z.string("Scope ID is required").min(1, "Scope ID is required"),
-  action_kode: z
-    .string("Action kode is required")
-    .min(1, "Action kode is required"),
+  action_kode: z.string("Action kode is required").min(1, "Action kode is required"),
 });
 
 const findQuerySchema = z.object({
@@ -80,11 +75,7 @@ router.get(
   validateQuery(findQuerySchema),
   ClientControllerV1.getAll
 );
-router.get(
-  "/:ClientId",
-  authorizeScopes(["account.client.read"]),
-  ClientControllerV1.getById
-);
+router.get("/:ClientId", authorizeScopes(["account.client.read"]), ClientControllerV1.getById);
 router.get(
   "/:ClientId/scopes",
   authorizeScopes(["account.client.read"]),
@@ -142,11 +133,7 @@ router.delete(
   ClientControllerV1.removeGrant
 );
 
-router.delete(
-  "/:ClientId",
-  authorizeScopes(["account.client.delete"]),
-  ClientControllerV1.delete
-);
+router.delete("/:ClientId", authorizeScopes(["account.client.delete"]), ClientControllerV1.delete);
 
 router.patch(
   "/:ClientId",

@@ -28,15 +28,7 @@ class Service
     Scopes: HasMany<Service, Scope>;
   };
 
-  async addRole({
-    kode,
-    role,
-    description,
-  }: {
-    kode: string;
-    role: string;
-    description?: string;
-  }) {
+  async addRole({ kode, role, description }: { kode: string; role: string; description?: string }) {
     await Role.create({ service_kode: this.kode, kode, role, description });
     return this.Roles;
   }

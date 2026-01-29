@@ -11,10 +11,7 @@ type ScopeActionAttributes = {
 
 type ScopeActionCreationAttributes = Optional<ScopeActionAttributes, "id">;
 
-export class ScopeAction extends Model<
-  ScopeActionAttributes,
-  ScopeActionCreationAttributes
-> {
+export class ScopeAction extends Model<ScopeActionAttributes, ScopeActionCreationAttributes> {
   declare id: string;
   declare kode: string;
   declare name: string;
@@ -52,6 +49,5 @@ ScopeAction.init(
     },
   }
 );
-
 
 export default ScopeAction;

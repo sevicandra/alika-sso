@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { ScopeActionControllerV1 } from "@/controllers/v1/scopeAction.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 import { z } from "zod";
 const router = Router();
@@ -19,14 +16,9 @@ const findQuerySchema = z.object({
 });
 
 const scopeActionCreateSchema = z.object({
-  kode: z
-    .string("Kode is required")
-    .regex(/^\d{3}$/, "Kode must be 3 digits number"),
+  kode: z.string("Kode is required").regex(/^\d{3}$/, "Kode must be 3 digits number"),
   name: z.string("Name is required").min(1, "Name is required"),
-  description: z
-    .string("Description is required")
-    .min(1, "Description is required")
-    .optional(),
+  description: z.string("Description is required").min(1, "Description is required").optional(),
 });
 
 const scopeActionUpdateSchema = z.object({
@@ -35,10 +27,7 @@ const scopeActionUpdateSchema = z.object({
     .regex(/^\d{3}$/, "Kode must be 3 digits number")
     .optional(),
   name: z.string("Name is required").min(1, "Name is required").optional(),
-  description: z
-    .string("Description is required")
-    .min(1, "Description is required")
-    .optional(),
+  description: z.string("Description is required").min(1, "Description is required").optional(),
 });
 
 router.get(
@@ -47,11 +36,7 @@ router.get(
   validateQuery(findQuerySchema),
   ScopeActionControllerV1.getAll
 );
-router.get(
-  "/:id",
-  authorizeScopes(["account.scopeaction.read"]),
-  ScopeActionControllerV1.getById
-);
+router.get("/:id", authorizeScopes(["account.scopeaction.read"]), ScopeActionControllerV1.getById);
 router.post(
   "/",
   authorizeScopes(["account.scopeaction.write"]),

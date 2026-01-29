@@ -15,10 +15,7 @@ type ClientAttributes = {
 
 type ClientCreationAttributes = Optional<ClientAttributes, "id">;
 
-class Client
-  extends Model<ClientAttributes, ClientCreationAttributes>
-  implements ClientAttributes
-{
+class Client extends Model<ClientAttributes, ClientCreationAttributes> implements ClientAttributes {
   public id!: string;
   public client_id!: string;
   public client_secret!: string;
@@ -33,26 +30,14 @@ class Client
     GrantTypes: BelongsToMany<Client, Grant>;
     RedirectUris: HasMany<Client, RedirectUri>;
   };
-  async addScope({
-    scopeId,
-    action_kode,
-  }: {
-    scopeId: string;
-    action_kode: string;
-  }) {
+  async addScope({ scopeId, action_kode }: { scopeId: string; action_kode: string }) {
     await ClientScopes.create({
       client_id: this.id,
       scope_id: scopeId,
       action_kode,
     });
   }
-  async removeScope({
-    scopeId,
-    action_kode,
-  }: {
-    scopeId: string;
-    action_kode: string;
-  }) {
+  async removeScope({ scopeId, action_kode }: { scopeId: string; action_kode: string }) {
     await ClientScopes.destroy({
       where: { client_id: this.id, scope_id: scopeId, action_kode },
     });
@@ -116,9 +101,7 @@ Client.init(
           msg: "Secret must be at least 6 characters",
         },
         is: {
-          args: [
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&'~])[A-Za-z\d@$!%*?#&'~]{6,}$/,
-          ],
+          args: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&'~])[A-Za-z\d@$!%*?#&'~]{6,}$/],
           msg: "Secret must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
         },
       },
@@ -130,10 +113,7 @@ Client.init(
     tableName: "clients",
     hooks: {
       afterValidate: async (client: Client, options) => {
-        if (
-          client.client_secret &&
-          !options.skip?.some((s) => s === "client_secret")
-        ) {
+        if (client.client_secret && !options.skip?.some((s) => s === "client_secret")) {
           client.client_secret = await hash(client.client_secret);
         }
       },
@@ -152,6 +132,5 @@ Client.init(
     },
   }
 );
-
 
 export default Client;

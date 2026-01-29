@@ -1,7 +1,7 @@
 import { UserAssignments, UserRole } from "@/repositories";
 import { successResponse } from "@/helpers/respose.helper";
 import { Response, Request } from "express";
-import { Op, col } from "sequelize";
+import { Op, col, where } from "sequelize";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError, NotFoundError } from "@/utils/errors";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
@@ -13,22 +13,21 @@ export const UserControllerV2 = {
     const sort = req.query.sort as string;
     const order = sortBuilder(sort);
     const search = req.query.search || undefined;
-    const where: any = {
+    const find: any = {
       service_kode: "005",
     };
     if (search)
-      where[Op.or] = [
+      find[Op.or] = [
         where(col("nama"), { [Op.like]: `%${search}%` }),
         where(col("nip"), { [Op.like]: `%${search}%` }),
       ];
 
-    const { items: data, pagination } =
-      await UserAssignments.findAllWithPagination({
-        where,
-        limit,
-        offset,
-        order,
-      });
+    const { items: data, pagination } = await UserAssignments.findAllWithPagination({
+      where: find,
+      limit,
+      offset,
+      order,
+    });
     successResponse(res, "Success get all user", data, pagination);
   }),
   getById: asyncHandler(async (req: Request, res: Response) => {
@@ -140,6 +139,9 @@ export const UserControllerV2 = {
       }
       const { UserId } = req.params;
       const { role } = req.body;
+      if (typeof UserId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const user = await UserAssignments.findOne({
         where: {
           id: UserId,

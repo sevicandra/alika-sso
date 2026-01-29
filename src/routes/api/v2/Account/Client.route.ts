@@ -1,10 +1,7 @@
 import { Router } from "express";
 import { ClientControllerV2 } from "@/controllers/v2/account/client.controller";
 import { z } from "zod";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 
 const router = Router({ mergeParams: true });
 
@@ -44,9 +41,7 @@ const clientCreateSchema = z
   });
 
 const grantCreateSchema = z.object({
-  grant_kode: z
-    .string("Grant Kode is required")
-    .regex(/^\d{3}/, "Kode must be 3 digits long"),
+  grant_kode: z.string("Grant Kode is required").regex(/^\d{3}/, "Kode must be 3 digits long"),
 });
 
 const redirectCreateSchema = z.object({
@@ -55,9 +50,7 @@ const redirectCreateSchema = z.object({
 
 const scopeCreateSchema = z.object({
   scope_id: z.string("Scope ID is required"),
-  action_kode: z
-    .string("Action Kode is required")
-    .regex(/^\d{3}/, "Kode must be 3 digits long"),
+  action_kode: z.string("Action Kode is required").regex(/^\d{3}/, "Kode must be 3 digits long"),
 });
 
 const scopeUpdateSchema = z.object({
@@ -73,28 +66,13 @@ router.get("/:ClientId", ClientControllerV2.getById);
 router.post("/", validateBody(clientCreateSchema), ClientControllerV2.create);
 router.delete("/:ClientId", ClientControllerV2.delete);
 
-router.get(
-  "/:ClientId/Grant",
-  validateQuery(findQuerySchema),
-  ClientControllerV2.getGrants
-);
+router.get("/:ClientId/Grant", validateQuery(findQuerySchema), ClientControllerV2.getGrants);
 router.get("/:ClientId/Grant/:GrantId", ClientControllerV2.getGrantById);
-router.post(
-  "/:ClientId/Grant",
-  validateBody(grantCreateSchema),
-  ClientControllerV2.createGrant
-);
+router.post("/:ClientId/Grant", validateBody(grantCreateSchema), ClientControllerV2.createGrant);
 router.delete("/:ClientId/Grant/:GrantId", ClientControllerV2.removeGrant);
 
-router.get(
-  "/:ClientId/Redirect",
-  validateQuery(findQuerySchema),
-  ClientControllerV2.getRedirects
-);
-router.get(
-  "/:ClientId/Redirect/:RedirectId",
-  ClientControllerV2.getRedirectById
-);
+router.get("/:ClientId/Redirect", validateQuery(findQuerySchema), ClientControllerV2.getRedirects);
+router.get("/:ClientId/Redirect/:RedirectId", ClientControllerV2.getRedirectById);
 router.post(
   "/:ClientId/Redirect",
   validateBody(redirectCreateSchema),
@@ -105,22 +83,11 @@ router.patch(
   validateBody(redirectCreateSchema),
   ClientControllerV2.updateRedirect
 );
-router.delete(
-  "/:ClientId/Redirect/:RedirectId",
-  ClientControllerV2.removeRedirect
-);
+router.delete("/:ClientId/Redirect/:RedirectId", ClientControllerV2.removeRedirect);
 
-router.get(
-  "/:ClientId/Scope",
-  validateQuery(findQuerySchema),
-  ClientControllerV2.getScopes
-);
+router.get("/:ClientId/Scope", validateQuery(findQuerySchema), ClientControllerV2.getScopes);
 router.get("/:ClientId/Scope/:ScopeId", ClientControllerV2.getScopeById);
-router.post(
-  "/:ClientId/Scope",
-  validateBody(scopeCreateSchema),
-  ClientControllerV2.createScope
-);
+router.post("/:ClientId/Scope", validateBody(scopeCreateSchema), ClientControllerV2.createScope);
 router.patch(
   "/:ClientId/Scope/:ScopeId",
   validateBody(scopeUpdateSchema),

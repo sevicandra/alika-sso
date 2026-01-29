@@ -10,10 +10,7 @@ type ScopeAttributes = {
   service_kode: string;
 };
 type ScopeCreationAttributes = Optional<ScopeAttributes, "id">;
-class Scope
-  extends Model<ScopeAttributes, ScopeCreationAttributes>
-  implements ScopeAttributes
-{
+class Scope extends Model<ScopeAttributes, ScopeCreationAttributes> implements ScopeAttributes {
   public id!: string;
   public kode!: string;
   public scope!: string;

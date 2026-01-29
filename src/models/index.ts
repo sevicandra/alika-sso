@@ -29,10 +29,10 @@ Client.hasMany(ClientScope, {
   foreignKey: "client_id",
   as: "Scopes",
 });
-Client.hasMany(ClientGrant,{
+Client.hasMany(ClientGrant, {
   foreignKey: "client_id",
   as: "Grants",
-})
+});
 
 Client.belongsToMany(Grant, {
   through: {

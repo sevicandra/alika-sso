@@ -5,10 +5,7 @@ class SessionStore extends Store {
   constructor() {
     super();
   }
-  async get(
-    sid: string,
-    callback: (err: any, session?: session.SessionData | null) => void
-  ) {
+  async get(sid: string, callback: (err: any, session?: session.SessionData | null) => void) {
     try {
       const session = await Session.findOne({
         where: { sessionId: sid },
@@ -22,11 +19,7 @@ class SessionStore extends Store {
       callback(err);
     }
   }
-  async set(
-    sid: string,
-    sessionData: session.SessionData,
-    callback?: (err?: any) => void
-  ) {
+  async set(sid: string, sessionData: session.SessionData, callback?: (err?: any) => void) {
     try {
       const expires = new Date(sessionData.cookie.expires || 0);
       await Session.upsert({

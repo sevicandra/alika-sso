@@ -7,15 +7,11 @@ type SessionAttributes = {
   expires: Date;
 };
 
-export interface SessionInput
-  extends Optional<SessionAttributes, "sessionId"> {}
+export interface SessionInput extends Optional<SessionAttributes, "sessionId"> {}
 
 export interface SessionOutput extends Required<SessionAttributes> {}
 
-class Session
-  extends Model<SessionAttributes, SessionInput>
-  implements SessionAttributes
-{
+class Session extends Model<SessionAttributes, SessionInput> implements SessionAttributes {
   public sessionId!: string;
   public data!: string;
   public expires!: Date;

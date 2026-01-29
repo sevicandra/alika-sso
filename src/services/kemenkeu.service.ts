@@ -67,9 +67,7 @@ export class KemenkeuService {
         }
         if (error.response?.status === 401) {
           logger.error("Token API authentication failed");
-          throw new AuthenticationError(
-            "Kemenkeu service authentication failed"
-          );
+          throw new AuthenticationError("Kemenkeu service authentication failed");
         }
       }
 
@@ -77,10 +75,7 @@ export class KemenkeuService {
         error: error instanceof Error ? error.message : String(error),
       });
 
-      throw new ExternalServiceError(
-        "KemenkeuService",
-        "Failed to get access token"
-      );
+      throw new ExternalServiceError("KemenkeuService", "Failed to get access token");
     }
   }
 
@@ -103,10 +98,7 @@ export class KemenkeuService {
       );
 
       if (!response.data?.Data) {
-        throw new ExternalServiceError(
-          "KemenkeuService",
-          "Invalid Profil response format"
-        );
+        throw new ExternalServiceError("KemenkeuService", "Invalid Profil response format");
       }
 
       const profil = response.data.Data as Profile;
@@ -162,10 +154,7 @@ export class KemenkeuService {
       );
 
       if (!response.data?.Data) {
-        throw new ExternalServiceError(
-          "KemenkeuService",
-          "Invalid Keluarga response format"
-        );
+        throw new ExternalServiceError("KemenkeuService", "Invalid Keluarga response format");
       }
 
       const keluarga = response.data.Data as Keluarga[];
@@ -192,10 +181,7 @@ export class KemenkeuService {
         error: error instanceof Error ? error.message : String(error),
       });
 
-      throw new ExternalServiceError(
-        "KemenkeuService",
-        "Failed to get Keluarga"
-      );
+      throw new ExternalServiceError("KemenkeuService", "Failed to get Keluarga");
     }
   }
 
@@ -218,10 +204,7 @@ export class KemenkeuService {
       );
 
       if (!response.data?.data) {
-        throw new ExternalServiceError(
-          "KemenkeuService",
-          "Invalid Profil2 response format"
-        );
+        throw new ExternalServiceError("KemenkeuService", "Invalid Profil2 response format");
       }
 
       const profil = response.data.data as Profile2;

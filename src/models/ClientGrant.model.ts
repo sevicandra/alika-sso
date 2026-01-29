@@ -11,8 +11,10 @@ type ClientGrantAttributes = {
 
 type ClientGrantCreationAttributes = Optional<ClientGrantAttributes, "id">;
 
-
-class ClientGrant extends Model<ClientGrantAttributes, ClientGrantCreationAttributes> implements ClientGrantAttributes {
+class ClientGrant
+  extends Model<ClientGrantAttributes, ClientGrantCreationAttributes>
+  implements ClientGrantAttributes
+{
   public id!: string;
   public client_id!: string;
   public grant_kode!: string;
@@ -22,7 +24,7 @@ class ClientGrant extends Model<ClientGrantAttributes, ClientGrantCreationAttrib
 }
 ClientGrant.init(
   {
-    id:{
+    id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
@@ -40,13 +42,13 @@ ClientGrant.init(
     sequelize,
     modelName: "ClientGrant",
     tableName: "client_grant_types",
-    indexes:[
+    indexes: [
       {
         unique: true,
         fields: ["client_id", "grant_kode"],
-        name: "client_grant_type"
-      }
-    ]
+        name: "client_grant_type",
+      },
+    ],
   }
 );
 

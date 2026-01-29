@@ -12,8 +12,8 @@ export const RoleControllerV1 = {
     const search = req.query.search || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
     const offset = parseInt(req.query.offset as string) || undefined;
-        const sort = req.query.sort as string;
-        const order = sortBuilder(sort);
+    const sort = req.query.sort as string;
+    const order = sortBuilder(sort);
     if (search)
       where.grant = {
         [Op.like]: `%${search}%`,
@@ -23,19 +23,17 @@ export const RoleControllerV1 = {
       where,
       limit,
       offset,
-      order
+      order,
     });
 
-    successResponse(
-      res,
-      "Success get all clients",
-      data.items,
-      data.pagination
-    );
+    successResponse(res, "Success get all clients", data.items, data.pagination);
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const id = req.params.id;
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Role.findById(id);
 
     successResponse(res, "Success get client by id", data);
@@ -67,11 +65,18 @@ export const RoleControllerV1 = {
       throw new InvalidRequestError("Transaction not found");
     }
     const id = req.params.id;
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const { role, service_kode } = req.body;
-    const data = await Role.updateById(id, t, {
-      role,
-      service_kode,
-    });
+    const data = await Role.updateById(
+      id,
+      {
+        role,
+        service_kode,
+      },
+      t
+    );
     successResponse(res, "Success update client", data);
   }),
 
@@ -81,9 +86,10 @@ export const RoleControllerV1 = {
       throw new InvalidRequestError("Transaction not found");
     }
     const id = req.params.id;
-    await Role.deleteById(id, {
-      transaction: t,
-    });
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
+    await Role.deleteById(id, t);
     successResponse(res, "Success delete client", { id });
   }),
 };

@@ -20,8 +20,8 @@ passport.use(
     },
     async function (
       accessToken: string,
-      refreshToken: string,
-      profile: typeof User,
+      _refreshToken: string,
+      _profile: typeof User,
       cb: VerifyCallback
     ) {
       try {
@@ -62,21 +62,17 @@ passport.use(
           nama_kl: userInfoResponse.data.nama_kl,
           nip: profile.nip18,
           jabatan:
-            profile.jabatan.find(
-              (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
-            )?.namaJabatan || profile.jabatan[0].namaJabatan,
+            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
+              ?.namaJabatan || profile.jabatan[0].namaJabatan,
           jenis_jabatan:
-            profile.jabatan.find(
-              (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
-            )?.jenisJabatan || profile.jabatan[0].jenisJabatan,
+            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
+              ?.jenisJabatan || profile.jabatan[0].jenisJabatan,
           kode_organisasi:
-            profile.jabatan.find(
-              (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
-            )?.kodeOrganisasi || profile.jabatan[0].kodeOrganisasi,
+            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
+              ?.kodeOrganisasi || profile.jabatan[0].kodeOrganisasi,
           organisasi:
-            profile.jabatan.find(
-              (j) => j.statusJabatan.toLocaleLowerCase() === "definitif"
-            )?.organisasi || profile.jabatan[0].organisasi,
+            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
+              ?.organisasi || profile.jabatan[0].organisasi,
           kode_satker: profile.kdSatker,
           satker: profile.namaSatker,
           gravatar: userInfoResponse.data.gravatar,

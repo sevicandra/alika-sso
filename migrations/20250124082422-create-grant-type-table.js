@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) { 
-    await queryInterface.createTable('grant_types', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("grant_types", {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -17,10 +17,10 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: false,
       },
-    })
+    });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('grant_types');
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("grant_types");
+  },
 };

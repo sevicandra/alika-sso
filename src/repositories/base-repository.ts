@@ -1,19 +1,19 @@
 import {
+  Attributes,
+  CountOptions,
+  CreateOptions,
+  CreationAttributes,
+  DestroyOptions,
+  FindOptions,
+  Identifier,
   Model,
   ModelStatic,
-  FindOptions,
-  CreateOptions,
-  UpdateOptions,
-  DestroyOptions,
-  CountOptions,
-  Identifier,
   Transaction,
-  Attributes,
-  CreationAttributes,
+  UpdateOptions,
 } from "sequelize";
-import { handleSequelizeError } from "@/utils/errors/sequelize-error-handler";
+import { Col, Fn, Literal } from "sequelize/types/utils";
 import { NotFoundError } from "@/utils/errors";
-import { Fn, Col, Literal } from "sequelize/types/utils";
+import { handleSequelizeError } from "@/utils/errors/sequelize-error-handler";
 
 export interface PaginatedResult<T> {
   items: T[];
@@ -41,9 +41,7 @@ export abstract class BaseRepository<T extends Model> {
     }
   }
 
-  async findAllWithPagination(
-    options?: FindOptions<T>
-  ): Promise<PaginatedResult<T>> {
+  async findAllWithPagination(options?: FindOptions<T>): Promise<PaginatedResult<T>> {
     try {
       const { count, rows } = await this.model.findAndCountAll(options);
 
@@ -65,10 +63,7 @@ export abstract class BaseRepository<T extends Model> {
     }
   }
 
-  async findById(
-    id: Identifier,
-    options?: Omit<FindOptions<T>, "where">
-  ): Promise<T | null> {
+  async findById(id: Identifier, options?: Omit<FindOptions<T>, "where">): Promise<T | null> {
     try {
       return await this.model.findByPk(id, options);
     } catch (error) {
@@ -84,10 +79,7 @@ export abstract class BaseRepository<T extends Model> {
     }
   }
 
-  async create(
-    data: CreationAttributes<T>,
-    options?: CreateOptions<T>
-  ): Promise<T> {
+  async create(data: CreationAttributes<T>, options?: CreateOptions<T>): Promise<T> {
     try {
       return await this.model.create(data, options);
     } catch (error) {
@@ -95,10 +87,7 @@ export abstract class BaseRepository<T extends Model> {
     }
   }
 
-  async createBulk(
-    data: CreationAttributes<T>[],
-    options?: CreateOptions<T>
-  ): Promise<T[]> {
+  async createBulk(data: CreationAttributes<T>[], options?: CreateOptions<T>): Promise<T[]> {
     try {
       return await this.model.bulkCreate(data, options);
     } catch (error) {
@@ -128,12 +117,17 @@ export abstract class BaseRepository<T extends Model> {
     t: Transaction
   ): Promise<T> {
     try {
-      const data = await this.findOne(options);
+      const data = await this.model.findOne(options);
       if (!data) {
-        throw new NotFoundError(`Data with not found`);
+        throw new NotFoundError(`Data not found`);
       }
-      Object.assign(data, values);
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          (data as any)[key] = value;
+        }
+      });
       await data.save({ transaction: t });
+      await data.reload({ transaction: t });
       return data;
     } catch (error) {
       throw handleSequelizeError(error);
@@ -142,10 +136,10 @@ export abstract class BaseRepository<T extends Model> {
 
   async updateById(
     id: Identifier,
-    t: Transaction,
     values: {
       [key in keyof Attributes<T>]?: Attributes<T>[key] | Fn | Col | Literal;
-    }
+    },
+    t?: Transaction
   ): Promise<T> {
     try {
       const data = await this.findById(id, {
@@ -154,27 +148,28 @@ export abstract class BaseRepository<T extends Model> {
       if (!data) {
         throw new NotFoundError(`Data with ID ${id} not found`);
       }
-      Object.assign(data, values);
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          (data as any)[key] = value;
+        }
+      });
       await data.save({ transaction: t });
+      await data.reload({ transaction: t });
       return data;
     } catch (error) {
       throw handleSequelizeError(error);
     }
   }
 
-  async delete(options: DestroyOptions<T>): Promise<number> {
+  async delete(options: DestroyOptions<T>, t: Transaction): Promise<number> {
     try {
-      return this.model.destroy(options);
+      return this.model.destroy({ ...options, transaction: t });
     } catch (error) {
       throw handleSequelizeError(error);
     }
   }
 
-  async deleteOne(
-    options: FindOptions<T>,
-
-    t: Transaction
-  ): Promise<number> {
+  async deleteOne(options: FindOptions<T>, t: Transaction): Promise<number> {
     try {
       const data = await this.findOne(options);
       if (!data) {
@@ -187,12 +182,9 @@ export abstract class BaseRepository<T extends Model> {
     }
   }
 
-  async deleteById(
-    id: Identifier,
-    options?: DestroyOptions<T>
-  ): Promise<number> {
+  async deleteById(id: Identifier, t: Transaction): Promise<number> {
     try {
-      return this.model.destroy({ ...options, where: { id } as any });
+      return this.model.destroy({ transaction: t, where: { id } as any });
     } catch (error) {
       throw handleSequelizeError(error);
     }
@@ -201,6 +193,14 @@ export abstract class BaseRepository<T extends Model> {
   async count(options?: CountOptions<T>): Promise<number> {
     try {
       return await this.model.count(options);
+    } catch (error) {
+      throw handleSequelizeError(error);
+    }
+  }
+
+  async CreateOrUpdate(data: CreationAttributes<T>, t: Transaction) {
+    try {
+      return await this.model.upsert(data, { transaction: t });
     } catch (error) {
       throw handleSequelizeError(error);
     }

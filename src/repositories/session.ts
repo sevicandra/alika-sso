@@ -6,4 +6,3 @@ export class SessionRepository extends BaseRepository<Session> {
     super(Session);
   }
 }
-

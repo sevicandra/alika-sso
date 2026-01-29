@@ -26,16 +26,14 @@ export const ClientControllerV1 = {
       order: order,
     });
 
-    successResponse(
-      res,
-      "Success get all clients",
-      data.items,
-      data.pagination
-    );
+    successResponse(res, "Success get all clients", data.items, data.pagination);
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { ClientId } = req.params;
+    if (typeof ClientId !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Client.findById(ClientId, {
       include: [
         {
@@ -66,7 +64,6 @@ export const ClientControllerV1 = {
       if (!t) {
         throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-
       const { client_id, client_secret } = req.body;
 
       const data = await Client.create(
@@ -97,10 +94,17 @@ export const ClientControllerV1 = {
 
       const { client_id, client_secret } = req.body;
       const { ClientId } = req.params;
-      const data = await Client.updateById(ClientId, t, {
-        client_id,
-        client_secret,
-      });
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
+      const data = await Client.updateById(
+        ClientId,
+        {
+          client_id,
+          client_secret,
+        },
+        t
+      );
 
       successResponse(res, "Success update client", {
         client_id: data.client_id,
@@ -118,9 +122,10 @@ export const ClientControllerV1 = {
       if (!t) {
         throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-      await Client.deleteById(ClientId, {
-        transaction: t,
-      });
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
+      await Client.deleteById(ClientId, t);
       successResponse(res, "Success delete client", null);
     },
     {
@@ -195,6 +200,9 @@ export const ClientControllerV1 = {
         throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
       const { ClientId } = req.params;
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const { scope_id, action_kode } = req.body;
 
       const data = await ClientScope.create(
@@ -297,18 +305,16 @@ export const ClientControllerV1 = {
     const where: any = {
       client_id: ClientId,
     };
-    const { items: data, pagination } = await ClientGrant.findAllWithPagination(
-      {
-        where,
-        limit,
-        offset,
-        include: [
-          {
-            association: "Grant",
-          },
-        ],
-      }
-    );
+    const { items: data, pagination } = await ClientGrant.findAllWithPagination({
+      where,
+      limit,
+      offset,
+      include: [
+        {
+          association: "Grant",
+        },
+      ],
+    });
     successResponse(
       res,
       "Success get grants",
@@ -342,6 +348,9 @@ export const ClientControllerV1 = {
         throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
       const { ClientId } = req.params;
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const { grant_kode } = req.body;
 
       const data = await ClientGrant.create(
@@ -388,15 +397,13 @@ export const ClientControllerV1 = {
     const { ClientId } = req.params;
     const limit = parseInt(req.query.limit as string) || undefined;
     const offset = parseInt(req.query.offset as string) || undefined;
-    const { items: data, pagination } = await RedirectUri.findAllWithPagination(
-      {
-        where: {
-          client_id: ClientId,
-        },
-        limit,
-        offset,
-      }
-    );
+    const { items: data, pagination } = await RedirectUri.findAllWithPagination({
+      where: {
+        client_id: ClientId,
+      },
+      limit,
+      offset,
+    });
     successResponse(res, "Success get redirect", data, pagination);
   }),
 
@@ -416,6 +423,9 @@ export const ClientControllerV1 = {
 
   addRedirect: asyncHandler(async (req: Request, res: Response) => {
     const { ClientId } = req.params;
+    if (typeof ClientId !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const { uri } = req.body;
     const data = await RedirectUri.create({
       client_id: ClientId,

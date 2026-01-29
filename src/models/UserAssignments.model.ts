@@ -1,11 +1,5 @@
 import sequelize from "@/config/db.config";
-import {
-  Model,
-  Optional,
-  DataTypes,
-  BelongsTo,
-  BelongsToMany,
-} from "sequelize";
+import { Model, Optional, DataTypes, BelongsTo, BelongsToMany } from "sequelize";
 import User from "./User.model";
 import Role from "./Role.model";
 import Service from "./Service.model";
@@ -19,10 +13,7 @@ type UserAssignmentsAttributes = {
   service_kode: string;
 };
 
-type UserAssignmentsCreationAttributes = Optional<
-  UserAssignmentsAttributes,
-  "id" | "kd_satker"
->;
+type UserAssignmentsCreationAttributes = Optional<UserAssignmentsAttributes, "id" | "kd_satker">;
 export class UserAssignments
   extends Model<UserAssignmentsAttributes, UserAssignmentsCreationAttributes>
   implements UserAssignmentsAttributes
@@ -84,7 +75,7 @@ UserAssignments.init(
           args: "^(d{6}|-)$",
         },
       },
-      defaultValue: "-"
+      defaultValue: "-",
     },
     service_kode: {
       type: DataTypes.STRING(3),

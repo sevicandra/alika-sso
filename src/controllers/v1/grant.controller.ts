@@ -26,16 +26,14 @@ export const GrantControllerV1 = {
       order,
     });
 
-    successResponse(
-      res,
-      "Success get all clients",
-      data.items,
-      data.pagination
-    );
+    successResponse(res, "Success get all clients", data.items, data.pagination);
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const id = req.params.id;
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Grant.findById(id);
 
     successResponse(res, "Success get client by id", data);
@@ -67,9 +65,16 @@ export const GrantControllerV1 = {
     }
     const id = req.params.id;
     const { grant } = req.body;
-    const data = await Grant.updateById(id, t, {
-      grant,
-    });
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
+    const data = await Grant.updateById(
+      id,
+      {
+        grant,
+      },
+      t
+    );
     successResponse(res, "Success update client", data);
   }),
 
@@ -79,9 +84,10 @@ export const GrantControllerV1 = {
       throw new InvalidRequestError("Transaction not found");
     }
     const id = req.params.id;
-    await Grant.deleteById(id, {
-      transaction: t,
-    });
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
+    await Grant.deleteById(id, t);
     successResponse(res, "Success delete client", { id });
   }),
 };

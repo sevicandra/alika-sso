@@ -26,16 +26,14 @@ export const ClientControllerV2 = {
       order,
     });
 
-    successResponse(
-      res,
-      "Success get all clients",
-      data.items,
-      data.pagination
-    );
+    successResponse(res, "Success get all clients", data.items, data.pagination);
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { ClientId } = req.params;
+    if (typeof ClientId !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Client.findById(ClientId, {
       include: [
         {
@@ -97,10 +95,17 @@ export const ClientControllerV2 = {
 
       const { client_id, client_secret } = req.body;
       const { ClientId } = req.params;
-      const data = await Client.updateById(ClientId, t, {
-        client_id,
-        client_secret,
-      });
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
+      const data = await Client.updateById(
+        ClientId,
+        {
+          client_id,
+          client_secret,
+        },
+        t
+      );
 
       successResponse(res, "Success update client", {
         client_id: data.client_id,
@@ -118,9 +123,10 @@ export const ClientControllerV2 = {
       if (!t) {
         throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
-      await Client.deleteById(ClientId, {
-        transaction: t,
-      });
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
+      await Client.deleteById(ClientId, t);
       successResponse(res, "Success delete client", {
         ClientId,
       });
@@ -201,7 +207,9 @@ export const ClientControllerV2 = {
       }
       const { ClientId } = req.params;
       const { scope_id, action_kode } = req.body;
-
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const data = await ClientScope.create(
         {
           client_id: ClientId,
@@ -279,19 +287,17 @@ export const ClientControllerV2 = {
     const where: any = {
       client_id: ClientId,
     };
-    const { items: data, pagination } = await ClientGrant.findAllWithPagination(
-      {
-        where,
-        limit,
-        offset,
-        order,
-        include: [
-          {
-            association: "Grant",
-          },
-        ],
-      }
-    );
+    const { items: data, pagination } = await ClientGrant.findAllWithPagination({
+      where,
+      limit,
+      offset,
+      order,
+      include: [
+        {
+          association: "Grant",
+        },
+      ],
+    });
     successResponse(
       res,
       "Success get grants",
@@ -326,7 +332,9 @@ export const ClientControllerV2 = {
       }
       const { ClientId } = req.params;
       const { grant_kode } = req.body;
-
+      if (typeof ClientId !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const data = await ClientGrant.create(
         {
           client_id: ClientId,
@@ -373,16 +381,14 @@ export const ClientControllerV2 = {
     const offset = parseInt(req.query.offset as string) || undefined;
     const sort = req.query.sort as string;
     const order = sortBuilder(sort);
-    const { items: data, pagination } = await RedirectUri.findAllWithPagination(
-      {
-        where: {
-          client_id: ClientId,
-        },
-        limit,
-        offset,
-        order,
-      }
-    );
+    const { items: data, pagination } = await RedirectUri.findAllWithPagination({
+      where: {
+        client_id: ClientId,
+      },
+      limit,
+      offset,
+      order,
+    });
     successResponse(res, "Success get redirect", data, pagination);
   }),
 
@@ -403,6 +409,9 @@ export const ClientControllerV2 = {
   createRedirect: asyncHandler(async (req: Request, res: Response) => {
     const { ClientId } = req.params;
     const { uri } = req.body;
+    if (typeof ClientId !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await RedirectUri.create({
       client_id: ClientId,
       uri: uri,

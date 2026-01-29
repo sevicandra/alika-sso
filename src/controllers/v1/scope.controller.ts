@@ -26,16 +26,14 @@ export const ScopeControllerV1 = {
       order,
     });
 
-    successResponse(
-      res,
-      "Success get all clients",
-      data.items,
-      data.pagination
-    );
+    successResponse(res, "Success get all clients", data.items, data.pagination);
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const id = req.params.id;
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Scope.findById(id);
 
     successResponse(res, "Success get client by id", data);
@@ -67,11 +65,14 @@ export const ScopeControllerV1 = {
       throw new InvalidRequestError("Transaction not found");
     }
     const id = req.params.id;
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const { scope, service_kode } = req.body;
-    const data = await Scope.updateById(id, t, {
+    const data = await Scope.updateById(id, {
       scope,
       service_kode,
-    });
+    },t);
     successResponse(res, "Success update client", data);
   }),
 
@@ -81,9 +82,10 @@ export const ScopeControllerV1 = {
       throw new InvalidRequestError("Transaction not found");
     }
     const id = req.params.id;
-    await Scope.deleteById(id, {
-      transaction: t,
-    });
+    if (typeof id !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
+    await Scope.deleteById(id, t);
     successResponse(res, "Success delete client", { id });
   }),
 };

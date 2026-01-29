@@ -37,14 +37,14 @@ GrantType.init(
     tableName: "grant_types",
     timestamps: false,
     modelName: "GrantType",
-    defaultScope:{
-      order: [["kode", "ASC"]]
+    defaultScope: {
+      order: [["kode", "ASC"]],
     },
     hooks: {
       beforeCreate: (data) => {
         data.id = UUID.v7();
       },
-    }
+    },
   }
 );
 

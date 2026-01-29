@@ -13,12 +13,12 @@ export const getAuthorizationCode = asyncHandler(
     if (!session) {
       throw new InvalidRequestError("Session tidak ditemukan");
     }
-    const {client_id, redirect_uri, scope} = req.query;
+    const { client_id, redirect_uri, scope } = req.query;
 
     const code = await AuthorizationCode.create({
       client_id: client_id as string,
       user_id: session.passport?.user,
-      scope: scope as string|| "",
+      scope: (scope as string) || "",
       redirect_uri: redirect_uri as string,
       sessionId: req.sessionID,
       expiresAt: new Date(Date.now() + 2 * 60 * 1000),

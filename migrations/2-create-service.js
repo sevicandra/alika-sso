@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-const { name } = require('ejs');
+const { name } = require("ejs");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('services', {
+    await queryInterface.createTable("services", {
       id: {
         primaryKey: true,
         type: Sequelize.UUID,
@@ -25,6 +25,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('services');
-  }
+    await queryInterface.dropTable("services");
+  },
 };

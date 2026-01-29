@@ -13,10 +13,7 @@ type RoleAttributes = {
 
 type RoleCreationAttributes = Optional<RoleAttributes, "id" | "description">;
 
-class Role
-  extends Model<RoleAttributes, RoleCreationAttributes>
-  implements RoleAttributes
-{
+class Role extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
   public id!: string;
   public kode!: string;
   public role!: string;

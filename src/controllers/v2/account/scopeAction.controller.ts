@@ -15,14 +15,12 @@ export const ScopeActionControllerV2 = {
     const search = req.query.search || undefined;
     const where: any = {};
     if (search) where.name = { [Op.like]: `%${search}%` };
-    const { items: data, pagination } = await ScopeAction.findAllWithPagination(
-      {
-        where,
-        limit,
-        offset,
-        order,
-      }
-    );
+    const { items: data, pagination } = await ScopeAction.findAllWithPagination({
+      where,
+      limit,
+      offset,
+      order,
+    });
     successResponse(
       res,
       "Success get all scope action",
@@ -37,6 +35,9 @@ export const ScopeActionControllerV2 = {
   }),
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { ScopeActionId } = req.params;
+    if (typeof ScopeActionId !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await ScopeAction.findById(ScopeActionId);
     if (!data) {
       throw new NotFoundError("Scope action not found");

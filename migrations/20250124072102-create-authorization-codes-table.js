@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('authorization_codes', {
+    await queryInterface.createTable("authorization_codes", {
       code: {
         type: Sequelize.STRING(64),
         allowNull: false,
@@ -36,6 +36,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('authorization_codes');
+    await queryInterface.dropTable("authorization_codes");
   },
 };

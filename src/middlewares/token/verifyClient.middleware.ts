@@ -15,16 +15,12 @@ export const verifyClient = asyncHandler(
     const client_id =
       (await req.body.client_id) ||
       (req.headers.authorization?.split(" ")[1]?.toString() &&
-        (
-          await decode(req.headers.authorization?.split(" ")[1]?.toString())
-        ).split(":")[0]);
+        (await decode(req.headers.authorization?.split(" ")[1]?.toString())).split(":")[0]);
 
     const client_secret =
       (await req.body.client_secret) ||
       (req.headers.authorization?.split(" ")[1]?.toString() &&
-        (
-          await decode(req.headers.authorization?.split(" ")[1]?.toString())
-        ).split(":")[1]);
+        (await decode(req.headers.authorization?.split(" ")[1]?.toString())).split(":")[1]);
 
     const client = await Client.findOne({
       where: { client_id: client_id },

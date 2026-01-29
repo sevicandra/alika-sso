@@ -1,10 +1,6 @@
 import { Client } from "minio";
 import logger from "@/utils/Logger.utils";
-import {
-  StorageError,
-  ValidationError,
-  FileUploadError,
-} from "../utils/errors";
+import { StorageError, ValidationError, FileUploadError } from "../utils/errors";
 import { minioConfig } from "@/config/minio.config";
 
 export class MinIOService {
@@ -16,13 +12,7 @@ export class MinIOService {
     }
   }
   private isAllowedContentType(contentType: string): boolean {
-    const allowed = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "text/plain",
-    ];
+    const allowed = ["application/pdf", "image/jpeg", "image/png", "image/gif", "text/plain"];
     return allowed.includes(contentType);
   }
 
@@ -71,15 +61,9 @@ export class MinIOService {
         throw new FileUploadError(`Content type ${contentType} not allowed`);
       }
 
-      await this.client.putObject(
-        this.bucketName,
-        objectName,
-        file,
-        file.byteLength,
-        {
-          "Content-Type": contentType,
-        }
-      );
+      await this.client.putObject(this.bucketName, objectName, file, file.byteLength, {
+        "Content-Type": contentType,
+      });
       return this.getObjectUrl(objectName);
     } catch (error) {
       if (error instanceof ValidationError) throw error;
@@ -90,9 +74,7 @@ export class MinIOService {
       });
 
       throw new StorageError(
-        `Failed to upload file: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+        `Failed to upload file: ${error instanceof Error ? error.message : "Unknown error"}`
       );
     }
   }
@@ -107,19 +89,14 @@ export class MinIOService {
       });
 
       throw new StorageError(
-        `Failed to download file: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+        `Failed to download file: ${error instanceof Error ? error.message : "Unknown error"}`
       );
     }
   }
 
   async getFile(objectName: string): Promise<Buffer> {
     try {
-      const fileStream = await this.client.getObject(
-        this.bucketName,
-        objectName
-      );
+      const fileStream = await this.client.getObject(this.bucketName, objectName);
       const chunks: Buffer[] = [];
 
       for await (const chunk of fileStream) {
@@ -135,9 +112,7 @@ export class MinIOService {
       });
 
       throw new StorageError(
-        `Failed to get file: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+        `Failed to get file: ${error instanceof Error ? error.message : "Unknown error"}`
       );
     }
   }
@@ -157,9 +132,7 @@ export class MinIOService {
       });
 
       throw new StorageError(
-        `Failed to delete file: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+        `Failed to delete file: ${error instanceof Error ? error.message : "Unknown error"}`
       );
     }
   }
@@ -183,9 +156,7 @@ export class MinIOService {
           });
           reject(
             new StorageError(
-              `Failed to list files: ${
-                error instanceof Error ? error.message : "Unknown error"
-              }`
+              `Failed to list files: ${error instanceof Error ? error.message : "Unknown error"}`
             )
           );
         });

@@ -7,7 +7,7 @@ export class BaseError extends Error {
   constructor(
     message: string,
     statusCode: number = 500,
-    errorCode: string = 'INTERNAL_SERVER_ERROR',
+    errorCode: string = "INTERNAL_SERVER_ERROR",
     isOperational: boolean = true,
     details?: Record<string, any>
   ) {

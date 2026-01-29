@@ -1,8 +1,4 @@
-import jwt, {
-  JsonWebTokenError,
-  NotBeforeError,
-  TokenExpiredError,
-} from "jsonwebtoken";
+import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
 import { StringValue } from "ms";
 import fs from "fs";
 import { appConfig } from "@/config/app.config";
@@ -18,12 +14,10 @@ export class JwtUtil {
 
   static async initialize(): Promise<void> {
     try {
-      const publicKeyPath =
-        process.env.PUBLIC_KEY_FILE || path.join(__dirname, "../../public.pem");
+      const publicKeyPath = process.env.PUBLIC_KEY_FILE || path.join(__dirname, "../../public.pem");
 
       const privateKeyPath =
-        process.env.PRIVATE_KEY_FILE ||
-        path.join(__dirname, "../../private.key");
+        process.env.PRIVATE_KEY_FILE || path.join(__dirname, "../../private.key");
 
       if (!fs.existsSync(publicKeyPath)) {
         throw new Error(`Public key file not found: ${publicKeyPath}`);
@@ -65,9 +59,7 @@ export class JwtUtil {
 
   private static ensureInitialized(): void {
     if (!this.initialized) {
-      throw new Error(
-        "JwtUtil not initialized. Call JwtUtil.initialize() first."
-      );
+      throw new Error("JwtUtil not initialized. Call JwtUtil.initialize() first.");
     }
   }
 

@@ -6,4 +6,3 @@ export class GrantRepository extends BaseRepository<Grant> {
     super(Grant);
   }
 }
-

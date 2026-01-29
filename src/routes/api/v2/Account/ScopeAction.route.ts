@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { ScopeActionControllerV2 } from "@/controllers/v2/account/scopeAction.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { z } from "zod";
 const router = Router({ mergeParams: true });
 
@@ -32,11 +29,7 @@ const updateSchema = z.object({
 router.get("/", validateQuery(findQuerySchema), ScopeActionControllerV2.getAll);
 router.get("/:ScopeActionId", ScopeActionControllerV2.getById);
 router.post("/", validateBody(createSchema), ScopeActionControllerV2.create);
-router.patch(
-  "/:ScopeActionId",
-  validateBody(updateSchema),
-  ScopeActionControllerV2.update
-);
+router.patch("/:ScopeActionId", validateBody(updateSchema), ScopeActionControllerV2.update);
 router.delete("/:ScopeActionId", ScopeActionControllerV2.delete);
 
 export default router;

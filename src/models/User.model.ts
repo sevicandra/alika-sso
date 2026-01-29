@@ -55,10 +55,7 @@ type UserAttributes = {
 
 type UserCreationAttributes = Optional<UserAttributes, "sub" | "id">;
 
-class User
-  extends Model<UserAttributes, UserCreationAttributes>
-  implements UserAttributes
-{
+class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: string;
   public sub!: string;
   public userId!: string;

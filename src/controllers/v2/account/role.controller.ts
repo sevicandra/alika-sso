@@ -16,8 +16,7 @@ export const RoleControllerV2 = {
     const service = req.query.service || undefined;
     const where: any = {};
     if (search) where.nama = { [Op.like]: `%${search}%` };
-    if (service)
-      where.push(where(col("Service.name"), { [Op.like]: `%${search}%` }));
+    if (service) where.push(where(col("Service.name"), { [Op.like]: `%${search}%` }));
 
     const { items: data, pagination } = await Role.findAllWithPagination({
       where,
@@ -45,6 +44,9 @@ export const RoleControllerV2 = {
   }),
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { RoleId } = req.params;
+    if (typeof RoleId !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Role.findById(RoleId);
     if (!data) {
       throw new NotFoundError("Role not found");

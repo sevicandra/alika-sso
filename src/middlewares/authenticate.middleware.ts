@@ -4,7 +4,7 @@ import { authService } from "@/services/auth-service";
 
 export const authenticate = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
@@ -29,7 +29,7 @@ export const authenticate = async (
 };
 
 export const authorizeScopes = (requiredScopes?: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, _res: Response, next: NextFunction): void => {
     try {
       if (!req.user) {
         throw new AuthenticationError("User not authenticated");
@@ -58,7 +58,7 @@ export const authorizeScopes = (requiredScopes?: string[]) => {
 };
 
 export const authorizeRoles = (requiredRoles?: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, _res: Response, next: NextFunction): void => {
     try {
       if (!req.user) {
         throw new AuthenticationError("User not authenticated");
@@ -69,14 +69,10 @@ export const authorizeRoles = (requiredRoles?: string[]) => {
           const userRole = req.user?.account?.find(
             (a) => a.service.toLowerCase() === service
           )?.roles;
-          return userRole?.some(
-            (r) => r.nama.toUpperCase() === role.toUpperCase()
-          );
+          return userRole?.some((r) => r.nama.toUpperCase() === role.toUpperCase());
         });
         if (!hasRequiredRoles) {
-          throw new AuthorizationError(
-            `Access requires one of roles: ${requiredRoles.join(", ")}`
-          );
+          throw new AuthorizationError(`Access requires one of roles: ${requiredRoles.join(", ")}`);
         }
       }
 

@@ -6,4 +6,3 @@ export class UserRepository extends BaseRepository<User> {
     super(User);
   }
 }
-

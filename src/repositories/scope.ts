@@ -6,4 +6,3 @@ export class ScopeRepository extends BaseRepository<Scope> {
     super(Scope);
   }
 }
-

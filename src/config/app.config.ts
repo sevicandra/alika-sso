@@ -41,13 +41,10 @@ const envSchema = z.object({
     .string()
     .min(1, "JWT_EXPIRES_IN tidak boleh kosong")
     .refine(isMsFormat, {
-      message:
-        'JWT_EXPIRES_IN harus format ms (contoh: "7d", "24h", "30m", "3600s")',
+      message: 'JWT_EXPIRES_IN harus format ms (contoh: "7d", "24h", "30m", "3600s")',
     })
     .transform((value) => value as ms.StringValue),
-  LEVEL_LOG: z
-    .enum(["error", "warn", "info", "http", "verbose", "debug", "silly"])
-    .default("info"),
+  LEVEL_LOG: z.enum(["error", "warn", "info", "http", "verbose", "debug", "silly"]).default("info"),
 });
 
 let config: appConfigInterface;

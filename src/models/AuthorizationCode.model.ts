@@ -12,10 +12,7 @@ type AuthorizationCodeAttributes = {
   sessionId?: string;
 };
 
-type AuthorizationCodeCreationAttributes = Optional<
-  AuthorizationCodeAttributes,
-  "code"
->;
+type AuthorizationCodeCreationAttributes = Optional<AuthorizationCodeAttributes, "code">;
 
 class AuthorizationCode extends Model<
   AuthorizationCodeAttributes,

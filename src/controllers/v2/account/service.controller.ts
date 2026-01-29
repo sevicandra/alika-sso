@@ -131,6 +131,9 @@ export const ServiceControllerV2 = {
     async (req: Request, res: Response) => {
       const { ServiceKode } = req.params;
       const { kode, role, description } = req.body;
+      if (typeof ServiceKode !== "string") {
+        throw new InvalidRequestError("Invalid request");
+      }
       const data = await Role.create({
         kode,
         role,
@@ -171,25 +174,28 @@ export const ServiceControllerV2 = {
       useTransaction: true,
     }
   ),
-  removeRole: asyncHandler(async (req: Request, res: Response) => {
-    const t = req.transaction;
-    if (!t) {
-      throw new InvalidRequestError("Transaksi tidak ditemukan");
-    }
-    const { RoleKode, ServiceKode } = req.params;
-    await Role.deleteOne(
-      {
-        where: {
-          kode: RoleKode,
-          service_kode: ServiceKode,
+  removeRole: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
+      }
+      const { RoleKode, ServiceKode } = req.params;
+      await Role.deleteOne(
+        {
+          where: {
+            kode: RoleKode,
+            service_kode: ServiceKode,
+          },
         },
-      },
-      t
-    );
-    successResponse(res, "Success delete data role", null);
-  },{
-    useTransaction: true,
-  }),
+        t
+      );
+      successResponse(res, "Success delete data role", null);
+    },
+    {
+      useTransaction: true,
+    }
+  ),
 
   getScopes: asyncHandler(async (req: Request, res: Response) => {
     const { ServiceKode } = req.params;
@@ -226,6 +232,9 @@ export const ServiceControllerV2 = {
   addScope: asyncHandler(async (req: Request, res: Response) => {
     const { ServiceKode } = req.params;
     const { kode, scope } = req.body;
+    if (typeof ServiceKode !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
     const data = await Scope.create({
       kode,
       scope,
@@ -233,30 +242,33 @@ export const ServiceControllerV2 = {
     });
     successResponse(res, "Success create data scope", data);
   }),
-  updateScope: asyncHandler(async (req: Request, res: Response) => {
-    const t = req.transaction;
-    if (!t) {
-      throw new InvalidRequestError("Transaksi tidak ditemukan");
-    }
-    const { kode, scope } = req.body;
-    const { ScopeKode, ServiceKode } = req.params;
-    const data = await Scope.updateOne(
-      {
-        where: {
-          kode: ScopeKode,
-          service_kode: ServiceKode,
+  updateScope: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
+      }
+      const { kode, scope } = req.body;
+      const { ScopeKode, ServiceKode } = req.params;
+      const data = await Scope.updateOne(
+        {
+          where: {
+            kode: ScopeKode,
+            service_kode: ServiceKode,
+          },
         },
-      },
-      {
-        kode,
-        scope,
-      },
-      t
-    );
-    successResponse(res, "Success update data scope", data);
-  },{
-    useTransaction: true,
-  }),
+        {
+          kode,
+          scope,
+        },
+        t
+      );
+      successResponse(res, "Success update data scope", data);
+    },
+    {
+      useTransaction: true,
+    }
+  ),
   removeScope: asyncHandler(
     async (req: Request, res: Response) => {
       const t = req.transaction;

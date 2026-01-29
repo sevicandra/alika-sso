@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { GrantControllerV1 } from "@/controllers/v1/grant.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 import { z } from "zod";
 const router = Router();
@@ -20,9 +17,7 @@ const findQuerySchema = z.object({
 
 const grantCreateSchema = z.object({
   grant: z.string("Grant is required").min(1, "Grant is required"),
-  kode: z
-    .string("Kode is required")
-    .regex(/^\d{3}$/, "Kode must be 3 digits number"),
+  kode: z.string("Kode is required").regex(/^\d{3}$/, "Kode must be 3 digits number"),
 });
 
 const grantUpdateSchema = z.object({
@@ -39,11 +34,7 @@ router.get(
   validateQuery(findQuerySchema),
   GrantControllerV1.getAll
 );
-router.get(
-  "/:id",
-  authorizeScopes(["account.grant.read"]),
-  GrantControllerV1.getById
-);
+router.get("/:id", authorizeScopes(["account.grant.read"]), GrantControllerV1.getById);
 router.post(
   "/",
   authorizeScopes(["account.grant.write"]),
@@ -56,10 +47,6 @@ router.patch(
   validateBody(grantUpdateSchema),
   GrantControllerV1.update
 );
-router.delete(
-  "/:id",
-  authorizeScopes(["account.grant.delete"]),
-  GrantControllerV1.delete
-);
+router.delete("/:id", authorizeScopes(["account.grant.delete"]), GrantControllerV1.delete);
 
 export default router;

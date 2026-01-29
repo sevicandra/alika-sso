@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { GrantControllerV2 } from "@/controllers/v2/account/grant.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { z } from "zod";
 const router = Router({ mergeParams: true });
 
@@ -30,11 +27,7 @@ const grantUpdateSchema = z.object({
 router.get("/", validateQuery(findQuerySchema), GrantControllerV2.getAll);
 router.get("/:GrantId", GrantControllerV2.getById);
 router.post("/", validateBody(grantCreateSchema), GrantControllerV2.create);
-router.patch(
-  "/:GrantId",
-  validateBody(grantUpdateSchema),
-  GrantControllerV2.update
-);
+router.patch("/:GrantId", validateBody(grantUpdateSchema), GrantControllerV2.update);
 router.delete("/:GrantId", GrantControllerV2.delete);
 
 export default router;

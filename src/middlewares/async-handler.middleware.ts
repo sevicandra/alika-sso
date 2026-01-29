@@ -5,16 +5,9 @@ interface AsyncHandlerOptions {
   useTransaction?: boolean;
 }
 
-type RouteHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<void>;
+type RouteHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
-export const asyncHandler = (
-  fn: RouteHandler,
-  options: AsyncHandlerOptions = {}
-) => {
+export const asyncHandler = (fn: RouteHandler, options: AsyncHandlerOptions = {}) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const { useTransaction = false } = options;
 

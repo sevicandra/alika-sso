@@ -15,9 +15,7 @@ class MinioTransport extends Transport {
     });
 
     const date = new Date();
-    const fileName = `log/log-${date.getDate()}-${
-      date.getMonth() + 1
-    }-${date.getFullYear()}.log`;
+    const fileName = `log/log-${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.log`;
     const logEntry = `${JSON.stringify(info)}\n`;
 
     try {
@@ -27,7 +25,7 @@ class MinioTransport extends Transport {
         if (fileBuffer) {
           existingContent = Buffer.from(fileBuffer);
         }
-      } catch (error: any) {        
+      } catch (error: any) {
         if (error.message === "Failed to get file: The specified key does not exist.") {
           // File doesn't exist, proceed to create a new one
         } else {
@@ -35,10 +33,7 @@ class MinioTransport extends Transport {
         }
       }
 
-      const newContent = Buffer.concat([
-        existingContent,
-        Buffer.from(logEntry),
-      ]);
+      const newContent = Buffer.concat([existingContent, Buffer.from(logEntry)]);
       await minioService.uploadFile(newContent, fileName, "text/plain");
     } catch (error) {
       console.error("Error uploading log to MinIO:", error);

@@ -5,11 +5,7 @@ import { AuthenticationError } from "@/utils/errors";
 import { asyncHandler } from "./async-handler.middleware";
 
 export const checkRequest = asyncHandler(
-  async (
-    req: CodeRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  async (req: CodeRequest, _res: Response, next: NextFunction): Promise<void> => {
     const redirectUri = req.query.redirect_uri as string;
     const clientId = req.query.client_id as string;
     const scope = req.query.scope as string;

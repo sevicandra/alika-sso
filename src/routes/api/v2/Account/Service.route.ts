@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { ServiceControllerV2 } from "@/controllers/v2/account/service.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { z } from "zod";
 
 const router = Router({ mergeParams: true });
@@ -55,24 +52,12 @@ const updateScopeSchema = z.object({
 router.get("/", validateQuery(findQuerySchema), ServiceControllerV2.getAll);
 router.get("/:ServiceKode", ServiceControllerV2.getById);
 router.post("/", validateBody(createSchema), ServiceControllerV2.create);
-router.patch(
-  "/:ServiceKode",
-  validateBody(updateSchema),
-  ServiceControllerV2.update
-);
+router.patch("/:ServiceKode", validateBody(updateSchema), ServiceControllerV2.update);
 router.delete("/:ServiceKode", ServiceControllerV2.delete);
 
-router.get(
-  "/:ServiceKode/Role",
-  validateQuery(findQuerySchema),
-  ServiceControllerV2.getRoles
-);
+router.get("/:ServiceKode/Role", validateQuery(findQuerySchema), ServiceControllerV2.getRoles);
 router.get("/:ServiceKode/Role/:RoleKode", ServiceControllerV2.getRoleById);
-router.post(
-  "/:ServiceKode/Role",
-  validateBody(addRoleSchema),
-  ServiceControllerV2.addRole
-);
+router.post("/:ServiceKode/Role", validateBody(addRoleSchema), ServiceControllerV2.addRole);
 router.patch(
   "/:ServiceKode/Role/:RoleKode",
   validateBody(updateRoleSchema),
@@ -80,25 +65,14 @@ router.patch(
 );
 router.delete("/:ServiceKode/Role/:RoleKode", ServiceControllerV2.removeRole);
 
-router.get(
-  "/:ServiceKode/Scope",
-  validateQuery(findQuerySchema),
-  ServiceControllerV2.getScopes
-);
+router.get("/:ServiceKode/Scope", validateQuery(findQuerySchema), ServiceControllerV2.getScopes);
 router.get("/:ServiceKode/Scope/:ScopeKode", ServiceControllerV2.getScopeById);
-router.post(
-  "/:ServiceKode/Scope",
-  validateBody(addScopeSchema),
-  ServiceControllerV2.addScope
-);
+router.post("/:ServiceKode/Scope", validateBody(addScopeSchema), ServiceControllerV2.addScope);
 router.patch(
   "/:ServiceKode/Scope/:ScopeKode",
   validateBody(updateScopeSchema),
   ServiceControllerV2.updateScope
 );
-router.delete(
-  "/:ServiceKode/Scope/:ScopeKode",
-  ServiceControllerV2.removeScope
-);
+router.delete("/:ServiceKode/Scope/:ScopeKode", ServiceControllerV2.removeScope);
 
 export default router;

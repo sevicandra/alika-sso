@@ -9,7 +9,7 @@ import { appConfig } from "@/config/app.config";
 const router = Router();
 import { authenticate } from "@/middlewares/authenticate.middleware";
 
-router.get("/", isAuthenticated, (req: Request, res: Response) => {
+router.get("/", isAuthenticated, (_req: Request, res: Response) => {
   return res.render("index", {
     url: appConfig.URL,
   });
@@ -17,7 +17,7 @@ router.get("/", isAuthenticated, (req: Request, res: Response) => {
 router.use("/login", Login);
 router.use("/auth", Auth);
 router.use("/api", authenticate, Api);
-router.get("/.well-known/jwks.json", async (req: Request, res: Response) => {
+router.get("/.well-known/jwks.json", async (_req: Request, res: Response) => {
   try {
     const jwks = await JwtUtil.getJWKS();
     return res.json(jwks);

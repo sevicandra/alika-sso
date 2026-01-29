@@ -51,12 +51,7 @@ export class UnprocessableEntityError extends BaseError {
 
 export class ExternalServiceError extends BaseError {
   constructor(serviceName: string, message: string, statusCode: number = 502) {
-    super(
-      `${serviceName} error: ${message}`,
-      statusCode,
-      "EXTERNAL_SERVICE_ERROR",
-      true
-    );
+    super(`${serviceName} error: ${message}`, statusCode, "EXTERNAL_SERVICE_ERROR", true);
     Object.setPrototypeOf(this, ExternalServiceError.prototype);
   }
 }
@@ -82,9 +77,7 @@ export class DatabaseError extends BaseError {
       500,
       "DATABASE_ERROR",
       true,
-      process.env.NODE_ENV === "development"
-        ? { original: originalError?.message }
-        : {}
+      process.env.NODE_ENV === "development" ? { original: originalError?.message } : {}
     );
     Object.setPrototypeOf(this, DatabaseError.prototype);
   }
@@ -120,7 +113,7 @@ export class TimeoutError extends BaseError {
 
 export class QueueError extends BaseError {
   constructor(message: string, details?: Record<string, any>) {
-    super(message, 503, 'QUEUE_ERROR', true, details);
+    super(message, 503, "QUEUE_ERROR", true, details);
     Object.setPrototypeOf(this, QueueError.prototype);
   }
 }

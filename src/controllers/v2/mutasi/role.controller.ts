@@ -12,6 +12,9 @@ export const RoleControllerV2 = {
     const order = sortBuilder(sort);
 
     const { items: data, pagination } = await Role.findAllWithPagination({
+      where: {
+        service_kode: "005",
+      },
       limit,
       offset,
       order,

@@ -17,13 +17,10 @@ import { AuthorizationCode, RefreshToken, Session } from "./repositories";
 import { Op } from "sequelize";
 import { redisService } from "@/services/redis-service";
 import { correlationIdMiddleware } from "@/middlewares/correlation-id.middleware";
-import {
-  notFoundHandler,
-  errorHandler,
-} from "./middlewares/error-handler.middleware";
+import { notFoundHandler, errorHandler } from "./middlewares/error-handler.middleware";
 import { JwtUtil } from "@/utils/jwt.util";
 import ms from "ms";
-
+import { sequelize } from "./models";
 
 const startServer = async () => {
   try {
@@ -91,22 +88,32 @@ const startServer = async () => {
     });
 
     cron.schedule("0 * * * *", async () => {
+      const t = await sequelize.transaction();
       try {
         const startTime = Date.now();
 
         logger.info("Starting cleanup cron job");
 
-        const authCodeCount = await AuthorizationCode.delete({
-          where: { expiresAt: { [Op.lt]: new Date() } },
-        });
+        const authCodeCount = await AuthorizationCode.deleteOne(
+          {
+            where: { expiresAt: { [Op.lt]: new Date() } },
+          },
+          t
+        );
 
-        const refreshTokenCount = await RefreshToken.delete({
-          where: { expiresAt: { [Op.lt]: new Date() } },
-        });
+        const refreshTokenCount = await RefreshToken.deleteOne(
+          {
+            where: { expiresAt: { [Op.lt]: new Date() } },
+          },
+          t
+        );
 
-        const sessionCount = await Session.delete({
-          where: { expires: { [Op.lt]: new Date() } },
-        });
+        const sessionCount = await Session.deleteOne(
+          {
+            where: { expires: { [Op.lt]: new Date() } },
+          },
+          t
+        );
 
         logger.info("Cleanup cron job completed", {
           authCodeDeleted: authCodeCount,
@@ -114,10 +121,12 @@ const startServer = async () => {
           sessionDeleted: sessionCount,
           durationMs: Date.now() - startTime,
         });
+        await t.commit();
       } catch (error) {
         logger.error("Cron job failed", {
           error: error instanceof Error ? error.message : String(error),
         });
+        await t.rollback();
       }
     });
 

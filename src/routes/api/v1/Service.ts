@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { ServiceControllerV1 } from "@/controllers/v1/service.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 import { z } from "zod";
 const router = Router();
@@ -19,14 +16,9 @@ const findQuerySchema = z.object({
 });
 
 const serviceCreateSchema = z.object({
-  kode: z
-    .string("Kode is required")
-    .regex(/^\d{3}$/, "Kode must be 3 digits number"),
+  kode: z.string("Kode is required").regex(/^\d{3}$/, "Kode must be 3 digits number"),
   name: z.string("Name is required").min(1, "Name is required"),
-  description: z
-    .string("Description is required")
-    .min(1, "Description is required")
-    .optional(),
+  description: z.string("Description is required").min(1, "Description is required").optional(),
 });
 
 const serviceUpdateScema = z.object({
@@ -35,25 +27,18 @@ const serviceUpdateScema = z.object({
     .regex(/^\d{3}$/, "Kode must be 3 digits number")
     .optional(),
   name: z.string("Name is required").min(1, "Name is required").optional(),
-  description: z
-    .string("Description is required")
-    .min(1, "Description is required")
-    .optional(),
+  description: z.string("Description is required").min(1, "Description is required").optional(),
 });
 
 const addRoleSchema = z.object({
   role: z.string("Role is required").min(1, "Role is required"),
-  kode: z
-    .string("Kode is required")
-    .regex(/^\d{3}$/, "Kode must be 3 digits number"),
+  kode: z.string("Kode is required").regex(/^\d{3}$/, "Kode must be 3 digits number"),
   description: z.string("Description is required").optional(),
 });
 
 const addScopeSchema = z.object({
   scope: z.string("Scope is required").min(1, "Scope is required"),
-  kode: z
-    .string("Kode is required")
-    .regex(/^\d{3}$/, "Kode must be 3 digits number"),
+  kode: z.string("Kode is required").regex(/^\d{3}$/, "Kode must be 3 digits number"),
 });
 
 router.get(
@@ -62,21 +47,9 @@ router.get(
   validateQuery(findQuerySchema),
   ServiceControllerV1.getAll
 );
-router.get(
-  "/:id",
-  authorizeScopes(["account.service.read"]),
-  ServiceControllerV1.getById
-);
-router.get(
-  "/:id/roles",
-  authorizeScopes(["account.service.read"]),
-  ServiceControllerV1.getRoles
-);
-router.get(
-  "/:id/scopes",
-  authorizeScopes(["account.service.read"]),
-  ServiceControllerV1.getScopes
-);
+router.get("/:id", authorizeScopes(["account.service.read"]), ServiceControllerV1.getById);
+router.get("/:id/roles", authorizeScopes(["account.service.read"]), ServiceControllerV1.getRoles);
+router.get("/:id/scopes", authorizeScopes(["account.service.read"]), ServiceControllerV1.getScopes);
 
 router.post(
   "/",
@@ -104,11 +77,7 @@ router.patch(
   ServiceControllerV1.update
 );
 
-router.delete(
-  "/:id",
-  authorizeScopes(["account.service.delete"]),
-  ServiceControllerV1.delete
-);
+router.delete("/:id", authorizeScopes(["account.service.delete"]), ServiceControllerV1.delete);
 router.delete(
   "/:id/roles/:roleId",
   authorizeScopes(["account.service.delete", "account.role.delete"]),

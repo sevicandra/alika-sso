@@ -7,7 +7,7 @@ const router = Router();
 
 router.use(lusca.csrf());
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", (_req: Request, res: Response) => {
   return res.render("auth/login", {
     url: appConfig.URL,
     csrfToken: res.locals._csrf,
@@ -22,8 +22,7 @@ router.get(
   }),
   (req: Request, res: Response) => {
     const searchParams = new URLSearchParams();
-    if (req.query.ReturnUrl)
-      searchParams.append("ReturnUrl", req.query.ReturnUrl as string);
+    if (req.query.ReturnUrl) searchParams.append("ReturnUrl", req.query.ReturnUrl as string);
     return res.redirect(`${appConfig.URL}?${searchParams.toString()}`);
   }
 );

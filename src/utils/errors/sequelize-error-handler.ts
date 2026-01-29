@@ -19,10 +19,13 @@ import {
 export const handleSequelizeError = (error: any): BaseError => {
   // Validation Errors
   if (error instanceof SequelizeValidationError) {
-    const details = error.errors.reduce((acc, err) => {
-      acc[err.path!] = err.message;
-      return acc;
-    }, {} as Record<string, string>);
+    const details = error.errors.reduce(
+      (acc, err) => {
+        acc[err.path!] = err.message;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
     return new ValidationError("Database validation failed", details);
   }
 
@@ -43,10 +46,7 @@ export const handleSequelizeError = (error: any): BaseError => {
   }
 
   // Connection Errors
-  if (
-    error instanceof ConnectionError ||
-    error instanceof ConnectionRefusedError
-  ) {
+  if (error instanceof ConnectionError || error instanceof ConnectionRefusedError) {
     return new DatabaseError("Database connection failed", error);
   }
 

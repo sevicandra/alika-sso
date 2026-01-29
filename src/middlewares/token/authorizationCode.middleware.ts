@@ -6,7 +6,7 @@ import { asyncHandler } from "../async-handler.middleware";
 import { AuthenticationError } from "@/utils/errors";
 
 export const authorizationCodeGrant = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     const t = req.transaction;
     if (!t) {
       throw new Error("Transaksi tidak ditemukan");

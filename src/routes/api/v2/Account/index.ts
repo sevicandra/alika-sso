@@ -12,5 +12,4 @@ router.use("/ScopeAction", ScopeAction);
 router.use("/Client", Client);
 router.use("/Grant", Grant);
 
-
 export default router;

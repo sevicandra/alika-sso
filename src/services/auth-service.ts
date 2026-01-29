@@ -6,13 +6,11 @@ import path from "path";
 
 class key {
   static publicKey = fs.readFileSync(
-    (process.env.PUBLIC_KEY_FILE as string) ||
-      path.join(__dirname, "../../public.pem"),
+    (process.env.PUBLIC_KEY_FILE as string) || path.join(__dirname, "../../public.pem"),
     "utf8"
   );
   static privateKey = fs.readFileSync(
-    (process.env.PRIVATE_KEY_FILE as string) ||
-      path.join(__dirname, "../../private.key"),
+    (process.env.PRIVATE_KEY_FILE as string) || path.join(__dirname, "../../private.key"),
     "utf8"
   );
 }

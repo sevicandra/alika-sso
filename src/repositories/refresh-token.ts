@@ -6,4 +6,3 @@ export class RefreshTokenRepository extends BaseRepository<RefreshToken> {
     super(RefreshToken);
   }
 }
-

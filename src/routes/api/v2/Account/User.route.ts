@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { UserControllerV2 } from "@/controllers/v2/account/user.controller";
-import {
-  validateBody,
-  validateQuery,
-} from "@/middlewares/validate-request.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { z } from "zod";
 const router = Router({ mergeParams: true });
 
@@ -35,10 +32,7 @@ const updateSchema = z.object({
       "NIP must be 18 digits"
     )
     .optional(),
-  nama: z
-    .string("Nama is required")
-    .min(3, "Nama must be at least 3 characters long")
-    .optional(),
+  nama: z.string("Nama is required").min(3, "Nama must be at least 3 characters long").optional(),
 });
 
 const addRoleSchema = z.object({
@@ -51,11 +45,7 @@ router.post("/", validateBody(createSchema), UserControllerV2.create);
 router.patch("/:UserId", validateBody(updateSchema), UserControllerV2.update);
 router.delete("/:UserId", UserControllerV2.delete);
 router.get("/:UserId/role", UserControllerV2.getRoles);
-router.post(
-  "/:UserId/role",
-  validateBody(addRoleSchema),
-  UserControllerV2.addRole
-);
+router.post("/:UserId/role", validateBody(addRoleSchema), UserControllerV2.addRole);
 router.delete("/:UserId/role/:role", UserControllerV2.removeRole);
 
 export default router;

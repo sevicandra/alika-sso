@@ -6,4 +6,3 @@ export class RedirectUriRepository extends BaseRepository<RedirectUri> {
     super(RedirectUri);
   }
 }
-
