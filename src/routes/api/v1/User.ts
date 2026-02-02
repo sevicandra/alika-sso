@@ -39,7 +39,13 @@ const addRoleSchema = z.object({
   role: z.string("Role is required"),
 });
 
+const getByRoleQuerySchema = z.object({
+  service_kode: z.string("Service kode is required"),
+  role: z.string("Role is required"),
+});
+
 router.get("/", validateQuery(findQuerySchema), UserControllerV1.getAll);
+router.get("/getByRole", validateQuery(getByRoleQuerySchema), UserControllerV1.getByRoles);
 router.get("/:UserId", UserControllerV1.getById);
 router.post("/", validateBody(createSchema), UserControllerV1.create);
 router.patch("/:UserId", validateBody(updateSchema), UserControllerV1.update);

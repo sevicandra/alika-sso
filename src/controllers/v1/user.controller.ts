@@ -43,6 +43,31 @@ export const UserControllerV1 = {
     }
     successResponse(res, "Success get user", data);
   }),
+  getByRoles: asyncHandler(async (req: Request, res: Response) => {
+    const limit = parseInt(req.query.limit as string) || undefined;
+    const offset = parseInt(req.query.offset as string) || undefined;
+    const service_kode = req.query.service_kode as string | undefined;
+    const role = req.query.role as string | undefined;
+
+    const { items: data , pagination} = await UserAssignments.findAllWithPagination({
+      where: {
+        service_kode: service_kode,
+      },
+      include: [
+        {
+          association: "Roles",
+          where: {
+            kode: role,
+          },
+          required: true,
+          attributes: [],
+        },
+      ],
+      limit,
+      offset,
+    });
+    successResponse(res, "Success get all user", data, pagination);
+  }),
   create: asyncHandler(async (req: Request, res: Response) => {
     const { nip, nama } = req.body;
     const data = await UserAssignments.create({
