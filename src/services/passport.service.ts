@@ -26,7 +26,7 @@ passport.use(
     ) {
       try {
         if (!accessToken) {
-          throw new AuthenticationError("No access token provided");
+          cb(new AuthenticationError("No access token provided"));
         }
         const userInfoResponse = await axios.get(
           `${passportConfig.BASE_URI}/${passportConfig.USERINFO_ENDPOINT}`,
@@ -39,7 +39,7 @@ passport.use(
         );
 
         if (!userInfoResponse.data?.nip) {
-          throw new AuthenticationError("Invalid user info: missing NIP");
+          cb(new AuthenticationError("Invalid user info: missing NIP"));
         }
         let profile: Profile2;
         try {
@@ -51,7 +51,7 @@ passport.use(
             nip: userInfoResponse.data.nip,
             error: error instanceof Error ? error.message : String(error),
           });
-
+          cb(error);
           profile = null as unknown as Profile2;
         }
 
