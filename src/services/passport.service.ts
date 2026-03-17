@@ -24,10 +24,10 @@ passport.use(
       _profile: typeof User,
       cb: VerifyCallback
     ) {
+      if (!accessToken) {
+        return cb(new AuthenticationError("No access token provided"));
+      }
       try {
-        if (!accessToken) {
-          cb(new AuthenticationError("No access token provided"));
-        }
         const userInfoResponse = await axios.get(
           `${passportConfig.BASE_URI}/${passportConfig.USERINFO_ENDPOINT}`,
           {
@@ -39,20 +39,33 @@ passport.use(
         );
 
         if (!userInfoResponse.data?.nip) {
-          cb(new AuthenticationError("Invalid user info: missing NIP"));
+          return cb(new AuthenticationError("Invalid user info: missing NIP"));
         }
         let profile: Profile2;
         try {
           profile = await KemenkeuService.getProfilHris2({
             nip: userInfoResponse.data.nip,
           });
-        } catch (error) {
+        } catch (error: any) {
+          let errorMessage = error instanceof Error ? error.message : String(error);
+          let errorDetails = error;
+
+          if (axios.isAxiosError(error)) {
+            const targetUrl = error.config?.url ? ` [Target: ${error.config.url}]` : "";
+            errorMessage = `AxiosError${targetUrl}: ${error.message}`;
+            errorDetails = error.response?.data || error.message;
+          }
+
           logger.error("Failed to fetch Kemenkeu profile during OAuth", {
             nip: userInfoResponse.data.nip,
-            error: error instanceof Error ? error.message : String(error),
+            error: errorMessage,
+            details: errorDetails,
           });
-          cb(error);
-          profile = null as unknown as Profile2;
+          return cb(
+            new AuthenticationError(`Failed to fetch Kemenkeu profile: ${errorMessage}`, {
+              details: errorDetails,
+            })
+          );
         }
 
         const userData = {
@@ -91,14 +104,24 @@ passport.use(
           user = await User.create(userData);
         }
         cb(null, user);
-      } catch (error) {
+      } catch (error: any) {
+        let errorMessage = error instanceof Error ? error.message : String(error);
+        let errorDetails = error;
+
+        if (axios.isAxiosError(error)) {
+          const targetUrl = error.config?.url ? ` [Target: ${error.config.url}]` : "";
+          errorMessage = `AxiosError${targetUrl}: ${error.message}`;
+          errorDetails = error.response?.data || error.message;
+        }
+
         logger.error("OAuth strategy verification failed", {
-          error: error instanceof Error ? error.message : String(error),
+          error: errorMessage,
+          details: errorDetails,
         });
 
-        cb(
-          new AuthenticationError("OAuth authentication failed", {
-            details: "Internal authentication error",
+        return cb(
+          new AuthenticationError(`OAuth authentication failed: ${errorMessage}`, {
+            details: errorDetails,
           })
         );
       }
