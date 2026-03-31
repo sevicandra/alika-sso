@@ -34,7 +34,7 @@ passport.use(
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-            timeout: 5000,
+            timeout: 120000,
           }
         );
 
@@ -68,30 +68,34 @@ passport.use(
           );
         }
 
+        if (!profile.jabatan || profile.jabatan.length === 0) {
+          throw new AuthenticationError("User profile is missing job position (jabatan data)");
+        }
+
+        const activeJabatan =
+          profile.jabatan.find((j) => j.statusJabatan?.toLocaleLowerCase() === "definitif") ||
+          profile.jabatan[0];
+
+        if (!activeJabatan) {
+          throw new AuthenticationError("No valid job position found in user profile");
+        }
+
         const userData = {
           name: profile.nama,
           email: profile.email,
           kode_kl: userInfoResponse.data.kode_kl,
           nama_kl: userInfoResponse.data.nama_kl,
           nip: profile.nip18,
-          jabatan:
-            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
-              ?.namaJabatan || profile.jabatan[0].namaJabatan,
-          jenis_jabatan:
-            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
-              ?.jenisJabatan || profile.jabatan[0].jenisJabatan,
-          kode_organisasi:
-            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
-              ?.kodeOrganisasi || profile.jabatan[0].kodeOrganisasi,
-          organisasi:
-            profile.jabatan.find((j) => j.statusJabatan.toLocaleLowerCase() === "definitif")
-              ?.organisasi || profile.jabatan[0].organisasi,
+          jabatan: activeJabatan.namaJabatan,
+          jenis_jabatan: activeJabatan.jenisJabatan,
+          kode_organisasi: activeJabatan.kodeOrganisasi,
+          organisasi: activeJabatan.organisasi,
           kode_satker: profile.kdSatker,
           satker: profile.namaSatker,
           gravatar: userInfoResponse.data.gravatar,
           preferred_username: userInfoResponse.data.preferred_username,
           nik: profile.nik,
-          npwp: profile.npwp.replace(/\D/g, ""),
+          npwp: profile.npwp ? profile.npwp.replace(/\D/g, "") : "",
         };
 
         let user = await User.findOne({

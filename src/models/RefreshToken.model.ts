@@ -31,6 +31,7 @@ RefreshToken.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7(),
     },
     token: {
       type: DataTypes.STRING(64),
@@ -71,9 +72,6 @@ RefreshToken.init(
     modelName: "RefreshToken",
     tableName: "refresh_tokens",
     hooks: {
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
-      },
       afterValidate: async (token: RefreshToken) => {
         token.token = await hash(token.token);
       },

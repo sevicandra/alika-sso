@@ -27,6 +27,7 @@
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
+    "csv-parse": "^6.1.0",
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
@@ -37,7 +38,9 @@
     "lusca": "^1.7.0",
     "method-override": "^3.0.0",
     "minio": "^8.0.6",
+    "module-alias": "^2.2.3",
     "morgan": "^1.10.0",
+    "multer": "^2.1.1",
     "mysql2": "^3.14.1",
     "node-cron": "^4.0.5",
     "node-jose": "^2.2.0",
@@ -50,8 +53,7 @@
     "tailwindcss": "^4.1.6",
     "uuid": "^11.1.0",
     "winston": "^3.18.3",
-    "zod": "^4.2.1",
-    "module-alias": "^2.2.3"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -65,6 +67,7 @@
     "@types/method-override": "^3.0.0",
     "@types/module-alias": "^2.0.4",
     "@types/morgan": "^1.9.9",
+    "@types/multer": "^2.1.0",
     "@types/node": "^22.15.17",
     "@types/node-jose": "^1.1.13",
     "@types/passport": "^1.0.17",

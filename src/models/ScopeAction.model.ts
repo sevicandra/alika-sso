@@ -23,6 +23,7 @@ ScopeAction.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7(),
     },
     kode: {
       type: DataTypes.STRING(3),
@@ -42,11 +43,6 @@ ScopeAction.init(
     modelName: "ScopeActions",
     tableName: "scope_actions",
     timestamps: false,
-    hooks: {
-      beforeCreate: (scopeAction) => {
-        scopeAction.id = UUID.v7();
-      },
-    },
   }
 );
 

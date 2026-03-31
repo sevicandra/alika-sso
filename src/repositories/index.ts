@@ -13,6 +13,7 @@ import { ClientScopeRepository } from "./client-scope";
 import { ClientGrantRepository } from "./client-grant";
 import { UserAssignmentsRepository } from "./user-assignments";
 import { UserRoleRepository } from "./user-role";
+import { JabatanServiceRepository } from "./jabatan-service";
 
 const AuthorizationCode = new AuthorizationCodeRepository();
 const Client = new ClientRepository();
@@ -29,6 +30,7 @@ const ClientScope = new ClientScopeRepository();
 const ClientGrant = new ClientGrantRepository();
 const UserAssignments = new UserAssignmentsRepository();
 const UserRole = new UserRoleRepository();
+const JabatanService = new JabatanServiceRepository();
 
 export {
   AuthorizationCode,
@@ -46,4 +48,5 @@ export {
   UserAssignments,
   UserRole,
   Session,
+  JabatanService,
 };

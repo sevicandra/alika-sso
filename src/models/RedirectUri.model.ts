@@ -20,8 +20,9 @@ class RedirectUri
 RedirectUri.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7()
     },
     client_id: {
       type: DataTypes.STRING,
@@ -54,11 +55,7 @@ RedirectUri.init(
     tableName: "redirect_uris",
     timestamps: false,
     modelName: "RedirectUri",
-    hooks: {
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
-      },
-    },
+
   }
 );
 

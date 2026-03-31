@@ -63,8 +63,9 @@ class Client extends Model<ClientAttributes, ClientCreationAttributes> implement
 Client.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7(),
     },
     client_id: {
       type: DataTypes.STRING,
@@ -116,10 +117,6 @@ Client.init(
         if (client.client_secret && !options.skip?.some((s) => s === "client_secret")) {
           client.client_secret = await hash(client.client_secret);
         }
-      },
-
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
       },
     },
     defaultScope: {

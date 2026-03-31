@@ -2,6 +2,7 @@ import sequelize from "@/config/db.config";
 import { Model, DataTypes, Optional } from "sequelize";
 import { Client } from "@/models";
 import { Grant } from "@/models";
+import { UUID } from "@/utils/uuid.util";
 
 type ClientGrantAttributes = {
   id: string;
@@ -27,10 +28,10 @@ ClientGrant.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: UUID.v7(),
     },
     client_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     grant_kode: {

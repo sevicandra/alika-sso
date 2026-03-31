@@ -4,6 +4,7 @@ import User from "./User.model";
 import Role from "./Role.model";
 import Service from "./Service.model";
 import UserRole from "./UserRole.model";
+import { UUID } from "@/utils/uuid.util";
 
 type UserAssignmentsAttributes = {
   id: string;
@@ -46,7 +47,7 @@ UserAssignments.init(
   {
     id: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: UUID.v7(),
       primaryKey: true,
     },
     nip: {

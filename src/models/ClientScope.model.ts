@@ -3,6 +3,7 @@ import { Model, DataTypes, BelongsTo, Optional } from "sequelize";
 import Scope from "./Scope.model";
 import Client from "./Client.model";
 import ScopeAction from "./ScopeAction.model";
+import { UUID } from "@/utils/uuid.util";
 
 type ClientScopesAttributes = {
   id: string;
@@ -38,7 +39,7 @@ ClientScope.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: UUID.v7(),
     },
     client_id: {
       type: DataTypes.UUID,

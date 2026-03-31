@@ -20,8 +20,9 @@ class GrantType
 GrantType.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7(),
     },
     kode: {
       type: DataTypes.STRING,
@@ -39,11 +40,6 @@ GrantType.init(
     modelName: "GrantType",
     defaultScope: {
       order: [["kode", "ASC"]],
-    },
-    hooks: {
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
-      },
     },
   }
 );

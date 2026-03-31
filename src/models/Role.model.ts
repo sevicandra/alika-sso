@@ -29,8 +29,9 @@ class Role extends Model<RoleAttributes, RoleCreationAttributes> implements Role
 Role.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7(),
     },
     kode: {
       type: DataTypes.STRING(3),
@@ -87,11 +88,6 @@ Role.init(
     modelName: "Roles",
     tableName: "roles",
     timestamps: false,
-    hooks: {
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
-      },
-    },
   }
 );
 

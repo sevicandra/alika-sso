@@ -14,6 +14,7 @@ import ClientScope from "./ClientScope.model";
 import UserRole from "./UserRole.model";
 import sequelize from "@/config/db.config";
 import ClientGrant from "./ClientGrant.model";
+import JabatanService from "./JabatanService.model";
 
 Role.belongsTo(Service, {
   foreignKey: "service_kode",
@@ -55,6 +56,12 @@ Service.hasMany(Scope, {
   foreignKey: "service_kode",
   sourceKey: "kode",
   as: "Scopes",
+});
+
+Service.hasMany(JabatanService, {
+  foreignKey: "service_kode",
+  sourceKey: "kode",
+  as: "Jabatan",
 });
 
 RedirectUri.belongsTo(Client, {
@@ -126,4 +133,5 @@ export {
   sequelize,
   UserRole,
   ClientGrant,
+  JabatanService,
 };

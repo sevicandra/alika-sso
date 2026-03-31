@@ -27,6 +27,7 @@ Scope.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7(),
     },
     service_kode: {
       type: DataTypes.STRING(3),
@@ -83,11 +84,6 @@ Scope.init(
           attributes: ["kode", "name"],
         },
       ],
-    },
-    hooks: {
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
-      },
     },
     indexes: [
       {

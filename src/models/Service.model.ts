@@ -1,7 +1,6 @@
 import sequelize from "@/config/db.config";
 import { Model, Optional, DataTypes, HasMany } from "sequelize";
-import Role from "./Role.model";
-import Scope from "./Scope.model";
+import { Scope, Role, JabatanService } from "@/models";
 import { UUID } from "@/utils/uuid.util";
 type ServiceAttributes = {
   id: string;
@@ -22,10 +21,12 @@ class Service
   public description!: string;
   public Roles!: Role[];
   public Scopes!: Scope[];
+  public Jabatan!: JabatanService[];
 
   public static associations: {
     Roles: HasMany<Service, Role>;
     Scopes: HasMany<Service, Scope>;
+    Jabatan: HasMany<Service, JabatanService>;
   };
 
   async addRole({ kode, role, description }: { kode: string; role: string; description?: string }) {
@@ -68,6 +69,7 @@ Service.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: UUID.v7(),
     },
     kode: {
       type: DataTypes.STRING(3),
@@ -105,11 +107,6 @@ Service.init(
     modelName: "Services",
     tableName: "services",
     timestamps: false,
-    hooks: {
-      beforeCreate: (data) => {
-        data.id = UUID.v7();
-      },
-    },
   }
 );
 

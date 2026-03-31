@@ -1,4 +1,4 @@
-import { Service, Role, Scope } from "@/repositories";
+import { Service, Role, Scope, JabatanService } from "@/repositories";
 import { successResponse } from "@/helpers/respose.helper";
 import { Response, Request } from "express";
 import { Op } from "sequelize";
@@ -286,6 +286,105 @@ export const ServiceControllerV2 = {
         t
       );
       successResponse(res, "Success delete data scope", null);
+    },
+    {
+      useTransaction: true,
+    }
+  ),
+
+  getJabatan: asyncHandler(async (req: Request, res: Response) => {
+    const { ServiceKode } = req.params;
+    const limit = parseInt(req.query.limit as string) || undefined;
+    const offset = parseInt(req.query.offset as string) || undefined;
+    const sort = req.query.sort as string;
+    const order = sortBuilder(sort);
+    const search = req.query.search || undefined;
+    const where: any = {};
+    if (search) where.description = { [Op.like]: `%${search}%` };
+    const { items: data, pagination } = await JabatanService.findAllWithPagination({
+      where: {
+        service_kode: ServiceKode,
+      },
+      limit,
+      offset,
+      order,
+    });
+    successResponse(res, "Success get all data jabatan", data, pagination);
+  }),
+  getJabatanById: asyncHandler(async (req: Request, res: Response) => {
+    const { Id, ServiceKode } = req.params;
+    const data = await JabatanService.findOne({
+      where: {
+        id: Id,
+        service_kode: ServiceKode,
+      },
+    });
+    if (!data) {
+      throw new NotFoundError("Jabatan not found");
+    }
+    successResponse(res, "Success get data jabatan by id", data);
+  }),
+  addJabatan: asyncHandler(async (req: Request, res: Response) => {
+    const { ServiceKode } = req.params;
+    const { kode_satker, kode_jabatan, kode_organisasi, description } = req.body;
+    if (typeof ServiceKode !== "string") {
+      throw new InvalidRequestError("Invalid request");
+    }
+    const data = await JabatanService.create({
+      kode_satker,
+      kode_jabatan,
+      kode_organisasi,
+      description,
+      service_kode: ServiceKode,
+    });
+    successResponse(res, "Success create data jabatan", data);
+  }),
+  updateJabatan: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
+      }
+      const { kode_satker, kode_jabatan, kode_organisasi, description } = req.body;
+      const { Id, ServiceKode } = req.params;
+      const data = await JabatanService.updateOne(
+        {
+          where: {
+            id: Id,
+            service_kode: ServiceKode,
+          },
+        },
+        {
+          kode_satker,
+          kode_jabatan,
+          kode_organisasi,
+          description,
+        },
+        t
+      );
+      successResponse(res, "Success update data jabatan", data);
+    },
+    {
+      useTransaction: true,
+    }
+  ),
+  removeJabatan: asyncHandler(
+    async (req: Request, res: Response) => {
+      const t = req.transaction;
+      if (!t) {
+        throw new InvalidRequestError("Transaksi tidak ditemukan");
+      }
+      const { Id, ServiceKode } = req.params;
+      await JabatanService.deleteOne(
+        {
+          where: {
+            id: Id,
+            service_kode: ServiceKode,
+          },
+        },
+        t
+      );
+      successResponse(res, "Success delete data jabatan", null);
     },
     {
       useTransaction: true,

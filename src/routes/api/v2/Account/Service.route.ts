@@ -49,6 +49,41 @@ const updateScopeSchema = z.object({
   scope: z.string("Scope is required").optional(),
 });
 
+const addJabatanSchema = z.object({
+  kode_satker: z
+    .string("Kode Satker is required")
+    .min(1, "Kode Satker is required")
+    .regex(/^(\d{6}|-)$/, "Kode Satker must be 6 digits atau '-'"),
+  kode_jabatan: z
+    .string("Kode Jabatan is required")
+    .min(1, "Kode Jabatan is required")
+    .regex(/^\d{1,20}$/, "Kode Jabatan must be 20 digits or less"),
+  kode_organisasi: z
+    .string("Kode Organisasi is required")
+    .min(1, "Kode Organisasi is required")
+    .regex(/^\d{1,20}$/, "Kode Organisasi must be 20 digits or less"),
+  description: z.string("Description is required").min(1, "Description is required"),
+});
+
+const updateJabatanSchema = z.object({
+  kode_satker: z
+    .string("Kode Satker is required")
+    .min(1, "Kode Satker is required")
+    .regex(/^(\d{6}|-)$/, "Kode Satker must be 6 digits atau '-'")
+    .optional(),
+  kode_jabatan: z
+    .string("Kode Jabatan is required")
+    .min(1, "Kode Jabatan is required")
+    .regex(/^\d{1,20}$/, "Kode Jabatan must be 20 digits or less")
+    .optional(),
+  kode_organisasi: z
+    .string("Kode Organisasi is required")
+    .min(1, "Kode Organisasi is required")
+    .regex(/^\d{1,20}$/, "Kode Organisasi must be 20 digits or less")
+    .optional(),
+  description: z.string("Description is required").min(1, "Description is required").optional(),
+});
+
 router.get("/", validateQuery(findQuerySchema), ServiceControllerV2.getAll);
 router.get("/:ServiceKode", ServiceControllerV2.getById);
 router.post("/", validateBody(createSchema), ServiceControllerV2.create);
@@ -74,5 +109,19 @@ router.patch(
   ServiceControllerV2.updateScope
 );
 router.delete("/:ServiceKode/Scope/:ScopeKode", ServiceControllerV2.removeScope);
+
+router.get("/:ServiceKode/Jabatan", validateQuery(findQuerySchema), ServiceControllerV2.getJabatan);
+router.get("/:ServiceKode/Jabatan/:Id", ServiceControllerV2.getJabatanById);
+router.post(
+  "/:ServiceKode/Jabatan",
+  validateBody(addJabatanSchema),
+  ServiceControllerV2.addJabatan
+);
+router.patch(
+  "/:ServiceKode/Jabatan/:Id",
+  validateBody(updateJabatanSchema),
+  ServiceControllerV2.updateJabatan
+);
+router.delete("/:ServiceKode/Jabatan/:Id", ServiceControllerV2.removeJabatan);
 
 export default router;

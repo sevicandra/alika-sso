@@ -78,6 +78,10 @@
             </div>
           </div>
           <div class="p-6 pt-0 space-y-6">
+            <!-- Error Alert Container -->
+            <div id="error-alert" class="hidden mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+              <span class="font-medium">Authentication Failed:</span> <span id="error-message"></span>
+            </div>
             <div class="space-y-4">
               <form action="<%= url %>/login/KemenkeuID" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -121,7 +125,21 @@
   </body>
   <script>
     const theme = localStorage.getItem("theme");
-
     document.documentElement.setAttribute("data-theme", theme ? theme : "blue");
+
+    // Display error message from URL if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMsg = urlParams.get('error');
+    
+    if (errorMsg) {
+      const errorAlert = document.getElementById('error-alert');
+      const errorMessageSpan = document.getElementById('error-message');
+      
+      errorMessageSpan.textContent = errorMsg;
+      errorAlert.classList.remove('hidden');
+      
+      // Optional: Clean up URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   </script>
 </html>
