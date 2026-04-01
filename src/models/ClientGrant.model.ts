@@ -28,7 +28,7 @@ ClientGrant.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: UUID.v7(),
+      defaultValue: UUID.v7,
     },
     client_id: {
       type: DataTypes.UUID,

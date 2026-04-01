@@ -27,7 +27,7 @@ Scope.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: UUID.v7(),
+      defaultValue: UUID.v7,
     },
     service_kode: {
       type: DataTypes.STRING(3),

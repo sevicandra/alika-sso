@@ -47,7 +47,7 @@ UserAssignments.init(
   {
     id: {
       type: DataTypes.UUID,
-      defaultValue: UUID.v7(),
+      defaultValue: UUID.v7,
       primaryKey: true,
     },
     nip: {
