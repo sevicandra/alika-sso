@@ -79,6 +79,10 @@ const startServer = async () => {
     app.set("views", path.join(__dirname, "./views"));
     app.set("view engine", "ejs");
 
+    app.get("/health", (_req: Request, res: Response) => {
+      res.status(200).json({ status: "OK", timestamp: new Date() });
+    });
+
     app.use("/", router);
     app.use(notFoundHandler);
     app.use(errorHandler);
