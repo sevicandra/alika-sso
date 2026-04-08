@@ -7,6 +7,17 @@ const router = Router();
 
 router.use(lusca.csrf());
 
+router.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (err && err.message && err.message.toLowerCase().includes("csrf token")) {
+    const searchParams = new URLSearchParams();
+    if (req.query.ReturnUrl) {
+      searchParams.append("ReturnUrl", req.query.ReturnUrl as string);
+    }
+    searchParams.append("error", "Sesi anda telah berakhir atau tidak valid, silakan login kembali.");
+    return res.redirect(`${appConfig.URL}/login?${searchParams.toString()}`);
+  }
+  next(err);
+});
 router.get("/", (_req: Request, res: Response) => {
   return res.render("auth/login", {
     url: appConfig.URL,

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserControllerV1 } from "@/controllers/v1/user.controller";
 import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 import { z } from "zod";
+import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 const router = Router({ mergeParams: true });
 
 const findQuerySchema = z.object({
@@ -44,14 +45,47 @@ const getByRoleQuerySchema = z.object({
   role: z.string("Role is required"),
 });
 
-router.get("/", validateQuery(findQuerySchema), UserControllerV1.getAll);
-router.get("/getByRole", validateQuery(getByRoleQuerySchema), UserControllerV1.getByRoles);
-router.get("/:UserId", UserControllerV1.getById);
-router.post("/", validateBody(createSchema), UserControllerV1.create);
-router.patch("/:UserId", validateBody(updateSchema), UserControllerV1.update);
-router.delete("/:UserId", UserControllerV1.delete);
-router.get("/:UserId/role", UserControllerV1.getRoles);
-router.post("/:UserId/role", validateBody(addRoleSchema), UserControllerV1.addRole);
-router.delete("/:UserId/role/:role", UserControllerV1.removeRole);
+router.get(
+  "/",
+  authorizeScopes(["account.user.read"]),
+  validateQuery(findQuerySchema),
+  UserControllerV1.getAll
+);
+router.get(
+  "/getByRole",
+  authorizeScopes(["account.user.read"]),
+  validateQuery(getByRoleQuerySchema),
+  UserControllerV1.getByRoles
+);
+router.get("/:UserId", authorizeScopes(["account.user.read"]), UserControllerV1.getById);
+router.post(
+  "/",
+  authorizeScopes(["account.user.write"]),
+  validateBody(createSchema),
+  UserControllerV1.create
+);
+router.patch(
+  "/:UserId",
+  authorizeScopes(["account.user.update"]),
+  validateBody(updateSchema),
+  UserControllerV1.update
+);
+router.delete("/:UserId", authorizeScopes(["account.user.delete"]), UserControllerV1.delete);
+router.get(
+  "/:UserId/role",
+  authorizeScopes(["account.user.read", "account.role.read"]),
+  UserControllerV1.getRoles
+);
+router.post(
+  "/:UserId/role",
+  authorizeScopes(["account.user.write", "account.role.write"]),
+  validateBody(addRoleSchema),
+  UserControllerV1.addRole
+);
+router.delete(
+  "/:UserId/role/:role",
+  authorizeScopes(["account.user.delete", "account.role.delete"]),
+  UserControllerV1.removeRole
+);
 
 export default router;
