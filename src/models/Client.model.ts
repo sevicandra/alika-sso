@@ -1,11 +1,11 @@
-import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, HasMany, BelongsToMany } from "sequelize";
-import Grant from "./GrantType.model";
-import RedirectUri from "./RedirectUri.model";
+import { BelongsToMany, DataTypes, HasMany, Model, Optional } from "sequelize";
 import { hash } from "@/utils/crypt.util";
 import { UUID } from "@/utils/uuid.util";
-import ClientScopes from "./ClientScope.model";
+import sequelize from "@/config/db.config";
 import ClientGrant from "./ClientGrant.model";
+import ClientScopes from "./ClientScope.model";
+import Grant from "./GrantType.model";
+import RedirectUri from "./RedirectUri.model";
 
 type ClientAttributes = {
   id: string;

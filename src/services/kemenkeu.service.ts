@@ -1,15 +1,15 @@
 import axios from "axios";
-import { ServiceKemenkeuConfig } from "@/config/serviceKemenkeu.config";
-import { appConfig } from "@/config/app.config";
 import { redisService } from "@/services/redis-service";
-import { Keluarga, Profile, Profile2 } from "@/types/serviceKemenkeu";
-import {
-  ExternalServiceError,
-  TimeoutError,
-  AuthenticationError,
-  NotFoundError,
-} from "@/utils/errors";
 import logger from "@/utils/Logger.utils";
+import {
+  AuthenticationError,
+  ExternalServiceError,
+  NotFoundError,
+  TimeoutError,
+} from "@/utils/errors";
+import { appConfig } from "@/config/app.config";
+import { ServiceKemenkeuConfig } from "@/config/serviceKemenkeu.config";
+import { Keluarga, Profile, Profile2 } from "@/types/serviceKemenkeu";
 
 const API_TIMEOUT = 5000;
 

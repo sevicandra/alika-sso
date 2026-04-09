@@ -1,10 +1,10 @@
-import { UserAssignments, UserRole } from "@/repositories";
-import { successResponse } from "@/helpers/respose.helper";
-import { Response, Request } from "express";
+import { Request, Response } from "express";
 import { Op, col, where } from "sequelize";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { UserAssignments, UserRole } from "@/repositories";
 
 export const UserControllerV1 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {
@@ -49,7 +49,7 @@ export const UserControllerV1 = {
     const service_kode = req.query.service_kode as string | undefined;
     const role = req.query.role as string | undefined;
 
-    const { items: data , pagination} = await UserAssignments.findAllWithPagination({
+    const { items: data, pagination } = await UserAssignments.findAllWithPagination({
       where: {
         service_kode: service_kode,
       },

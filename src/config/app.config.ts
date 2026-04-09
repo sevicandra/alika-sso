@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import fs from "fs";
-import { z } from "zod";
 import ms from "ms";
+import { z } from "zod";
+
 dotenv.config();
 
 interface appConfigInterface {

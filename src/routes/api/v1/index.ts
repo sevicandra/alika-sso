@@ -1,11 +1,11 @@
 import { Router } from "express";
 import Client from "./Client";
 import Grant from "./Grant";
-import Service from "./Service";
 import Role from "./Role";
 import Scope from "./Scope";
-import User from "./User";
 import ScopeAction from "./ScopeAction";
+import Service from "./Service";
+import User from "./User";
 
 const router = Router();
 router.use("/client", Client);

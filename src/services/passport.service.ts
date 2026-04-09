@@ -1,12 +1,12 @@
-import { passportConfig } from "@/config/passport.config";
+import axios from "axios";
 import passport from "passport";
 import { Strategy as OAuth2Strategy, VerifyCallback } from "passport-oauth2";
-import { User } from "@/repositories";
-import axios from "axios";
-import { KemenkeuService } from "./kemenkeu.service";
-import { AuthenticationError } from "@/utils/errors";
 import logger from "@/utils/Logger.utils";
+import { AuthenticationError } from "@/utils/errors";
+import { passportConfig } from "@/config/passport.config";
+import { User } from "@/repositories";
 import { Profile2 } from "@/types/serviceKemenkeu";
+import { KemenkeuService } from "./kemenkeu.service";
 
 passport.use(
   new OAuth2Strategy(

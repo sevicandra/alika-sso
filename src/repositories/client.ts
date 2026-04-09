@@ -1,9 +1,9 @@
-import { Client } from "@/models";
-import { BaseRepository } from "./base-repository";
-import { ClientScope, ClientGrant, RedirectUri } from ".";
-import { handleSequelizeError } from "@/utils/errors/sequelize-error-handler";
-import { NotFoundError } from "@/utils/errors";
 import { Transaction } from "sequelize";
+import { NotFoundError } from "@/utils/errors";
+import { handleSequelizeError } from "@/utils/errors/sequelize-error-handler";
+import { Client } from "@/models";
+import { ClientGrant, ClientScope, RedirectUri } from ".";
+import { BaseRepository } from "./base-repository";
 
 export class ClientRepository extends BaseRepository<Client> {
   constructor() {

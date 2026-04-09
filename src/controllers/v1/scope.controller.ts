@@ -1,10 +1,10 @@
-import { Response, Request } from "express";
-import { Scope } from "@/repositories";
+import { Request, Response } from "express";
 import { Op } from "sequelize";
-import { successResponse } from "@/helpers/respose.helper";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { Scope } from "@/repositories";
 
 export const ScopeControllerV1 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {
@@ -69,10 +69,14 @@ export const ScopeControllerV1 = {
       throw new InvalidRequestError("Invalid request");
     }
     const { scope, service_kode } = req.body;
-    const data = await Scope.updateById(id, {
-      scope,
-      service_kode,
-    },t);
+    const data = await Scope.updateById(
+      id,
+      {
+        scope,
+        service_kode,
+      },
+      t
+    );
     successResponse(res, "Success update client", data);
   }),
 

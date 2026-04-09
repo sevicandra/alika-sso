@@ -1,13 +1,14 @@
-import { Router, Response } from "express";
-import { isAuthenticated } from "@/middlewares/auth.middleware";
-import { checkRequest } from "@/middlewares/authorize.middleware";
-import { getAuthorizationCode } from "@/controllers/authorize.controller";
-import { verifyClient } from "@/middlewares/token/verifyClient.middleware";
-import { TokenRequest } from "@/types/auth";
-import { logout } from "@/controllers/logout.controller";
+import { Response, Router } from "express";
 import { z } from "zod";
-import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
+import { getAuthorizationCode } from "@/controllers/authorize.controller";
+import { logout } from "@/controllers/logout.controller";
+import { isAuthenticated } from "@/middlewares/auth.middleware";
 import { authenticate } from "@/middlewares/authenticate.middleware";
+import { checkRequest } from "@/middlewares/authorize.middleware";
+import { verifyClient } from "@/middlewares/token/verifyClient.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
+import { TokenRequest } from "@/types/auth";
+
 const router = Router();
 
 const getCodeSchema = z.object({

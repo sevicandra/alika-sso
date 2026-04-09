@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { RoleControllerV1 } from "@/controllers/v1/role.controller";
-import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
-import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 import { z } from "zod";
+import { RoleControllerV1 } from "@/controllers/v1/role.controller";
+import { authorizeScopes } from "@/middlewares/authenticate.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 
 const findQuerySchema = z.object({
   search: z.string().optional(),

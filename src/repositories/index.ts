@@ -1,19 +1,19 @@
 import { AuthorizationCodeRepository } from "./authorization-code";
 import { ClientRepository } from "./client";
+import { ClientGrantRepository } from "./client-grant";
+import { ClientScopeRepository } from "./client-scope";
 import { GrantRepository } from "./grant";
+import { JabatanServiceRepository } from "./jabatan-service";
 import { RedirectUriRepository } from "./redirect";
 import { RefreshTokenRepository } from "./refresh-token";
 import { RoleRepository } from "./role";
-import { ScopeActionRepository } from "./scope-action";
 import { ScopeRepository } from "./scope";
-import { SessionRepository } from "./session";
+import { ScopeActionRepository } from "./scope-action";
 import { ServiceRepository } from "./service";
+import { SessionRepository } from "./session";
 import { UserRepository } from "./user";
-import { ClientScopeRepository } from "./client-scope";
-import { ClientGrantRepository } from "./client-grant";
 import { UserAssignmentsRepository } from "./user-assignments";
 import { UserRoleRepository } from "./user-role";
-import { JabatanServiceRepository } from "./jabatan-service";
 
 const AuthorizationCode = new AuthorizationCodeRepository();
 const Client = new ClientRepository();

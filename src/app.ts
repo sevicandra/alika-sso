@@ -1,32 +1,33 @@
-import "./register-alias";
-import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import path from "path";
 import dotenv from "dotenv";
-import router from "./routes";
-import morgan from "morgan";
-import logger from "./utils/Logger.utils";
+import express, { NextFunction, Request, Response } from "express";
 import session from "express-session";
-import { appConfig } from "@/config/app.config";
-import SessionStore from "./utils/session.util";
-import passport from "@/services/passport.service";
 import methodOverride from "method-override";
-import cron from "node-cron";
-import { AuthorizationCode, RefreshToken, Session } from "./repositories";
-import { Op } from "sequelize";
-import { redisService } from "@/services/redis-service";
-import { correlationIdMiddleware } from "@/middlewares/correlation-id.middleware";
-import { notFoundHandler, errorHandler } from "./middlewares/error-handler.middleware";
-import { JwtUtil } from "@/utils/jwt.util";
+import morgan from "morgan";
 import ms from "ms";
+import cron from "node-cron";
+import path from "path";
+import { Op } from "sequelize";
+import { correlationIdMiddleware } from "@/middlewares/correlation-id.middleware";
+import { minioService } from "@/services/minio-service";
+import passport from "@/services/passport.service";
+import { redisService } from "@/services/redis-service";
+import { JwtUtil } from "@/utils/jwt.util";
+import { appConfig } from "@/config/app.config";
+import { errorHandler, notFoundHandler } from "./middlewares/error-handler.middleware";
 import { sequelize } from "./models";
+import "./register-alias";
+import { AuthorizationCode, RefreshToken, Session } from "./repositories";
+import router from "./routes";
+import logger from "./utils/Logger.utils";
+import SessionStore from "./utils/session.util";
 
 const startServer = async () => {
   try {
     await JwtUtil.initialize();
     await redisService.connect();
-
+    await minioService.ensureBucketExists();
     dotenv.config();
     const sessionStore = new SessionStore();
     const port = appConfig.PORT;

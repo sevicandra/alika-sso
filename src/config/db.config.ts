@@ -1,6 +1,7 @@
-import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 import fs from "fs";
+import { Sequelize } from "sequelize";
+
 dotenv.config();
 
 const DB_LOGGING = process.env.DB_LOGGING || "false";

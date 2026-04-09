@@ -1,10 +1,10 @@
+import { BelongsTo, BelongsToMany, DataTypes, Model, Optional } from "sequelize";
+import { UUID } from "@/utils/uuid.util";
 import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, BelongsTo, BelongsToMany } from "sequelize";
-import User from "./User.model";
 import Role from "./Role.model";
 import Service from "./Service.model";
+import User from "./User.model";
 import UserRole from "./UserRole.model";
-import { UUID } from "@/utils/uuid.util";
 
 type UserAssignmentsAttributes = {
   id: string;

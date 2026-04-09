@@ -1,6 +1,6 @@
-import { redisConfig } from "@/config/redis.config";
-import { createClient, RedisClientType } from "redis";
+import { RedisClientType, createClient } from "redis";
 import logger from "@/utils/Logger.utils";
+import { redisConfig } from "@/config/redis.config";
 import { CacheError, TimeoutError } from "../utils/errors";
 
 export class RedisService {

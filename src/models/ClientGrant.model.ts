@@ -1,8 +1,8 @@
+import { DataTypes, Model, Optional } from "sequelize";
+import { UUID } from "@/utils/uuid.util";
 import sequelize from "@/config/db.config";
-import { Model, DataTypes, Optional } from "sequelize";
 import { Client } from "@/models";
 import { Grant } from "@/models";
-import { UUID } from "@/utils/uuid.util";
 
 type ClientGrantAttributes = {
   id: string;

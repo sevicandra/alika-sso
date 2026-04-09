@@ -1,6 +1,6 @@
 import { Router } from "express";
-import User from "./User.route";
 import Role from "./Role.route";
+import User from "./User.route";
 
 const router = Router({ mergeParams: true });
 

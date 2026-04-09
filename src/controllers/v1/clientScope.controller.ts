@@ -1,9 +1,9 @@
-import { Response, Request } from "express";
-import { ClientScope } from "@/repositories";
-import { successResponse } from "@/helpers/respose.helper";
+import { Request, Response } from "express";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { ClientScope } from "@/repositories";
 
 export const ClientScopeControllerV1 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {
@@ -53,11 +53,15 @@ export const ClientScopeControllerV1 = {
         throw new InvalidRequestError("Invalid request");
       }
       const { action_kode, scopeId, clientId } = req.body;
-      const data = await ClientScope.updateById(id, {
-        action_kode,
-        scope_id: scopeId,
-        client_id: clientId,
-      },t);
+      const data = await ClientScope.updateById(
+        id,
+        {
+          action_kode,
+          scope_id: scopeId,
+          client_id: clientId,
+        },
+        t
+      );
       successResponse(res, "Success update client scope", data);
     },
     {

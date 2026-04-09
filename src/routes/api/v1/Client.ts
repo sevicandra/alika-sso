@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { ClientControllerV1 } from "@/controllers/v1/client.controller";
-import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
-import { authorizeScopes } from "@/middlewares/authenticate.middleware";
-
 import { z } from "zod";
+import { ClientControllerV1 } from "@/controllers/v1/client.controller";
+import { authorizeScopes } from "@/middlewares/authenticate.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 
 const clientCreateSchema = z
   .object({

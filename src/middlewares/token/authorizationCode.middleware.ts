@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { AuthorizationCode, User, RefreshToken } from "@/repositories";
-import { JwtUtil } from "@/utils/jwt.util";
 import crypto from "crypto";
-import { asyncHandler } from "../async-handler.middleware";
+import { NextFunction, Request, Response } from "express";
 import { AuthenticationError } from "@/utils/errors";
+import { JwtUtil } from "@/utils/jwt.util";
+import { AuthorizationCode, RefreshToken, User } from "@/repositories";
+import { asyncHandler } from "../async-handler.middleware";
 
 export const authorizationCodeGrant = asyncHandler(
   async (req: Request, _res: Response, next: NextFunction): Promise<void> => {

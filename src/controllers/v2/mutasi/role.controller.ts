@@ -1,8 +1,8 @@
-import { Role } from "@/repositories";
-import { successResponse } from "@/helpers/respose.helper";
-import { Response, Request } from "express";
+import { Request, Response } from "express";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { Role } from "@/repositories";
 
 export const RoleControllerV2 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {

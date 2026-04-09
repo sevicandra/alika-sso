@@ -1,9 +1,9 @@
-import { Response, Request } from "express";
-import { JabatanService } from "@/repositories";
-import { successResponse } from "@/helpers/respose.helper";
+import { Request, Response } from "express";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
-import { InvalidRequestError, NotFoundError, InternalServerError } from "@/utils/errors";
+import { InternalServerError, InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { JabatanService } from "@/repositories";
 
 export const JabatanServiceControllerV1 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {

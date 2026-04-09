@@ -1,10 +1,10 @@
-import { UserAssignments, UserRole } from "@/repositories";
-import { successResponse } from "@/helpers/respose.helper";
-import { Response, Request } from "express";
+import { Request, Response } from "express";
 import { Op, col, where } from "sequelize";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { UserAssignments, UserRole } from "@/repositories";
 
 export const UserControllerV2 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {

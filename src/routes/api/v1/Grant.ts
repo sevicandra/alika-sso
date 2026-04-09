@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { GrantControllerV1 } from "@/controllers/v1/grant.controller";
-import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
-import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 import { z } from "zod";
+import { GrantControllerV1 } from "@/controllers/v1/grant.controller";
+import { authorizeScopes } from "@/middlewares/authenticate.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
+
 const router = Router();
 
 const findQuerySchema = z.object({

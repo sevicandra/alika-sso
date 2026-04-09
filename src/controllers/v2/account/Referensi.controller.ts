@@ -1,9 +1,9 @@
-import { Grant, ScopeAction, Service, Role, Scope } from "@/repositories";
-import { successResponse } from "@/helpers/respose.helper";
-import { Response, Request } from "express";
+import { Request, Response } from "express";
 import { Op } from "sequelize";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { Grant, Role, Scope, ScopeAction, Service } from "@/repositories";
 
 export const getScopeAction = asyncHandler(async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || undefined;

@@ -1,6 +1,6 @@
-import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes } from "sequelize";
 import crypto from "crypto";
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "@/config/db.config";
 
 type AuthorizationCodeAttributes = {
   code: string;

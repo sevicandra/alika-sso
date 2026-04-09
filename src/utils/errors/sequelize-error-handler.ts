@@ -1,18 +1,18 @@
-import { BaseError } from "./base-error";
 import {
-  ValidationError as SequelizeValidationError,
-  DatabaseError as SequelizeDatabaseError,
-  UniqueConstraintError,
-  ForeignKeyConstraintError,
-  TimeoutError as SequelizeTimeoutError,
   ConnectionError,
   ConnectionRefusedError,
+  ForeignKeyConstraintError,
+  DatabaseError as SequelizeDatabaseError,
+  TimeoutError as SequelizeTimeoutError,
+  ValidationError as SequelizeValidationError,
+  UniqueConstraintError,
 } from "sequelize";
+import { BaseError } from "./base-error";
 import {
-  DatabaseError,
   ConflictError,
-  UnprocessableEntityError,
+  DatabaseError,
   TimeoutError,
+  UnprocessableEntityError,
   ValidationError,
 } from "./index";
 

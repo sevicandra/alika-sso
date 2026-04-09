@@ -1,7 +1,7 @@
-import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes } from "sequelize";
-import { UUID } from "@/utils/uuid.util";
+import { DataTypes, Model, Optional } from "sequelize";
 import { hash } from "@/utils/crypt.util";
+import { UUID } from "@/utils/uuid.util";
+import sequelize from "@/config/db.config";
 
 type RefreshTokenAttributes = {
   id?: string;

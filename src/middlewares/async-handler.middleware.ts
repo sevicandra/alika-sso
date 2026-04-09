@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { sequelize } from "@/models";
+import { NextFunction, Request, Response } from "express";
 import { Transaction } from "sequelize";
+import { sequelize } from "@/models";
+
 interface AsyncHandlerOptions {
   useTransaction?: boolean;
 }

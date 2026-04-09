@@ -1,11 +1,11 @@
-import { NextFunction, Response, Request } from "express";
-import { Client } from "@/repositories";
+import { NextFunction, Request, Response } from "express";
 import { verify } from "@/utils/crypt.util";
-import { clientCredentialsGrant } from "./clientCredentials.middleware";
-import { authorizationCodeGrant } from "./authorizationCode.middleware";
-import { refreshTokenGrant } from "./refreshToken.middleware";
-import { asyncHandler } from "../async-handler.middleware";
 import { AuthenticationError } from "@/utils/errors";
+import { Client } from "@/repositories";
+import { asyncHandler } from "../async-handler.middleware";
+import { authorizationCodeGrant } from "./authorizationCode.middleware";
+import { clientCredentialsGrant } from "./clientCredentials.middleware";
+import { refreshTokenGrant } from "./refreshToken.middleware";
 
 export const verifyClient = asyncHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {

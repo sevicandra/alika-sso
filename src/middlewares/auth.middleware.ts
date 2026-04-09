@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { appConfig } from "@/config/app.config";
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {

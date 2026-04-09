@@ -1,7 +1,7 @@
-import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, BelongsTo } from "sequelize";
-import Service from "./Service.model";
+import { BelongsTo, DataTypes, Model, Optional } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
+import sequelize from "@/config/db.config";
+import Service from "./Service.model";
 
 type RoleAttributes = {
   id: string;

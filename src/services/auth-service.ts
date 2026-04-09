@@ -1,8 +1,8 @@
-import jwt from "jsonwebtoken";
-import { AuthenticationError } from "../utils/errors";
-import logger from "@/utils/Logger.utils";
 import fs from "fs";
+import jwt from "jsonwebtoken";
 import path from "path";
+import logger from "@/utils/Logger.utils";
+import { AuthenticationError } from "../utils/errors";
 
 class key {
   static publicKey = fs.readFileSync(

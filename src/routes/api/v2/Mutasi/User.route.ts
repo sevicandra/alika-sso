@@ -1,7 +1,8 @@
 import { Router } from "express";
+import { z } from "zod";
 import { UserControllerV2 } from "@/controllers/v2/mutasi/user.controller";
 import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
-import { z } from "zod";
+
 const router = Router({ mergeParams: true });
 
 const findQuerySchema = z.object({

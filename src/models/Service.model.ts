@@ -1,7 +1,8 @@
-import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, HasMany } from "sequelize";
-import { Scope, Role, JabatanService } from "@/models";
+import { DataTypes, HasMany, Model, Optional } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
+import sequelize from "@/config/db.config";
+import { JabatanService, Role, Scope } from "@/models";
+
 type ServiceAttributes = {
   id: string;
   kode: string;

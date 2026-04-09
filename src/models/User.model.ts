@@ -1,8 +1,9 @@
-import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes, HasMany } from "sequelize";
-import UserAssignments from "./UserAssignments.model";
+import { DataTypes, HasMany, Model, Optional } from "sequelize";
 // import GlobalRole from "./GlobalRole.model";
 import { UUID } from "@/utils/uuid.util";
+import sequelize from "@/config/db.config";
+import UserAssignments from "./UserAssignments.model";
+
 type UserGlobalRoleAttributes = {
   userId: string;
   role: string;

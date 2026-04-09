@@ -1,7 +1,7 @@
-import { Response, Request } from "express";
-import { AuthorizationCode } from "@/repositories";
+import { Request, Response } from "express";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError } from "@/utils/errors";
+import { AuthorizationCode } from "@/repositories";
 
 export const getAuthorizationCode = asyncHandler(
   async (req: Request, res: Response) => {

@@ -1,10 +1,10 @@
-import { Response, Request } from "express";
-import { Service } from "@/repositories";
+import { Request, Response } from "express";
 import { Op } from "sequelize";
-import { successResponse } from "@/helpers/respose.helper";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { Service } from "@/repositories";
 
 export const ServiceControllerV1 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {
@@ -69,10 +69,14 @@ export const ServiceControllerV1 = {
     if (typeof id !== "string") {
       throw new InvalidRequestError("Invalid request");
     }
-    const data = await Service.updateById(id, {
-      name,
-      description,
-    },t);
+    const data = await Service.updateById(
+      id,
+      {
+        name,
+        description,
+      },
+      t
+    );
     successResponse(res, "Success update client", data);
   }),
 

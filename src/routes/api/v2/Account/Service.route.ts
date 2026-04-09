@@ -1,7 +1,7 @@
 import { Router } from "express";
+import { z } from "zod";
 import { ServiceControllerV2 } from "@/controllers/v2/account/service.controller";
 import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
-import { z } from "zod";
 
 const router = Router({ mergeParams: true });
 

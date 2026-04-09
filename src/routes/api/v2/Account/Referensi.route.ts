@@ -1,10 +1,10 @@
 import { Router } from "express";
 import {
-  getScopeAction,
   getGrant,
-  getService,
   getRole,
   getScope,
+  getScopeAction,
+  getService,
 } from "@/controllers/v2/account/Referensi.controller";
 
 const router = Router({ mergeParams: true });

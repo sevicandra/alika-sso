@@ -1,7 +1,7 @@
 import winston from "winston";
 import Transport from "winston-transport";
-import { appConfig } from "@/config/app.config";
 import { minioService } from "@/services/minio-service";
+import { appConfig } from "@/config/app.config";
 
 class MinioTransport extends Transport {
   constructor(opts?: Transport.TransportStreamOptions) {

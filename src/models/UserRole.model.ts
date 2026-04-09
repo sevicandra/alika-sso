@@ -1,5 +1,5 @@
+import { DataTypes, Model } from "sequelize";
 import sequelize from "@/config/db.config";
-import { Model, DataTypes } from "sequelize";
 
 type UserRoleAttributes = {
   user_id: string;

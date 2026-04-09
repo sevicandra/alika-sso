@@ -1,13 +1,13 @@
-import { Response, Request } from "express";
-import { JwtUtil } from "@/utils/jwt.util";
+import { Request, Response } from "express";
+import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { verify } from "@/utils/crypt.util";
-import { RefreshToken } from "@/models";
-import { successResponse } from "@/helpers/respose.helper";
-import { Session } from "@/models";
+import { InvalidRequestError } from "@/utils/errors";
+import { JwtUtil } from "@/utils/jwt.util";
 import { appConfig } from "@/config/app.config";
 import { passportConfig } from "@/config/passport.config";
-import { asyncHandler } from "@/middlewares/async-handler.middleware";
-import { InvalidRequestError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
+import { RefreshToken } from "@/models";
+import { Session } from "@/models";
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   const refresh_token = req.body.refresh_token;

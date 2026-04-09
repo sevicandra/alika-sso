@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import { User, RefreshToken } from "@/models";
-import { JwtUtil } from "@/utils/jwt.util";
-import { verify } from "@/utils/crypt.util";
 import crypto from "crypto";
-import { asyncHandler } from "../async-handler.middleware";
+import { NextFunction, Request, Response } from "express";
+import { verify } from "@/utils/crypt.util";
 import { AuthenticationError } from "@/utils/errors";
+import { JwtUtil } from "@/utils/jwt.util";
+import { RefreshToken, User } from "@/models";
+import { asyncHandler } from "../async-handler.middleware";
 
 export const refreshTokenGrant = asyncHandler(
   async (req: Request, _res: Response, next: NextFunction): Promise<void> => {

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { redisService } from "@/services/redis-service";
 import logger from "@/utils/Logger.utils";
 

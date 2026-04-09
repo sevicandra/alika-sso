@@ -1,10 +1,10 @@
-import { Service, Role, Scope, JabatanService } from "@/repositories";
-import { successResponse } from "@/helpers/respose.helper";
-import { Response, Request } from "express";
+import { Request, Response } from "express";
 import { Op } from "sequelize";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { JabatanService, Role, Scope, Service } from "@/repositories";
 
 export const ServiceControllerV2 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {

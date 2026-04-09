@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { RefreshToken } from "@/models";
-import { JwtUtil } from "@/utils/jwt.util";
 import crypto from "crypto";
-import { asyncHandler } from "../async-handler.middleware";
+import { NextFunction, Request, Response } from "express";
 import { AuthenticationError } from "@/utils/errors";
+import { JwtUtil } from "@/utils/jwt.util";
+import { RefreshToken } from "@/models";
+import { asyncHandler } from "../async-handler.middleware";
 
 export const clientCredentialsGrant = asyncHandler(
   async (req: Request, _res: Response, next: NextFunction): Promise<void> => {

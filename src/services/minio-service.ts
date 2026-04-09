@@ -1,7 +1,7 @@
 import { Client } from "minio";
 import logger from "@/utils/Logger.utils";
-import { StorageError, ValidationError, FileUploadError } from "../utils/errors";
 import { minioConfig } from "@/config/minio.config";
+import { FileUploadError, StorageError, ValidationError } from "../utils/errors";
 
 export class MinIOService {
   private client: Client;

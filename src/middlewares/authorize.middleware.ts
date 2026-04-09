@@ -1,7 +1,7 @@
-import { Client } from "@/repositories";
-import { Response, NextFunction } from "express";
-import { CodeRequest } from "@/types/auth";
+import { NextFunction, Response } from "express";
 import { AuthenticationError } from "@/utils/errors";
+import { Client } from "@/repositories";
+import { CodeRequest } from "@/types/auth";
 import { asyncHandler } from "./async-handler.middleware";
 
 export const checkRequest = asyncHandler(

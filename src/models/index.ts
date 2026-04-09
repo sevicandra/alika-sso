@@ -1,20 +1,20 @@
+import sequelize from "@/config/db.config";
 import AuthorizationCode from "./AuthorizationCode.model";
 import Client from "./Client.model";
+import ClientGrant from "./ClientGrant.model";
+import ClientScope from "./ClientScope.model";
 import Grant from "./GrantType.model";
+import JabatanService from "./JabatanService.model";
 import RedirectUri from "./RedirectUri.model";
 import RefreshToken from "./RefreshToken.model";
 import Role from "./Role.model";
 import Scope from "./Scope.model";
-import Session from "./Session.model";
-import UserAssignments from "./UserAssignments.model";
-import User from "./User.model";
-import Service from "./Service.model";
 import ScopeAction from "./ScopeAction.model";
-import ClientScope from "./ClientScope.model";
+import Service from "./Service.model";
+import Session from "./Session.model";
+import User from "./User.model";
+import UserAssignments from "./UserAssignments.model";
 import UserRole from "./UserRole.model";
-import sequelize from "@/config/db.config";
-import ClientGrant from "./ClientGrant.model";
-import JabatanService from "./JabatanService.model";
 
 Role.belongsTo(Service, {
   foreignKey: "service_kode",

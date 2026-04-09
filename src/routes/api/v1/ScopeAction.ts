@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { ScopeActionControllerV1 } from "@/controllers/v1/scopeAction.controller";
-import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
-import { authorizeScopes } from "@/middlewares/authenticate.middleware";
 import { z } from "zod";
+import { ScopeActionControllerV1 } from "@/controllers/v1/scopeAction.controller";
+import { authorizeScopes } from "@/middlewares/authenticate.middleware";
+import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
+
 const router = Router();
 
 const findQuerySchema = z.object({

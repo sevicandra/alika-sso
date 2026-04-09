@@ -1,13 +1,13 @@
 import { Router } from "express";
+import { z } from "zod";
 import { JabatanServiceControllerV1 } from "@/controllers/v1/jabatanService.controller";
+import { authorizeScopes } from "@/middlewares/authenticate.middleware";
+import { uploadCsvMemory } from "@/middlewares/multer.middleware";
 import {
   validateBody,
-  validateQuery,
   validateCsvMiddleware,
+  validateQuery,
 } from "@/middlewares/validate-request.middleware";
-import { authorizeScopes } from "@/middlewares/authenticate.middleware";
-import { z } from "zod";
-import { uploadCsvMemory } from "@/middlewares/multer.middleware";
 
 const findQuerySchema = z.object({
   search: z.string().optional(),

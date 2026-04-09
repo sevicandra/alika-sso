@@ -1,9 +1,9 @@
-import sequelize from "@/config/db.config";
-import { Model, DataTypes, BelongsTo, Optional } from "sequelize";
-import Scope from "./Scope.model";
-import Client from "./Client.model";
-import ScopeAction from "./ScopeAction.model";
+import { BelongsTo, DataTypes, Model, Optional } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
+import sequelize from "@/config/db.config";
+import Client from "./Client.model";
+import Scope from "./Scope.model";
+import ScopeAction from "./ScopeAction.model";
 
 type ClientScopesAttributes = {
   id: string;

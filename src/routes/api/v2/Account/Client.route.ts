@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { ClientControllerV2 } from "@/controllers/v2/account/client.controller";
 import { z } from "zod";
+import { ClientControllerV2 } from "@/controllers/v2/account/client.controller";
 import { validateBody, validateQuery } from "@/middlewares/validate-request.middleware";
 
 const router = Router({ mergeParams: true });

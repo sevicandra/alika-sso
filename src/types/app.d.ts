@@ -1,6 +1,7 @@
-import { JWTPayload } from "@/services/auth-service";
 import "express-session";
 import Sequelize from "sequelize";
+import { JWTPayload } from "@/services/auth-service";
+
 declare global {
   namespace Express {
     interface Request {

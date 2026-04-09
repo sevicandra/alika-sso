@@ -1,7 +1,8 @@
-import sequelize from "@/config/db.config";
-import { Model, Optional, DataTypes } from "sequelize";
-import Client from "./Client.model";
+import { DataTypes, Model, Optional } from "sequelize";
 import { UUID } from "@/utils/uuid.util";
+import sequelize from "@/config/db.config";
+import Client from "./Client.model";
+
 type RedirectUriAttributes = {
   id: string;
   client_id: string;
@@ -22,7 +23,7 @@ RedirectUri.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: UUID.v7
+      defaultValue: UUID.v7,
     },
     client_id: {
       type: DataTypes.STRING,
@@ -55,7 +56,6 @@ RedirectUri.init(
     tableName: "redirect_uris",
     timestamps: false,
     modelName: "RedirectUri",
-
   }
 );
 

@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { AuthenticationError, AuthorizationError } from "../utils/errors";
+import { NextFunction, Request, Response } from "express";
 import { authService } from "@/services/auth-service";
+import { AuthenticationError, AuthorizationError } from "../utils/errors";
 
 export const authenticate = async (
   req: Request,

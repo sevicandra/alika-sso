@@ -1,10 +1,10 @@
-import { Response, Request } from "express";
-import { Role } from "@/repositories";
+import { Request, Response } from "express";
 import { Op } from "sequelize";
-import { successResponse } from "@/helpers/respose.helper";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError } from "@/utils/errors";
+import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
+import { Role } from "@/repositories";
 
 export const RoleControllerV1 = {
   getAll: asyncHandler(async (req: Request, res: Response) => {

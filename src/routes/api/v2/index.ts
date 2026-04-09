@@ -1,9 +1,9 @@
 import { Router } from "express";
-import Mutasi from "./Mutasi";
+import { authorizeRoles } from "@/middlewares/authenticate.middleware";
 import Account from "./Account";
+import Mutasi from "./Mutasi";
 
 const router = Router({ mergeParams: true });
-import { authorizeRoles } from "@/middlewares/authenticate.middleware";
 
 router.use("/Mutasi", authorizeRoles(["mutasi.admin"]), Mutasi);
 router.use("/Account", authorizeRoles(["account.admin"]), Account);

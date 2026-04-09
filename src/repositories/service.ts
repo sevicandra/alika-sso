@@ -1,9 +1,9 @@
-import { Service } from "@/models";
-import { BaseRepository } from "./base-repository";
-import { handleSequelizeError } from "@/utils/errors/sequelize-error-handler";
-import { NotFoundError } from "@/utils/errors";
-import { Role, Scope } from "@/repositories";
 import { Transaction } from "sequelize";
+import { NotFoundError } from "@/utils/errors";
+import { handleSequelizeError } from "@/utils/errors/sequelize-error-handler";
+import { Service } from "@/models";
+import { Role, Scope } from "@/repositories";
+import { BaseRepository } from "./base-repository";
 
 export class ServiceRepository extends BaseRepository<Service> {
   constructor() {

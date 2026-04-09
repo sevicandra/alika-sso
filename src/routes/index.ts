@@ -1,13 +1,14 @@
-import { Router, Request, Response } from "express";
-import Login from "./Login";
-import Auth from "./Auth";
-import Api from "./api";
-import { JwtUtil } from "@/utils/jwt.util";
-import { errorResponse } from "@/helpers/respose.helper";
+import { Request, Response, Router } from "express";
 import { isAuthenticated } from "@/middlewares/auth.middleware";
-import { appConfig } from "@/config/app.config";
-const router = Router();
 import { authenticate } from "@/middlewares/authenticate.middleware";
+import { JwtUtil } from "@/utils/jwt.util";
+import { appConfig } from "@/config/app.config";
+import { errorResponse } from "@/helpers/respose.helper";
+import Auth from "./Auth";
+import Login from "./Login";
+import Api from "./api";
+
+const router = Router();
 
 router.get("/", isAuthenticated, (_req: Request, res: Response) => {
   return res.render("index", {
