@@ -2,14 +2,11 @@
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
-  :root,
-  :host {
-    --font-sans:
-      ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-      "Segoe UI Symbol", "Noto Color Emoji";
-    --font-mono:
-      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-      monospace;
+  :root, :host {
+    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
     --color-red-50: oklch(97.1% 0.013 17.38);
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-800: oklch(44.4% 0.177 26.899);
@@ -54,31 +51,17 @@
   }
 }
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     border: 0 solid;
   }
-  html,
-  :host {
+  html, :host {
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
     tab-size: 4;
-    font-family: var(
-      --default-font-family,
-      ui-sans-serif,
-      system-ui,
-      sans-serif,
-      "Apple Color Emoji",
-      "Segoe UI Emoji",
-      "Segoe UI Symbol",
-      "Noto Color Emoji"
-    );
+    font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
     font-feature-settings: var(--default-font-feature-settings, normal);
     font-variation-settings: var(--default-font-variation-settings, normal);
     -webkit-tap-highlight-color: transparent;
@@ -92,12 +75,7 @@
     -webkit-text-decoration: underline dotted;
     text-decoration: underline dotted;
   }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-size: inherit;
     font-weight: inherit;
   }
@@ -106,25 +84,11 @@
     -webkit-text-decoration: inherit;
     text-decoration: inherit;
   }
-  b,
-  strong {
+  b, strong {
     font-weight: bolder;
   }
-  code,
-  kbd,
-  samp,
-  pre {
-    font-family: var(
-      --default-mono-font-family,
-      ui-monospace,
-      SFMono-Regular,
-      Menlo,
-      Monaco,
-      Consolas,
-      "Liberation Mono",
-      "Courier New",
-      monospace
-    );
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
     font-feature-settings: var(--default-mono-font-feature-settings, normal);
     font-variation-settings: var(--default-mono-font-variation-settings, normal);
     font-size: 1em;
@@ -132,8 +96,7 @@
   small {
     font-size: 80%;
   }
-  sub,
-  sup {
+  sub, sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
@@ -159,33 +122,18 @@
   summary {
     display: list-item;
   }
-  ol,
-  ul,
-  menu {
+  ol, ul, menu {
     list-style: none;
   }
-  img,
-  svg,
-  video,
-  canvas,
-  audio,
-  iframe,
-  embed,
-  object {
+  img, svg, video, canvas, audio, iframe, embed, object {
     display: block;
     vertical-align: middle;
   }
-  img,
-  video {
+  img, video {
     max-width: 100%;
     height: auto;
   }
-  button,
-  input,
-  select,
-  optgroup,
-  textarea,
-  ::file-selector-button {
+  button, input, select, optgroup, textarea, ::file-selector-button {
     font: inherit;
     font-feature-settings: inherit;
     font-variation-settings: inherit;
@@ -207,7 +155,7 @@
   ::placeholder {
     opacity: 1;
   }
-  @supports (not (-webkit-appearance: -apple-pay-button)) or (contain-intrinsic-size: 1px) {
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
     ::placeholder {
       color: currentcolor;
       @supports (color: color-mix(in lab, red, red)) {
@@ -231,15 +179,7 @@
   ::-webkit-datetime-edit-fields-wrapper {
     padding: 0;
   }
-  ::-webkit-datetime-edit,
-  ::-webkit-datetime-edit-year-field,
-  ::-webkit-datetime-edit-month-field,
-  ::-webkit-datetime-edit-day-field,
-  ::-webkit-datetime-edit-hour-field,
-  ::-webkit-datetime-edit-minute-field,
-  ::-webkit-datetime-edit-second-field,
-  ::-webkit-datetime-edit-millisecond-field,
-  ::-webkit-datetime-edit-meridiem-field {
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
     padding-block: 0;
   }
   ::-webkit-calendar-picker-indicator {
@@ -248,13 +188,10 @@
   :-moz-ui-invalid {
     box-shadow: none;
   }
-  button,
-  input:where([type="button"], [type="reset"], [type="submit"]),
-  ::file-selector-button {
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
     appearance: button;
   }
-  ::-webkit-inner-spin-button,
-  ::-webkit-outer-spin-button {
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
     height: auto;
   }
   [hidden]:where(:not([hidden="until-found"])) {
@@ -293,8 +230,7 @@
         grid-template-columns: var(--list-grid-cols);
       }
       & > :not(:last-child) {
-        &.list-row,
-        .list-row {
+        &.list-row, .list-row {
           &:after {
             content: "";
             border-bottom: var(--border) solid;
@@ -328,7 +264,7 @@
         }
         &:has(.list-col-grow:nth-child(6)) {
           --list-grid-cols: minmax(0, auto) minmax(0, auto) minmax(0, auto) minmax(0, auto)
-            minmax(0, auto) 1fr;
+          minmax(0, auto) 1fr;
         }
         > * {
           grid-row-start: 1;
@@ -383,8 +319,7 @@
       }
     }
     @layer daisyui.l1.l2 {
-      &,
-      &.stack-bottom {
+      &, &.stack-bottom {
         > * {
           grid-column: 3 / 4;
           grid-row: 3 / 6;
@@ -478,15 +413,10 @@
       @supports (color: color-mix(in lab, red, red)) {
         color: color-mix(in oklab, var(--color-black) 30%, transparent);
       }
-      background-image: radial-gradient(
-        circle at 35% 30%,
-        oklch(1 0 0 / calc(var(--depth) * 0.5)),
-        #0000
-      );
+      background-image: radial-gradient( circle at 35% 30%, oklch(1 0 0 / calc(var(--depth) * 0.5)), #0000 );
       box-shadow: 0 2px 3px -1px currentColor;
       @supports (color: color-mix(in lab, red, red)) {
-        box-shadow: 0 2px 3px -1px
-          color-mix(in oklab, currentColor calc(var(--depth) * 100%), #0000);
+        box-shadow: 0 2px 3px -1px color-mix(in oklab, currentColor calc(var(--depth) * 100%), #0000);
       }
     }
   }
@@ -552,21 +482,9 @@
       line-height: 1.25rem;
       background-size: auto, calc(var(--noise) * 100%);
       background-image: none, var(--fx-noise);
-      box-shadow:
-        0 3px 0 -2px oklch(100% 0 0 / calc(var(--depth) * 0.08)) inset,
-        0 1px #000,
-        0 4px 3px -2px oklch(0% 0 0 / calc(var(--depth) * 0.08));
+      box-shadow: 0 3px 0 -2px oklch(100% 0 0 / calc(var(--depth) * 0.08)) inset, 0 1px #000, 0 4px 3px -2px oklch(0% 0 0 / calc(var(--depth) * 0.08));
       @supports (color: color-mix(in lab, red, red)) {
-        box-shadow:
-          0 3px 0 -2px oklch(100% 0 0 / calc(var(--depth) * 0.08)) inset,
-          0 1px
-            color-mix(
-              in oklab,
-              color-mix(in oklab, #000 20%, var(--alert-color, var(--color-base-200)))
-                calc(var(--depth) * 20%),
-              #0000
-            ),
-          0 4px 3px -2px oklch(0% 0 0 / calc(var(--depth) * 0.08));
+        box-shadow: 0 3px 0 -2px oklch(100% 0 0 / calc(var(--depth) * 0.08)) inset, 0 1px color-mix( in oklab, color-mix(in oklab, #000 20%, var(--alert-color, var(--color-base-200))) calc(var(--depth) * 20%), #0000 ), 0 4px 3px -2px oklch(0% 0 0 / calc(var(--depth) * 0.08));
       }
       &:has(:nth-child(2)) {
         grid-template-columns: auto minmax(auto, 1fr);
@@ -743,53 +661,30 @@
   }
   .from-gray-900 {
     --tw-gradient-from: var(--color-gray-900);
-    --tw-gradient-stops: var(
-      --tw-gradient-via-stops,
-      var(--tw-gradient-position),
-      var(--tw-gradient-from) var(--tw-gradient-from-position),
-      var(--tw-gradient-to) var(--tw-gradient-to-position)
-    );
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
   .from-primary\/5 {
     --tw-gradient-from: var(--color-primary);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-gradient-from: color-mix(in oklab, var(--color-primary) 5%, transparent);
     }
-    --tw-gradient-stops: var(
-      --tw-gradient-via-stops,
-      var(--tw-gradient-position),
-      var(--tw-gradient-from) var(--tw-gradient-from-position),
-      var(--tw-gradient-to) var(--tw-gradient-to-position)
-    );
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
   .via-transparent {
     --tw-gradient-via: transparent;
-    --tw-gradient-via-stops:
-      var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position),
-      var(--tw-gradient-via) var(--tw-gradient-via-position),
-      var(--tw-gradient-to) var(--tw-gradient-to-position);
+    --tw-gradient-via-stops: var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-via) var(--tw-gradient-via-position), var(--tw-gradient-to) var(--tw-gradient-to-position);
     --tw-gradient-stops: var(--tw-gradient-via-stops);
   }
   .to-gray-700 {
     --tw-gradient-to: var(--color-gray-700);
-    --tw-gradient-stops: var(
-      --tw-gradient-via-stops,
-      var(--tw-gradient-position),
-      var(--tw-gradient-from) var(--tw-gradient-from-position),
-      var(--tw-gradient-to) var(--tw-gradient-to-position)
-    );
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
   .to-primary\/10 {
     --tw-gradient-to: var(--color-primary);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-gradient-to: color-mix(in oklab, var(--color-primary) 10%, transparent);
     }
-    --tw-gradient-stops: var(
-      --tw-gradient-via-stops,
-      var(--tw-gradient-position),
-      var(--tw-gradient-from) var(--tw-gradient-from-position),
-      var(--tw-gradient-to) var(--tw-gradient-to-position)
-    );
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
   .loading-spinner {
     @layer daisyui.l1.l2 {
@@ -902,21 +797,13 @@
     opacity: 20%;
   }
   .shadow-sm {
-    --tw-shadow:
-      0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
-      0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-    box-shadow:
-      var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
-      var(--tw-ring-shadow), var(--tw-shadow);
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .shadow-base-content\/20 {
     --tw-shadow-color: var(--color-base-content);
     @supports (color: color-mix(in lab, red, red)) {
-      --tw-shadow-color: color-mix(
-        in oklab,
-        color-mix(in oklab, var(--color-base-content) 20%, transparent) var(--tw-shadow-alpha),
-        transparent
-      );
+      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-base-content) 20%, transparent) var(--tw-shadow-alpha), transparent);
     }
   }
   .ring-primary-300 {
@@ -924,14 +811,10 @@
   }
   .blur-3xl {
     --tw-blur: blur(var(--blur-3xl));
-    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,)
-      var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,)
-      var(--tw-drop-shadow,);
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
   .transition-colors {
-    transition-property:
-      color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
-      --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
@@ -947,18 +830,14 @@
   }
   .focus-visible\:ring-2 {
     &:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width))
-        var(--tw-ring-color, currentcolor);
-      box-shadow:
-        var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
-        var(--tw-ring-shadow), var(--tw-shadow);
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
   .focus-visible\:ring-offset-2 {
     &:focus-visible {
       --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width)
-        var(--tw-ring-offset-color);
+      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
     }
   }
   .focus-visible\:outline-none {
@@ -1005,31 +884,17 @@
   }
 }
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     border: 0 solid;
   }
-  html,
-  :host {
+  html, :host {
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
     tab-size: 4;
-    font-family: var(
-      --default-font-family,
-      ui-sans-serif,
-      system-ui,
-      sans-serif,
-      "Apple Color Emoji",
-      "Segoe UI Emoji",
-      "Segoe UI Symbol",
-      "Noto Color Emoji"
-    );
+    font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji');
     font-feature-settings: var(--default-font-feature-settings, normal);
     font-variation-settings: var(--default-font-variation-settings, normal);
     -webkit-tap-highlight-color: transparent;
@@ -1043,12 +908,7 @@
     -webkit-text-decoration: underline dotted;
     text-decoration: underline dotted;
   }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-size: inherit;
     font-weight: inherit;
   }
@@ -1057,25 +917,11 @@
     -webkit-text-decoration: inherit;
     text-decoration: inherit;
   }
-  b,
-  strong {
+  b, strong {
     font-weight: bolder;
   }
-  code,
-  kbd,
-  samp,
-  pre {
-    font-family: var(
-      --default-mono-font-family,
-      ui-monospace,
-      SFMono-Regular,
-      Menlo,
-      Monaco,
-      Consolas,
-      "Liberation Mono",
-      "Courier New",
-      monospace
-    );
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace);
     font-feature-settings: var(--default-mono-font-feature-settings, normal);
     font-variation-settings: var(--default-mono-font-variation-settings, normal);
     font-size: 1em;
@@ -1083,8 +929,7 @@
   small {
     font-size: 80%;
   }
-  sub,
-  sup {
+  sub, sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
@@ -1110,33 +955,18 @@
   summary {
     display: list-item;
   }
-  ol,
-  ul,
-  menu {
+  ol, ul, menu {
     list-style: none;
   }
-  img,
-  svg,
-  video,
-  canvas,
-  audio,
-  iframe,
-  embed,
-  object {
+  img, svg, video, canvas, audio, iframe, embed, object {
     display: block;
     vertical-align: middle;
   }
-  img,
-  video {
+  img, video {
     max-width: 100%;
     height: auto;
   }
-  button,
-  input,
-  select,
-  optgroup,
-  textarea,
-  ::file-selector-button {
+  button, input, select, optgroup, textarea, ::file-selector-button {
     font: inherit;
     font-feature-settings: inherit;
     font-variation-settings: inherit;
@@ -1158,7 +988,7 @@
   ::placeholder {
     opacity: 1;
   }
-  @supports (not (-webkit-appearance: -apple-pay-button)) or (contain-intrinsic-size: 1px) {
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
     ::placeholder {
       color: currentcolor;
       @supports (color: color-mix(in lab, red, red)) {
@@ -1182,15 +1012,7 @@
   ::-webkit-datetime-edit-fields-wrapper {
     padding: 0;
   }
-  ::-webkit-datetime-edit,
-  ::-webkit-datetime-edit-year-field,
-  ::-webkit-datetime-edit-month-field,
-  ::-webkit-datetime-edit-day-field,
-  ::-webkit-datetime-edit-hour-field,
-  ::-webkit-datetime-edit-minute-field,
-  ::-webkit-datetime-edit-second-field,
-  ::-webkit-datetime-edit-millisecond-field,
-  ::-webkit-datetime-edit-meridiem-field {
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
     padding-block: 0;
   }
   ::-webkit-calendar-picker-indicator {
@@ -1199,16 +1021,13 @@
   :-moz-ui-invalid {
     box-shadow: none;
   }
-  button,
-  input:where([type="button"], [type="reset"], [type="submit"]),
-  ::file-selector-button {
+  button, input:where([type='button'], [type='reset'], [type='submit']), ::file-selector-button {
     appearance: button;
   }
-  ::-webkit-inner-spin-button,
-  ::-webkit-outer-spin-button {
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
     height: auto;
   }
-  [hidden]:where(:not([hidden="until-found"])) {
+  [hidden]:where(:not([hidden='until-found'])) {
     display: none !important;
   }
 }
@@ -1218,8 +1037,7 @@
   -webkit-scrollbar: none;
 }
 @layer base {
-  :root:has(input.theme-controller[value="sea-salt"]:checked),
-  [data-theme="sea-salt"] {
+  :root:has(input.theme-controller[value=sea-salt]:checked),[data-theme="sea-salt"] {
     color-scheme: light;
     --color-base-100: #f8f9fa;
     --color-base-200: #e9ecef;
@@ -1408,8 +1226,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="sky-blue"]:checked),
-  [data-theme="sky-blue"] {
+  :root:has(input.theme-controller[value=sky-blue]:checked),[data-theme="sky-blue"] {
     color-scheme: light;
     --color-base-100: #edf6f9;
     --color-base-200: #d8eaf2;
@@ -1598,8 +1415,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="sandstone"]:checked),
-  [data-theme="sandstone"] {
+  :root:has(input.theme-controller[value=sandstone]:checked),[data-theme="sandstone"] {
     color-scheme: light;
     --color-base-100: #fefae0;
     --color-base-200: #faedcd;
@@ -1788,8 +1604,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="mint-choco"]:checked),
-  [data-theme="mint-choco"] {
+  :root:has(input.theme-controller[value=mint-choco]:checked),[data-theme="mint-choco"] {
     color-scheme: light;
     --color-base-100: #f1faee;
     --color-base-200: #e0f2e3;
@@ -1978,8 +1793,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="lavender-blush"]:checked),
-  [data-theme="lavender-blush"] {
+  :root:has(input.theme-controller[value=lavender-blush]:checked),[data-theme="lavender-blush"] {
     color-scheme: light;
     --color-base-100: #fff0f5;
     --color-base-200: #fde4ee;
@@ -2168,8 +1982,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="coral-reef"]:checked),
-  [data-theme="coral-reef"] {
+  :root:has(input.theme-controller[value=coral-reef]:checked),[data-theme="coral-reef"] {
     color-scheme: light;
     --color-base-100: #fdf0e6;
     --color-base-200: #fbe5d3;
@@ -2358,8 +2171,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="forest-glade"]:checked),
-  [data-theme="forest-glade"] {
+  :root:has(input.theme-controller[value=forest-glade]:checked),[data-theme="forest-glade"] {
     color-scheme: light;
     --color-base-100: #f0fdf4;
     --color-base-200: #dcfce7;
@@ -2548,8 +2360,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="sunrise-glow"]:checked),
-  [data-theme="sunrise-glow"] {
+  :root:has(input.theme-controller[value=sunrise-glow]:checked),[data-theme="sunrise-glow"] {
     color-scheme: light;
     --color-base-100: #fff7ed;
     --color-base-200: #ffedd5;
@@ -2738,8 +2549,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="ocean-breeze"]:checked),
-  [data-theme="ocean-breeze"] {
+  :root:has(input.theme-controller[value=ocean-breeze]:checked),[data-theme="ocean-breeze"] {
     color-scheme: light;
     --color-base-100: #eff6ff;
     --color-base-200: #dbeafe;
@@ -2928,8 +2738,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="stone-path"]:checked),
-  [data-theme="stone-path"] {
+  :root:has(input.theme-controller[value=stone-path]:checked),[data-theme="stone-path"] {
     color-scheme: light;
     --color-base-100: #fafaf9;
     --color-base-200: #f5f5f4;
@@ -3118,8 +2927,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="cherry-blossom"]:checked),
-  [data-theme="cherry-blossom"] {
+  :root:has(input.theme-controller[value=cherry-blossom]:checked),[data-theme="cherry-blossom"] {
     color-scheme: light;
     --color-base-100: #fef2f2;
     --color-base-200: #fee2e2;
@@ -3308,8 +3116,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="royal-gold"]:checked),
-  [data-theme="royal-gold"] {
+  :root:has(input.theme-controller[value=royal-gold]:checked),[data-theme="royal-gold"] {
     color-scheme: light;
     --color-base-100: #fdfbf6;
     --color-base-200: #fbf3e4;
@@ -3498,8 +3305,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="spring-meadow"]:checked),
-  [data-theme="spring-meadow"] {
+  :root:has(input.theme-controller[value=spring-meadow]:checked),[data-theme="spring-meadow"] {
     color-scheme: light;
     --color-base-100: #f7fee7;
     --color-base-200: #ecfccb;
@@ -3688,8 +3494,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="lilac-dream"]:checked),
-  [data-theme="lilac-dream"] {
+  :root:has(input.theme-controller[value=lilac-dream]:checked),[data-theme="lilac-dream"] {
     color-scheme: light;
     --color-base-100: #f5f3ff;
     --color-base-200: #ede9fe;
@@ -3878,8 +3683,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="aqua-marine"]:checked),
-  [data-theme="aqua-marine"] {
+  :root:has(input.theme-controller[value=aqua-marine]:checked),[data-theme="aqua-marine"] {
     color-scheme: light;
     --color-base-100: #ecfeff;
     --color-base-200: #cffafe;
@@ -4068,8 +3872,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="peach-sorbet"]:checked),
-  [data-theme="peach-sorbet"] {
+  :root:has(input.theme-controller[value=peach-sorbet]:checked),[data-theme="peach-sorbet"] {
     color-scheme: light;
     --color-base-100: #fff7f2;
     --color-base-200: #ffeadb;
@@ -4258,8 +4061,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="mocha-latte"]:checked),
-  [data-theme="mocha-latte"] {
+  :root:has(input.theme-controller[value=mocha-latte]:checked),[data-theme="mocha-latte"] {
     color-scheme: light;
     --color-base-100: #fdf8f6;
     --color-base-200: #fbf1ed;
@@ -4448,8 +4250,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="steel-blue"]:checked),
-  [data-theme="steel-blue"] {
+  :root:has(input.theme-controller[value=steel-blue]:checked),[data-theme="steel-blue"] {
     color-scheme: light;
     --color-base-100: #f0f4f8;
     --color-base-200: #d9e2ec;
@@ -4638,8 +4439,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="rose-quartz"]:checked),
-  [data-theme="rose-quartz"] {
+  :root:has(input.theme-controller[value=rose-quartz]:checked),[data-theme="rose-quartz"] {
     color-scheme: light;
     --color-base-100: #fcf5f7;
     --color-base-200: #faeaef;
@@ -4828,8 +4628,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="golden-hour"]:checked),
-  [data-theme="golden-hour"] {
+  :root:has(input.theme-controller[value=golden-hour]:checked),[data-theme="golden-hour"] {
     color-scheme: light;
     --color-base-100: #fffbeb;
     --color-base-200: #fef3c7;
@@ -5018,8 +4817,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="emerald-isle"]:checked),
-  [data-theme="emerald-isle"] {
+  :root:has(input.theme-controller[value=emerald-isle]:checked),[data-theme="emerald-isle"] {
     color-scheme: light;
     --color-base-100: #f0fdfa;
     --color-base-200: #ccfbf1;
@@ -5208,8 +5006,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="slate-gray"]:checked),
-  [data-theme="slate-gray"] {
+  :root:has(input.theme-controller[value=slate-gray]:checked),[data-theme="slate-gray"] {
     color-scheme: light;
     --color-base-100: #f8fafc;
     --color-base-200: #f1f5f9;
@@ -5398,8 +5195,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="crimson-tide"]:checked),
-  [data-theme="crimson-tide"] {
+  :root:has(input.theme-controller[value=crimson-tide]:checked),[data-theme="crimson-tide"] {
     color-scheme: light;
     --color-base-100: #fdf2f2;
     --color-base-200: #fee2e2;
@@ -5588,8 +5384,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="indigo-dye"]:checked),
-  [data-theme="indigo-dye"] {
+  :root:has(input.theme-controller[value=indigo-dye]:checked),[data-theme="indigo-dye"] {
     color-scheme: light;
     --color-base-100: #eef2ff;
     --color-base-200: #e0e7ff;
@@ -5778,8 +5573,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="teal-lagoon"]:checked),
-  [data-theme="teal-lagoon"] {
+  :root:has(input.theme-controller[value=teal-lagoon]:checked),[data-theme="teal-lagoon"] {
     color-scheme: light;
     --color-base-100: #f0f9ff;
     --color-base-200: #e0f2fe;
@@ -5968,8 +5762,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="midnight-hush"]:checked),
-  [data-theme="midnight-hush"] {
+  :root:has(input.theme-controller[value=midnight-hush]:checked),[data-theme="midnight-hush"] {
     color-scheme: dark;
     --color-base-100: #0d1117;
     --color-base-200: #161b22;
@@ -6158,8 +5951,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="deep-ocean"]:checked),
-  [data-theme="deep-ocean"] {
+  :root:has(input.theme-controller[value=deep-ocean]:checked),[data-theme="deep-ocean"] {
     color-scheme: dark;
     --color-base-100: #011627;
     --color-base-200: #01121f;
@@ -6348,8 +6140,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="cyber-noir"]:checked),
-  [data-theme="cyber-noir"] {
+  :root:has(input.theme-controller[value=cyber-noir]:checked),[data-theme="cyber-noir"] {
     color-scheme: dark;
     --color-base-100: #000000;
     --color-base-200: #1a1a1a;
@@ -6538,8 +6329,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="starry-night"]:checked),
-  [data-theme="starry-night"] {
+  :root:has(input.theme-controller[value=starry-night]:checked),[data-theme="starry-night"] {
     color-scheme: dark;
     --color-base-100: #191d24;
     --color-base-200: #222831;
@@ -6728,8 +6518,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="forest-night"]:checked),
-  [data-theme="forest-night"] {
+  :root:has(input.theme-controller[value=forest-night]:checked),[data-theme="forest-night"] {
     color-scheme: dark;
     --color-base-100: #1a202c;
     --color-base-200: #2d3748;
@@ -6918,8 +6707,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="volcanic-ash"]:checked),
-  [data-theme="volcanic-ash"] {
+  :root:has(input.theme-controller[value=volcanic-ash]:checked),[data-theme="volcanic-ash"] {
     color-scheme: dark;
     --color-base-100: #121212;
     --color-base-200: #1e1e1e;
@@ -7108,8 +6896,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="nebula-purple"]:checked),
-  [data-theme="nebula-purple"] {
+  :root:has(input.theme-controller[value=nebula-purple]:checked),[data-theme="nebula-purple"] {
     color-scheme: dark;
     --color-base-100: #1d1b26;
     --color-base-200: #2c2a3a;
@@ -7298,8 +7085,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="slate-night"]:checked),
-  [data-theme="slate-night"] {
+  :root:has(input.theme-controller[value=slate-night]:checked),[data-theme="slate-night"] {
     color-scheme: dark;
     --color-base-100: #0f172a;
     --color-base-200: #1e293b;
@@ -7488,8 +7274,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="crimson-dark"]:checked),
-  [data-theme="crimson-dark"] {
+  :root:has(input.theme-controller[value=crimson-dark]:checked),[data-theme="crimson-dark"] {
     color-scheme: dark;
     --color-base-100: #1c0000;
     --color-base-200: #2e0000;
@@ -7678,8 +7463,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="emerald-dark"]:checked),
-  [data-theme="emerald-dark"] {
+  :root:has(input.theme-controller[value=emerald-dark]:checked),[data-theme="emerald-dark"] {
     color-scheme: dark;
     --color-base-100: #061e1a;
     --color-base-200: #0a2d27;
@@ -7868,8 +7652,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="golden-dark"]:checked),
-  [data-theme="golden-dark"] {
+  :root:has(input.theme-controller[value=golden-dark]:checked),[data-theme="golden-dark"] {
     color-scheme: dark;
     --color-base-100: #1c1917;
     --color-base-200: #292524;
@@ -8058,8 +7841,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="rose-dark"]:checked),
-  [data-theme="rose-dark"] {
+  :root:has(input.theme-controller[value=rose-dark]:checked),[data-theme="rose-dark"] {
     color-scheme: dark;
     --color-base-100: #260915;
     --color-base-200: #3c1021;
@@ -8248,8 +8030,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="indigo-dark"]:checked),
-  [data-theme="indigo-dark"] {
+  :root:has(input.theme-controller[value=indigo-dark]:checked),[data-theme="indigo-dark"] {
     color-scheme: dark;
     --color-base-100: #1e1b4b;
     --color-base-200: #312e71;
@@ -8438,8 +8219,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="teal-dark"]:checked),
-  [data-theme="teal-dark"] {
+  :root:has(input.theme-controller[value=teal-dark]:checked),[data-theme="teal-dark"] {
     color-scheme: dark;
     --color-base-100: #132a28;
     --color-base-200: #115e59;
@@ -8628,8 +8408,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="amethyst-dark"]:checked),
-  [data-theme="amethyst-dark"] {
+  :root:has(input.theme-controller[value=amethyst-dark]:checked),[data-theme="amethyst-dark"] {
     color-scheme: dark;
     --color-base-100: #2e1065;
     --color-base-200: #4c1d95;
@@ -8818,8 +8597,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="oceanic-depth"]:checked),
-  [data-theme="oceanic-depth"] {
+  :root:has(input.theme-controller[value=oceanic-depth]:checked),[data-theme="oceanic-depth"] {
     color-scheme: dark;
     --color-base-100: #0c2b64;
     --color-base-200: #1e3a8a;
@@ -9008,8 +8786,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="sunset-dark"]:checked),
-  [data-theme="sunset-dark"] {
+  :root:has(input.theme-controller[value=sunset-dark]:checked),[data-theme="sunset-dark"] {
     color-scheme: dark;
     --color-base-100: #451a03;
     --color-base-200: #7c2d12;
@@ -9198,8 +8975,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="evergreen-dark"]:checked),
-  [data-theme="evergreen-dark"] {
+  :root:has(input.theme-controller[value=evergreen-dark]:checked),[data-theme="evergreen-dark"] {
     color-scheme: dark;
     --color-base-100: #14532d;
     --color-base-200: #166534;
@@ -9388,8 +9164,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="charcoal-gray"]:checked),
-  [data-theme="charcoal-gray"] {
+  :root:has(input.theme-controller[value=charcoal-gray]:checked),[data-theme="charcoal-gray"] {
     color-scheme: dark;
     --color-base-100: #171717;
     --color-base-200: #262626;
@@ -9578,8 +9353,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="sapphire-blue"]:checked),
-  [data-theme="sapphire-blue"] {
+  :root:has(input.theme-controller[value=sapphire-blue]:checked),[data-theme="sapphire-blue"] {
     color-scheme: dark;
     --color-base-100: #0f1c4d;
     --color-base-200: #172a6f;
@@ -9768,8 +9542,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="ruby-red"]:checked),
-  [data-theme="ruby-red"] {
+  :root:has(input.theme-controller[value=ruby-red]:checked),[data-theme="ruby-red"] {
     color-scheme: dark;
     --color-base-100: #3b0000;
     --color-base-200: #5c0000;
@@ -9958,8 +9731,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="olive-drab"]:checked),
-  [data-theme="olive-drab"] {
+  :root:has(input.theme-controller[value=olive-drab]:checked),[data-theme="olive-drab"] {
     color-scheme: dark;
     --color-base-100: #24281a;
     --color-base-200: #353b27;
@@ -10148,8 +9920,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="mocha-dark"]:checked),
-  [data-theme="mocha-dark"] {
+  :root:has(input.theme-controller[value=mocha-dark]:checked),[data-theme="mocha-dark"] {
     color-scheme: dark;
     --color-base-100: #1e1511;
     --color-base-200: #2d201a;
@@ -10338,8 +10109,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="plum-velvet"]:checked),
-  [data-theme="plum-velvet"] {
+  :root:has(input.theme-controller[value=plum-velvet]:checked),[data-theme="plum-velvet"] {
     color-scheme: dark;
     --color-base-100: #2a0033;
     --color-base-200: #3d004a;
@@ -10528,8 +10298,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="carbon-fiber"]:checked),
-  [data-theme="carbon-fiber"] {
+  :root:has(input.theme-controller[value=carbon-fiber]:checked),[data-theme="carbon-fiber"] {
     color-scheme: dark;
     --color-base-100: #101010;
     --color-base-200: #181818;
@@ -10746,32 +10515,24 @@
   :root {
     background: var(--page-scroll-bg, var(--root-bg));
     --page-scroll-bg-on: linear-gradient(var(--root-bg, #0000), var(--root-bg, #0000))
-      var(--root-bg, #0000);
+    var(--root-bg, #0000);
     @supports (color: color-mix(in lab, red, red)) {
       --page-scroll-bg-on: linear-gradient(var(--root-bg, #0000), var(--root-bg, #0000))
-        color-mix(
-          in srgb,
-          var(--root-bg, #0000),
-          oklch(0% 0 0) calc(var(--page-has-backdrop, 0) * 40%)
-        );
+    color-mix(in srgb, var(--root-bg, #0000), oklch(0% 0 0) calc(var(--page-has-backdrop, 0) * 40%));
     }
     --page-scroll-transition-on: background-color 0.3s ease-out;
     transition: var(--page-scroll-transition);
     scrollbar-gutter: var(--page-scroll-gutter, unset);
-    scrollbar-gutter: if(
-      style(--page-has-scroll: 1): var(--page-scroll-gutter, unset) ; else: unset
-    );
+    scrollbar-gutter: if(style(--page-has-scroll: 1): var(--page-scroll-gutter, unset) ; else: unset);
   }
   @keyframes set-page-has-scroll {
-    0%,
-    to {
+    0%, to {
       --page-has-scroll: 1;
     }
   }
 }
 @layer base {
-  :root,
-  [data-theme] {
+  :root, [data-theme] {
     background: var(--page-scroll-bg, var(--root-bg));
     color: var(--color-base-content);
   }
@@ -10780,8 +10541,7 @@
   }
 }
 @keyframes rating {
-  0%,
-  40% {
+  0%, 40% {
     scale: 1.1;
     filter: brightness(1.05) contrast(1.05);
   }
@@ -10810,12 +10570,10 @@
   }
 }
 @keyframes rotator {
-  89.9999%,
-  100% {
+  89.9999%, 100% {
     --first-item-position: 0 0%;
   }
-  90%,
-  99.9999% {
+  90%, 99.9999% {
     --first-item-position: 0 calc(var(--items) * 100%);
   }
   100% {
@@ -10841,9 +10599,7 @@
   }
 }
 @layer base {
-  :where(:root),
-  :root:has(input.theme-controller[value="blue"]:checked),
-  [data-theme="blue"] {
+  :where(:root),:root:has(input.theme-controller[value=blue]:checked),[data-theme="blue"] {
     color-scheme: light;
     --color-base-100: #f5f7ff;
     --color-base-200: #e6ebff;
@@ -10868,8 +10624,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="blue-dark"]:checked),
-  [data-theme="blue-dark"] {
+  :root:has(input.theme-controller[value=blue-dark]:checked),[data-theme="blue-dark"] {
     color-scheme: dark;
     --color-base-100: #121826;
     --color-base-200: #1a2236;
@@ -11222,8 +10977,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="lylac"]:checked),
-  [data-theme="lylac"] {
+  :root:has(input.theme-controller[value=lylac]:checked),[data-theme="lylac"] {
     color-scheme: light;
     --color-base-100: #f9f7fc;
     --color-base-200: #efe8f7;
@@ -11248,8 +11002,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="lylac-dark"]:checked),
-  [data-theme="lylac-dark"] {
+  :root:has(input.theme-controller[value=lylac-dark]:checked),[data-theme="lylac-dark"] {
     color-scheme: dark;
     --color-base-100: #1a1b26;
     --color-base-200: #23243a;
@@ -11602,8 +11355,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="lavender"]:checked),
-  [data-theme="lavender"] {
+  :root:has(input.theme-controller[value=lavender]:checked),[data-theme="lavender"] {
     color-scheme: light;
     --color-base-100: #fbfaff;
     --color-base-200: #f1eeff;
@@ -11628,8 +11380,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="lavender-dark"]:checked),
-  [data-theme="lavender-dark"] {
+  :root:has(input.theme-controller[value=lavender-dark]:checked),[data-theme="lavender-dark"] {
     color-scheme: dark;
     --color-base-100: #1a1b26;
     --color-base-200: #23243a;
@@ -11982,8 +11733,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="burgundy"]:checked),
-  [data-theme="burgundy"] {
+  :root:has(input.theme-controller[value=burgundy]:checked),[data-theme="burgundy"] {
     color-scheme: light;
     --color-base-100: #f7f2f2;
     --color-base-200: #e8dcdc;
@@ -12008,8 +11758,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="burgundy-dark"]:checked),
-  [data-theme="burgundy-dark"] {
+  :root:has(input.theme-controller[value=burgundy-dark]:checked),[data-theme="burgundy-dark"] {
     color-scheme: dark;
     --color-base-100: #1b1414;
     --color-base-200: #2a1e1e;
@@ -12362,8 +12111,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="aqua"]:checked),
-  [data-theme="aqua"] {
+  :root:has(input.theme-controller[value=aqua]:checked),[data-theme="aqua"] {
     color-scheme: light;
     --color-base-100: #f2fefe;
     --color-base-200: #dfffff;
@@ -12724,8 +12472,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="aqua-dark"]:checked),
-  [data-theme="aqua-dark"] {
+  :root:has(input.theme-controller[value=aqua-dark]:checked),[data-theme="aqua-dark"] {
     color-scheme: dark;
     --color-base-100: #0a1e1e;
     --color-base-200: #123232;
@@ -13078,8 +12825,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="navy"]:checked),
-  [data-theme="navy"] {
+  :root:has(input.theme-controller[value=navy]:checked),[data-theme="navy"] {
     color-scheme: light;
     --color-base-100: #f5f7fa;
     --color-base-200: #e2e8f0;
@@ -13104,8 +12850,7 @@
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value="navy-dark"]:checked),
-  [data-theme="navy-dark"] {
+  :root:has(input.theme-controller[value=navy-dark]:checked),[data-theme="navy-dark"] {
     color-scheme: dark;
     --color-base-100: #0a0f1a;
     --color-base-200: #101826;
@@ -13641,12 +13386,8 @@
   inherits: false;
 }
 @layer properties {
-  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or
-    ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
-    *,
-    ::before,
-    ::after,
-    ::backdrop {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
       --tw-space-y-reverse: 0;
       --tw-space-x-reverse: 0;
       --tw-border-style: solid;
