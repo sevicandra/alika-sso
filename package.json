@@ -22,9 +22,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@tailwindcss/postcss": "^4.1.6",
-    "autoprefixer": "^10.4.21",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
@@ -34,8 +33,6 @@
     "express": "^5.2.1",
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
-    "jwk-to-pem": "^2.0.7",
-    "lodash": "^4.17.21",
     "lusca": "^1.7.0",
     "method-override": "^3.0.0",
     "minio": "^8.0.6",
@@ -52,7 +49,7 @@
     "redis": "^5.0.1",
     "sequelize": "^6.37.7",
     "tailwindcss": "^4.1.6",
-    "uuid": "^11.1.0",
+    "uuid": "^11.1.1",
     "winston": "^3.18.3",
     "zod": "^4.2.1"
   },
@@ -62,8 +59,6 @@
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.18.2",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/jwk-to-pem": "^2.0.3",
-    "@types/lodash": "^4.17.16",
     "@types/lusca": "^1.7.5",
     "@types/method-override": "^3.0.0",
     "@types/module-alias": "^2.0.4",
@@ -82,5 +77,9 @@
     "prettier-plugin-tailwindcss": "^0.6.12",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "tar": "^7.5.16",
+    "uuid": "$uuid"
   }
 }
