@@ -45,7 +45,9 @@ export const getRole = asyncHandler(async (req: Request, res: Response) => {
   const sort = req.query.sort as string;
   const order = sortBuilder(sort);
   const search = (req.query.search as string) || "";
-  const where: any = {};
+  const where: any = {
+    service_kode: "002",
+  };
   if (search) where.name = { [Op.like]: `%${search}%` };
 
   const { items: data, pagination } = await Role.findAllWithPagination({

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Op, col, where } from "sequelize";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
-import { InvalidRequestError, NotFoundError } from "@/utils/errors";
+import { AuthorizationError, InvalidRequestError, NotFoundError } from "@/utils/errors";
 import { successResponse } from "@/helpers/respose.helper";
 import { sortBuilder } from "@/helpers/sequelizer.helper";
 import { UserAssignments, UserRole } from "@/repositories";
@@ -137,6 +137,10 @@ export const UserControllerV2 = {
       if (!t) {
         throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
+      const nip = req.user?.nip;
+      if (!nip) {
+        throw new AuthorizationError("Pengguna tidak dapat di verifikasi");
+      }
       const { UserId } = req.params;
       const { role } = req.body;
       if (typeof UserId !== "string") {
@@ -150,6 +154,9 @@ export const UserControllerV2 = {
       });
       if (!user) {
         throw new NotFoundError("User not found");
+      }
+      if (nip == user.nip) {
+        throw new AuthorizationError("Tidak bisa menambah role diri sendiri");
       }
       const data = await UserRole.create(
         {
@@ -172,6 +179,10 @@ export const UserControllerV2 = {
       if (!t) {
         throw new InvalidRequestError("Transaksi tidak ditemukan");
       }
+      const nip = req.user?.nip;
+      if (!nip) {
+        throw new AuthorizationError("Pengguna tidak dapat di verifikasi");
+      }
       const { UserId, role } = req.params;
       const user = await UserAssignments.findOne({
         where: {
@@ -181,6 +192,9 @@ export const UserControllerV2 = {
       });
       if (!user) {
         throw new NotFoundError("User not found");
+      }
+      if (nip == user.nip) {
+        throw new AuthorizationError("Tidak bisa menghapus role diri sendiri");
       }
       await UserRole.deleteOne(
         {
