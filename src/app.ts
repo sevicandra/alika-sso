@@ -25,10 +25,25 @@ import SessionStore from "./utils/session.util";
 
 const startServer = async () => {
   try {
-    await JwtUtil.initialize();
-    await redisService.connect();
-    await minioService.ensureBucketExists();
     dotenv.config();
+    await JwtUtil.initialize();
+
+    try {
+      await redisService.connect();
+    } catch (error) {
+      logger.error("Failed to connect to Redis during startup. App will run without Redis cache.", {
+        error,
+      });
+    }
+
+    try {
+      await minioService.ensureBucketExists();
+    } catch (error) {
+      logger.error(
+        "Failed to initialize MinIO during startup. App will run without functional object storage.",
+        { error }
+      );
+    }
     const sessionStore = new SessionStore();
     const port = appConfig.PORT;
     const publicPath = path.join(__dirname, "../public");
