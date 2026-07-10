@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Op } from "sequelize";
+import { Op, col } from "sequelize";
 import { asyncHandler } from "@/middlewares/async-handler.middleware";
 import { InvalidRequestError, NotFoundError } from "@/utils/errors";
 import { successResponse } from "@/helpers/respose.helper";
@@ -159,18 +159,14 @@ export const ClientControllerV1 = {
           association: "Action",
         },
       ],
+      attributes: [
+        "id",
+        [col("Scope.Service.name"), "service"],
+        [col("Scope.scope"), "scope"],
+        [col("Action.name"), "action"],
+      ],
     });
-    successResponse(
-      res,
-      "Success get scopes",
-      data.items.map((item) => ({
-        id: item.id,
-        service: item.Scope.Service.name,
-        scope: item.Scope.scope,
-        action: item.Action.name,
-      })),
-      data.pagination
-    );
+    successResponse(res, "Success get scopes", data.items, data.pagination);
   }),
 
   getScopeById: asyncHandler(async (req: Request, res: Response) => {
