@@ -20,22 +20,20 @@
       <div class="relative z-10 w-full max-w-lg px-6">
         <div class="text-center space-y-4 mb-8">
           <div class="flex justify-center items-center space-x-2">
-            <span
-              class="badge bg-primary/10 text-primary border-primary/20 px-3 py-1"
-            >
+            <span class="badge bg-primary/10 text-primary border-primary/20 px-3 py-1">
               ALIKA
             </span>
           </div>
 
           <div class="space-y-2">
-            <h2
-              class="text-sm font-medium text-base-content uppercase tracking-wider"
-            >
+            <h2 class="text-sm font-medium text-base-content uppercase tracking-wider">
               Direktorat Jenderal Kekayaan Negara
             </h2>
             <h1
               class="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-base-content"
-            >Kementerian Keuangan</h1>
+            >
+              Kementerian Keuangan
+            </h1>
           </div>
 
           <div class="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
@@ -46,45 +44,33 @@
           <div class="flex flex-col p-6 text-center space-y-6 pb-8">
             <div class="flex justify-center">
               <div
-                class="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-base-content/20"
+                class="w-20 h-20 bg-primary rounded-full overflow-hidden flex items-center justify-center shadow-base-content/20"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="w-10 h-10 text-primary-content"
-                >
-                  <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path>
-                  <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path>
-                  <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path>
-                  <path d="M10 6h4"></path>
-                  <path d="M10 10h4"></path>
-                  <path d="M10 14h4"></path>
-                  <path d="M10 18h4"></path>
-                </svg>
+                <img
+                  src="<%= url %>/images/alika-bg-512.png"
+                  alt="Logo Alika"
+                  class="w-full text-primary-content"
+                />
               </div>
             </div>
             <div class="space-y-2">
               <h1 class="text-2xl font-bold text-base-content">ALIKA DJKN</h1>
-              <p class="text-neutral">
-                Masuk dengan akun SSO Kementerian Keuangan
-              </p>
+              <p class="text-neutral">Masuk dengan akun SSO Kementerian Keuangan</p>
             </div>
           </div>
           <div class="p-6 pt-0 space-y-6">
             <!-- Error Alert Container -->
-            <div id="error-alert" class="hidden mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-              <span class="font-medium">Authentication Failed:</span> <span id="error-message"></span>
+            <div
+              id="error-alert"
+              class="hidden mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+              role="alert"
+            >
+              <span class="font-medium">Authentication Failed:</span>
+              <span id="error-message"></span>
             </div>
             <div class="space-y-4">
               <form action="<%= url %>/login/KemenkeuID" method="post">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <button
                   class="inline-flex items-center justify-center gap-2 whitespace-nowrap ring-primary-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-content hover:bg-primary/90 h-11 rounded-md px-8 w-full gov-button text-base font-semibold cursor-pointer"
                 >
@@ -111,20 +97,22 @@
         </div>
         <div class="mt-8 text-center space-y-4">
           <div class="flex flex-col items-center justify-center space-y-2">
-            <span class="text-xs text-base-content/70">Didukung oleh layanan sertifikat elektronik dari:</span>
-            <img src="<%= url %>/images/logoBSrE.png" alt="Logo BSrE" class="h-10 opacity-80 hover:opacity-100 transition-opacity" />
+            <span class="text-xs text-base-content/70"
+              >Didukung oleh layanan sertifikat elektronik dari:</span
+            >
+            <img
+              src="<%= url %>/images/logoBSrE.png"
+              alt="Logo BSrE"
+              class="h-10 opacity-80 hover:opacity-100 transition-opacity"
+            />
           </div>
           <p class="text-xs text-base-content">
             © 2025 Sekretariat Direktorat Jenderal Kekayaan Negara
           </p>
         </div>
       </div>
-      <div
-        class="absolute top-10 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl"
-      ></div>
-      <div
-        class="absolute bottom-10 right-10 w-40 h-40 bg-primary/3 rounded-full blur-3xl"
-      ></div>
+      <div class="absolute top-10 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-10 w-40 h-40 bg-primary/3 rounded-full blur-3xl"></div>
     </div>
   </body>
   <script>
@@ -133,15 +121,15 @@
 
     // Display error message from URL if present
     const urlParams = new URLSearchParams(window.location.search);
-    const errorMsg = urlParams.get('error');
-    
+    const errorMsg = urlParams.get("error");
+
     if (errorMsg) {
-      const errorAlert = document.getElementById('error-alert');
-      const errorMessageSpan = document.getElementById('error-message');
-      
+      const errorAlert = document.getElementById("error-alert");
+      const errorMessageSpan = document.getElementById("error-message");
+
       errorMessageSpan.textContent = errorMsg;
-      errorAlert.classList.remove('hidden');
-      
+      errorAlert.classList.remove("hidden");
+
       // Optional: Clean up URL without reloading
       window.history.replaceState({}, document.title, window.location.pathname);
     }
